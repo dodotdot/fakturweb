@@ -32,7 +32,8 @@ export const useInvoiceStore = defineStore('invoice', () => {
       }
     ],
     taxRate: 10,
-    notes: 'Payment is due within 30 days. Thank you for your business!'
+    notes: 'Payment is due within 30 days. Thank you for your business!',
+    logo: null
   })
 
   const subtotal = computed(() => {
@@ -100,7 +101,8 @@ export const useInvoiceStore = defineStore('invoice', () => {
         }
       ],
       taxRate: 10,
-      notes: 'Payment is due within 30 days. Thank you for your business!'
+      notes: 'Payment is due within 30 days. Thank you for your business!',
+      logo: null
     }
   }
 
@@ -130,6 +132,7 @@ export const useInvoiceStore = defineStore('invoice', () => {
         items: currentInvoice.value.items,
         tax_rate: currentInvoice.value.taxRate,
         notes: currentInvoice.value.notes,
+        logo: currentInvoice.value.logo,
         user_id: userData.user.id,
         created_at: new Date().toISOString(),
         status: 'draft'
@@ -182,12 +185,13 @@ export const useInvoiceStore = defineStore('invoice', () => {
         id: invoice.id,
         title: invoice.title,
         date: invoice.date,
-        dueDate: invoice.due_date, // Map due_date to dueDate
+        dueDate: invoice.due_date,
         from: invoice.from_details,
         to: invoice.to_details,
         items: invoice.items,
         taxRate: invoice.tax_rate,
         notes: invoice.notes,
+        logo: invoice.logo,
         status: invoice.status,
         created_at: invoice.created_at,
         updated_at: invoice.updated_at
@@ -208,40 +212,36 @@ export const useInvoiceStore = defineStore('invoice', () => {
       isLoading.value = true
       error.value = null
       
-      // First check if it's in local state
-      const existingInvoice = invoices.value.find(inv => inv.id === id)
-      if (existingInvoice) {
-        currentInvoice.value = existingInvoice
-        return existingInvoice
-      }
+      const { data: userData } = await supabase.auth.getUser()
+      if (!userData.user) throw new Error('User not authenticated')
       
-      // Otherwise fetch from API
       const { data, error: fetchError } = await supabase
         .from('invoices')
         .select('*')
         .eq('id', id)
+        .eq('user_id', userData.user.id)
         .single()
       
       if (fetchError) throw fetchError
       
       // Map DB snake_case to JS camelCase
-      const mappedInvoice = {
+      currentInvoice.value = {
         id: data.id,
         title: data.title,
         date: data.date,
-        dueDate: data.due_date, // Map due_date to dueDate
+        dueDate: data.due_date,
         from: data.from_details,
         to: data.to_details,
         items: data.items,
         taxRate: data.tax_rate,
         notes: data.notes,
+        logo: data.logo,
         status: data.status,
         created_at: data.created_at,
         updated_at: data.updated_at
       }
       
-      currentInvoice.value = mappedInvoice
-      return mappedInvoice
+      return currentInvoice.value
     } catch (err) {
       error.value = err.message
       console.error('Get invoice error:', err)
@@ -293,66 +293,52 @@ export const useInvoiceStore = defineStore('invoice', () => {
     }
   }
 
-  async function updateInvoice(id) {
+  async function updateInvoice(updatedInvoice) {
     try {
-      isLoading.value = true
-      error.value = null
-      
-      const { data: userData } = await supabase.auth.getUser()
-      if (!userData.user) throw new Error('User not authenticated')
-      
+      isLoading.value = true;
+      error.value = null;
+
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData.user) throw new Error('User not authenticated');
+
       // Map our JS camelCase properties to the DB's snake_case columns
       const invoiceData = {
-        title: currentInvoice.value.title,
-        date: currentInvoice.value.date,
-        due_date: currentInvoice.value.dueDate, // Map dueDate to due_date
-        from_details: currentInvoice.value.from,
-        to_details: currentInvoice.value.to,
-        items: currentInvoice.value.items,
-        tax_rate: currentInvoice.value.taxRate,
-        notes: currentInvoice.value.notes,
+        title: updatedInvoice.title,
+        date: updatedInvoice.date,
+        due_date: updatedInvoice.dueDate,
+        from_details: updatedInvoice.from,
+        to_details: updatedInvoice.to,
+        items: updatedInvoice.items,
+        tax_rate: updatedInvoice.taxRate,
+        notes: updatedInvoice.notes,
+        logo: updatedInvoice.logo,
         updated_at: new Date().toISOString()
-      }
-      
-      console.log('Updating invoice with data:', invoiceData);
-      
-      const { data, error: updateError } = await supabase
+      };
+
+      const { error: updateError } = await supabase
         .from('invoices')
         .update(invoiceData)
-        .eq('id', id)
-        .eq('user_id', userData.user.id)
-        .select()
-        .single()
-      
-      if (updateError) throw updateError
-      
-      // Update local state
-      const index = invoices.value.findIndex(invoice => invoice.id === id)
+        .eq('id', updatedInvoice.id)
+        .eq('user_id', userData.user.id);
+
+      if (updateError) throw updateError;
+
+      // Update the current invoice in the store
+      currentInvoice.value = updatedInvoice;
+
+      // Update the invoice in the invoices list
+      const index = invoices.value.findIndex(inv => inv.id === updatedInvoice.id);
       if (index !== -1) {
-        // Map DB snake_case to JS camelCase
-        invoices.value[index] = {
-          id: data.id,
-          title: data.title,
-          date: data.date,
-          dueDate: data.due_date,
-          from: data.from_details,
-          to: data.to_details,
-          items: data.items,
-          taxRate: data.tax_rate,
-          notes: data.notes,
-          status: data.status,
-          created_at: data.created_at,
-          updated_at: data.updated_at
-        }
+        invoices.value[index] = updatedInvoice;
       }
-      
-      return true
+
+      return updatedInvoice.id;
     } catch (err) {
-      error.value = err.message
-      console.error('Update invoice error:', err)
-      throw err
+      error.value = err.message;
+      console.error('Update invoice error:', err);
+      throw err;
     } finally {
-      isLoading.value = false
+      isLoading.value = false;
     }
   }
 

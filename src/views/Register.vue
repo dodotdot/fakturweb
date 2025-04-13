@@ -4,7 +4,7 @@
       <div class="w-full max-w-md">
         <div class="mb-8 text-center">
           <router-link to="/" class="text-2xl font-bold text-primary">
-            FakturWeb
+            FAKTUR.web.id
           </router-link>
         </div>
         

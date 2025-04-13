@@ -4,8 +4,8 @@
       <div class="flex justify-between h-16">
         <div class="flex">
           <div class="flex-shrink-0 flex items-center">
-            <router-link to="/" class="text-xl font-bold text-primary">
-              FakturWeb
+            <router-link to="/" class="flex items-center">
+              <img src="/images/faktur-logo.png" alt="FAKTUR.web.id" class="h-8 w-auto">
             </router-link>
           </div>
           <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
@@ -14,8 +14,8 @@
               class="inline-flex items-center px-1 pt-1 border-b-2"
               :class="[
                 isActive('/') 
-                  ? 'border-primary text-gray-900 dark:text-white' 
-                  : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white'
+                  ? 'border-[#00B74A] text-[#00B74A] dark:text-white' 
+                  : 'border-transparent text-gray-500 hover:text-[#00B74A] dark:text-gray-300 dark:hover:text-white'
               ]"
             >
               Home
@@ -27,8 +27,8 @@
               class="inline-flex items-center px-1 pt-1 border-b-2"
               :class="[
                 isActive('/dashboard') 
-                  ? 'border-primary text-gray-900 dark:text-white' 
-                  : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white'
+                  ? 'border-[#00B74A] text-[#00B74A] dark:text-white' 
+                  : 'border-transparent text-gray-500 hover:text-[#00B74A] dark:text-gray-300 dark:hover:text-white'
               ]"
             >
               Dashboard
@@ -40,8 +40,8 @@
               class="inline-flex items-center px-1 pt-1 border-b-2"
               :class="[
                 isActive('/invoices') 
-                  ? 'border-primary text-gray-900 dark:text-white' 
-                  : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white'
+                  ? 'border-[#00B74A] text-[#00B74A] dark:text-white' 
+                  : 'border-transparent text-gray-500 hover:text-[#00B74A] dark:text-gray-300 dark:hover:text-white'
               ]"
             >
               Invoices
@@ -68,7 +68,7 @@
             </router-link>
             <router-link
               to="/register"
-              class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90"
+              class="inline-flex items-center px-4 py-2 border border-[#00B74A] text-sm font-medium rounded-md shadow-sm text-white bg-[#00B74A] hover:bg-[#00B74A]/90"
             >
               Sign up
             </router-link>

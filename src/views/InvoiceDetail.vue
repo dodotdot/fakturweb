@@ -35,25 +35,31 @@
     
     <div v-else class="bg-white rounded-lg shadow-sm p-8 border border-gray-100" ref="invoicePrintRef">
       <!-- Invoice Header -->
-      <div class="flex flex-col md:flex-row justify-between mb-10">
-        <div class="invoice-branding mb-6 md:mb-0">
+      <div class="flex flex-col md:flex-row justify-between items-start mb-10">
+        <div class="flex-1">
           <h2 class="text-3xl font-bold mb-2">{{ invoice.title }}</h2>
           <div class="flex flex-col space-y-1">
             <div class="flex items-center">
-              <span class="text-gray-500 w-24">Date:</span>
+              <span class="text-gray-500 w-24">Tanggal:</span>
               <span>{{ formatDate(invoice.date) }}</span>
             </div>
             <div class="flex items-center">
-              <span class="text-gray-500 w-24">Due Date:</span>
+              <span class="text-gray-500 w-24">Jatuh Tempo:</span>
               <span>{{ formatDate(invoice.dueDate) }}</span>
             </div>
           </div>
         </div>
-        <div class="invoice-status">
-          <div class="bg-blue-50 text-blue-700 px-4 py-2 rounded-md inline-flex items-center">
-            <span class="h-2 w-2 bg-blue-500 rounded-full mr-2"></span>
-            <span>{{ invoice.status || 'Draft' }}</span>
-          </div>
+        
+        <!-- Logo Display -->
+        <div class="w-40 h-40 flex items-center justify-center">
+          <img 
+            v-if="invoice.logo"
+            :src="invoice.logo" 
+            alt="Invoice Logo" 
+            crossorigin="anonymous"
+            class="max-w-full max-h-full object-contain"
+            @load="handleImageLoad"
+          />
         </div>
       </div>
       
@@ -146,15 +152,19 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useInvoiceStore } from '../stores/invoice';
+import { useAuthStore } from '../stores/auth';
+import { uploadLogo, deleteLogo } from '../lib/supabase';
 import html2pdf from 'html2pdf.js';
 
 const router = useRouter();
 const route = useRoute();
 const invoiceStore = useInvoiceStore();
+const authStore = useAuthStore();
 const invoicePrintRef = ref(null);
-
+const fileInput = ref(null);
 const isLoading = ref(true);
 const error = ref('');
+const isPrinting = ref(false);
 const invoiceId = computed(() => route.params.id);
 const invoice = computed(() => invoiceStore.currentInvoice);
 
@@ -198,19 +208,119 @@ function formatDate(dateString) {
   }).format(date);
 }
 
+async function handleLogoUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  // Validate file type
+  if (!['image/png', 'image/jpeg', 'image/jpg'].includes(file.type)) {
+    alert('Please upload only PNG or JPG images');
+    return;
+  }
+
+  // Validate file size (2MB)
+  if (file.size > 2 * 1024 * 1024) {
+    alert('File size should not exceed 2MB');
+    return;
+  }
+
+  try {
+    const userId = authStore.user?.id;
+    if (!userId) {
+      throw new Error('User not authenticated');
+    }
+
+    isLoading.value = true;
+    const publicUrl = await uploadLogo(file, userId);
+    
+    // Update invoice with new logo
+    const updatedInvoice = {
+      ...invoice.value,
+      logo: publicUrl
+    };
+    await invoiceStore.updateInvoice(updatedInvoice);
+
+  } catch (error) {
+    console.error('Error uploading logo:', error);
+    alert('Failed to upload logo. Please try again.');
+  } finally {
+    isLoading.value = false;
+    if (fileInput.value) {
+      fileInput.value.value = ''; // Reset file input
+    }
+  }
+}
+
+async function removeLogo() {
+  try {
+    const userId = authStore.user?.id;
+    if (!userId) {
+      throw new Error('User not authenticated');
+    }
+
+    isLoading.value = true;
+    
+    if (invoice.value.logo) {
+      // Extract file path from URL
+      const url = new URL(invoice.value.logo);
+      const filePath = url.pathname.split('/').pop();
+      await deleteLogo(filePath, userId);
+    }
+
+    // Update invoice without logo
+    await invoiceStore.updateInvoice({
+      ...invoice.value,
+      logo: null
+    });
+
+  } catch (error) {
+    console.error('Error removing logo:', error);
+    alert('Failed to remove logo. Please try again.');
+  } finally {
+    isLoading.value = false;
+  }
+}
+
 function downloadPDF() {
   if (!invoicePrintRef.value) return;
   
+  isPrinting.value = true;
+
   // Configure html2pdf options
   const options = {
     margin: 10,
     filename: `invoice-${invoice.value.title.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.pdf`,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2 },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    image: { 
+      type: 'jpeg', 
+      quality: 0.98 
+    },
+    html2canvas: { 
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      logging: true
+    },
+    jsPDF: { 
+      unit: 'mm', 
+      format: 'a4', 
+      orientation: 'portrait'
+    }
   };
-  
-  // Generate PDF
-  html2pdf().from(invoicePrintRef.value).set(options).save();
+
+  // Wait for a brief moment to ensure all content is rendered
+  setTimeout(() => {
+    html2pdf()
+      .from(invoicePrintRef.value)
+      .set(options)
+      .save()
+      .then(() => {
+        isPrinting.value = false;
+      })
+      .catch(error => {
+        console.error('Error generating PDF:', error);
+        isPrinting.value = false;
+        alert('Error generating PDF. Please try again.');
+      });
+  }, 500);
 }
 </script> 

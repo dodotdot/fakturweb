@@ -4,13 +4,15 @@
       <div class="w-full max-w-md">
         <div class="mb-8 text-center">
           <router-link to="/" class="text-2xl font-bold text-primary">
-            FakturWeb
+            FAKTUR.web.id
           </router-link>
         </div>
         
         <div v-if="registered" class="mb-4 p-4 bg-green-50 text-green-700 rounded-md">
           Registration successful! Please check your email to confirm your account, then login below.
         </div>
+        
+        <h2 class="text-2xl font-bold mb-6">Welcome back to FAKTUR.web.id</h2>
         
         <LoginForm />
       </div>

@@ -87,17 +87,17 @@
           <table class="invoice-items-table">
             <thead>
               <tr>
-                <th>Description</th>
-                <th>Quantity</th>
-                <th>Unit Price</th>
-                <th>Amount</th>
+                <th>Deskripsi</th>
+                <th>Kuantitas</th>
+                <th>Harga Satuan</th>
+                <th>Jumlah</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="(item, index) in invoice.items" :key="index">
                 <td>
-                  <input type="text" v-model="item.description" placeholder="Item description">
+                  <input type="text" v-model="item.description" placeholder="Deskripsi item">
                 </td>
                 <td>
                   <input type="number" v-model.number="item.quantity" min="1" @input="calculateItemTotal(index)">
@@ -126,12 +126,9 @@
             <span>Subtotal:</span>
             <span>{{ formatCurrency(calculateSubtotal()) }}</span>
           </div>
-          <div class="summary-row">
-            <span>Tax (%):</span>
-            <div class="tax-input">
-              <input type="number" v-model.number="invoice.taxRate" min="0" max="100">
-              <span>{{ formatCurrency(calculateTaxAmount()) }}</span>
-            </div>
+          <div class="summary-row tax">
+            <span>Pajak ({{ invoice.taxRate }}%):</span>
+            <span>{{ formatCurrency(calculateTaxAmount()) }}</span>
           </div>
           <div class="summary-row total">
             <span>Total:</span>
@@ -158,11 +155,21 @@
         <!-- Invoice Header -->
         <div class="invoice-header">
           <div class="invoice-title">
-            <h2>{{ invoice.title || 'INVOICE' }}</h2>
+            <h2>{{ invoice.title || 'FAKTUR' }}</h2>
             <div class="invoice-dates">
-              <div><strong>Date:</strong> {{ formatDate(invoice.date) }}</div>
-              <div><strong>Due Date:</strong> {{ formatDate(invoice.dueDate) }}</div>
+              <div><strong>Tanggal:</strong> {{ formatDate(invoice.date) }}</div>
+              <div><strong>Jatuh Tempo:</strong> {{ formatDate(invoice.dueDate) }}</div>
             </div>
+          </div>
+          <!-- Update Logo Display -->
+          <div class="invoice-logo" v-if="invoice.logo">
+            <img 
+              :src="invoice.logo" 
+              alt="Invoice Logo" 
+              crossorigin="anonymous"
+              @load="handleImageLoad"
+              style="max-height: 100px; max-width: 200px; object-fit: contain;"
+            >
           </div>
         </div>
         
@@ -194,10 +201,10 @@
           <table>
             <thead>
               <tr>
-                <th>Description</th>
-                <th>Quantity</th>
-                <th>Unit Price</th>
-                <th>Amount</th>
+                <th>Deskripsi</th>
+                <th>Kuantitas</th>
+                <th>Harga Satuan</th>
+                <th>Jumlah</th>
               </tr>
             </thead>
             <tbody>
@@ -214,7 +221,7 @@
                 <td>{{ formatCurrency(calculateSubtotal()) }}</td>
               </tr>
               <tr class="tax">
-                <td colspan="3">Tax ({{ invoice.taxRate }}%)</td>
+                <td colspan="3">Pajak ({{ invoice.taxRate }}%)</td>
                 <td>{{ formatCurrency(calculateTaxAmount()) }}</td>
               </tr>
               <tr class="total">
@@ -284,7 +291,8 @@ const localInvoice = reactive({
     }
   ],
   taxRate: 10,
-  notes: 'Payment is due within 30 days. Thank you for your business!'
+  notes: 'Payment is due within 30 days. Thank you for your business!',
+  logo: ''
 });
 
 // Use computed to reference either store invoice or local invoice
@@ -367,9 +375,11 @@ function calculateTotals() {
 
 // Format currency
 function formatCurrency(value) {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('id-ID', {
     style: 'currency',
-    currency: 'USD'
+    currency: 'IDR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
   }).format(value);
 }
 
@@ -424,18 +434,95 @@ function resetForm() {
   }
 }
 
-// Download PDF
+// In the script section, add these new functions and variables
+const isPrinting = ref(false);
+const imageLoaded = ref(false);
+
+function handleImageLoad(event) {
+  imageLoaded.value = true;
+}
+
+// Update the downloadPDF function
 function downloadPDF() {
-  const element = invoicePreview.value;
-  const options = {
-    margin: 1,
-    filename: `invoice-${invoice.value.title.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.pdf`,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2 },
-    jsPDF: { unit: 'cm', format: 'a4', orientation: 'portrait' }
-  };
+  if (!invoicePreview.value) return;
   
-  html2pdf().set(options).from(element).save();
+  isPrinting.value = true;
+
+  // Configure html2pdf options
+  const options = {
+    margin: [10, 10, 10, 10],
+    filename: `invoice-${invoice.value.title.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.pdf`,
+    image: { 
+      type: 'jpeg', 
+      quality: 1
+    },
+    html2canvas: { 
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      foreignObjectRendering: true,
+      imageTimeout: 15000,
+      logging: true,
+      letterRendering: true
+    },
+    jsPDF: { 
+      unit: 'mm', 
+      format: 'a4', 
+      orientation: 'portrait',
+      compress: false
+    }
+  };
+
+  // Create a deep clone of the invoice preview element
+  const element = invoicePreview.value.cloneNode(true);
+  document.body.appendChild(element);
+  element.style.position = 'fixed';
+  element.style.top = '-9999px';
+  element.style.left = '-9999px';
+
+  // Function to load image
+  const loadImage = (img) => {
+    return new Promise((resolve) => {
+      const image = new Image();
+      image.crossOrigin = 'Anonymous';
+      image.src = img.src;
+      
+      if (image.complete) {
+        resolve();
+      } else {
+        image.onload = () => resolve();
+        image.onerror = () => {
+          console.error('Error loading image:', img.src);
+          resolve();
+        };
+      }
+    });
+  };
+
+  // Get all images and wait for them to load
+  const images = element.getElementsByTagName('img');
+  const imagePromises = Array.from(images).map(loadImage);
+
+  // Create PDF after all images are loaded
+  Promise.all(imagePromises)
+    .then(() => {
+      return html2pdf()
+        .from(element)
+        .set(options)
+        .save();
+    })
+    .then(() => {
+      document.body.removeChild(element);
+      isPrinting.value = false;
+    })
+    .catch(error => {
+      console.error('Error generating PDF:', error);
+      if (element.parentNode) {
+        document.body.removeChild(element);
+      }
+      isPrinting.value = false;
+      alert('Error generating PDF. Please try again.');
+    });
 }
 
 // Watch for changes to taxRate in the form
@@ -670,7 +757,29 @@ onMounted(() => {
 .invoice-header {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
   margin-bottom: 2rem;
+  gap: 2rem;
+}
+
+.invoice-title {
+  flex: 1;
+}
+
+.invoice-logo {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  width: 200px;
+  height: 100px;
+}
+
+.invoice-logo img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
 .invoice-title h2 {
@@ -678,6 +787,12 @@ onMounted(() => {
   font-weight: 700;
   color: #111827;
   margin-bottom: 0.5rem;
+}
+
+.invoice-dates {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #6b7280;
 }
 
 .invoice-addresses {
@@ -769,4 +884,4 @@ onMounted(() => {
     flex-direction: column;
   }
 }
-</style> 
+</style>
