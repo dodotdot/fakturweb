@@ -6,6 +6,7 @@ export const useInvoiceStore = defineStore('invoice', () => {
   const invoices = ref([])
   const isLoading = ref(false)
   const error = ref(null)
+  const isGuestMode = ref(false)
   const currentInvoice = ref({
     title: 'INVOICE #001',
     date: new Date().toISOString().split('T')[0],
@@ -108,14 +109,33 @@ export const useInvoiceStore = defineStore('invoice', () => {
       isLoading.value = true
       error.value = null
       
+      // Check if user is authenticated
       const { data: userData } = await supabase.auth.getUser()
-      if (!userData.user) throw new Error('User not authenticated')
       
-      const invoiceData = {
-        ...currentInvoice.value,
-        user_id: userData.user.id,
-        created_at: new Date().toISOString()
+      // If no user is found, we're in guest mode
+      if (!userData.user) {
+        isGuestMode.value = true
+        // In guest mode, we don't save to database
+        // Here you could implement local storage saving instead
+        return 'guest-mode'
       }
+      
+      // Map our JS camelCase properties to the DB's snake_case columns
+      const invoiceData = {
+        title: currentInvoice.value.title,
+        date: currentInvoice.value.date,
+        due_date: currentInvoice.value.dueDate, // Map dueDate to due_date
+        from_details: currentInvoice.value.from,
+        to_details: currentInvoice.value.to,
+        items: currentInvoice.value.items,
+        tax_rate: currentInvoice.value.taxRate,
+        notes: currentInvoice.value.notes,
+        user_id: userData.user.id,
+        created_at: new Date().toISOString(),
+        status: 'draft'
+      }
+      
+      console.log('Saving invoice with data:', invoiceData);
       
       const { data, error: saveError } = await supabase
         .from('invoices')
@@ -157,8 +177,23 @@ export const useInvoiceStore = defineStore('invoice', () => {
       
       if (fetchError) throw fetchError
       
-      invoices.value = data
-      return data
+      // Map DB snake_case to JS camelCase
+      invoices.value = data.map(invoice => ({
+        id: invoice.id,
+        title: invoice.title,
+        date: invoice.date,
+        dueDate: invoice.due_date, // Map due_date to dueDate
+        from: invoice.from_details,
+        to: invoice.to_details,
+        items: invoice.items,
+        taxRate: invoice.tax_rate,
+        notes: invoice.notes,
+        status: invoice.status,
+        created_at: invoice.created_at,
+        updated_at: invoice.updated_at
+      }))
+      
+      return invoices.value
     } catch (err) {
       error.value = err.message
       console.error('Fetch invoices error:', err)
@@ -189,11 +224,132 @@ export const useInvoiceStore = defineStore('invoice', () => {
       
       if (fetchError) throw fetchError
       
-      currentInvoice.value = data
-      return data
+      // Map DB snake_case to JS camelCase
+      const mappedInvoice = {
+        id: data.id,
+        title: data.title,
+        date: data.date,
+        dueDate: data.due_date, // Map due_date to dueDate
+        from: data.from_details,
+        to: data.to_details,
+        items: data.items,
+        taxRate: data.tax_rate,
+        notes: data.notes,
+        status: data.status,
+        created_at: data.created_at,
+        updated_at: data.updated_at
+      }
+      
+      currentInvoice.value = mappedInvoice
+      return mappedInvoice
     } catch (err) {
       error.value = err.message
       console.error('Get invoice error:', err)
+      throw err
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  // Add a download PDF function for guest mode
+  function downloadPDF(element) {
+    // This function would be implemented with html2pdf
+    // Could be implemented here or in the component
+  }
+
+  function setGuestMode(isGuest) {
+    isGuestMode.value = isGuest
+  }
+
+  async function deleteInvoice(id) {
+    try {
+      isLoading.value = true
+      error.value = null
+      
+      const { data: userData } = await supabase.auth.getUser()
+      if (!userData.user) throw new Error('User not authenticated')
+      
+      const { error: deleteError } = await supabase
+        .from('invoices')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', userData.user.id)
+      
+      if (deleteError) throw deleteError
+      
+      // Remove from local state
+      const index = invoices.value.findIndex(invoice => invoice.id === id)
+      if (index !== -1) {
+        invoices.value.splice(index, 1)
+      }
+      
+      return true
+    } catch (err) {
+      error.value = err.message
+      console.error('Delete invoice error:', err)
+      throw err
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  async function updateInvoice(id) {
+    try {
+      isLoading.value = true
+      error.value = null
+      
+      const { data: userData } = await supabase.auth.getUser()
+      if (!userData.user) throw new Error('User not authenticated')
+      
+      // Map our JS camelCase properties to the DB's snake_case columns
+      const invoiceData = {
+        title: currentInvoice.value.title,
+        date: currentInvoice.value.date,
+        due_date: currentInvoice.value.dueDate, // Map dueDate to due_date
+        from_details: currentInvoice.value.from,
+        to_details: currentInvoice.value.to,
+        items: currentInvoice.value.items,
+        tax_rate: currentInvoice.value.taxRate,
+        notes: currentInvoice.value.notes,
+        updated_at: new Date().toISOString()
+      }
+      
+      console.log('Updating invoice with data:', invoiceData);
+      
+      const { data, error: updateError } = await supabase
+        .from('invoices')
+        .update(invoiceData)
+        .eq('id', id)
+        .eq('user_id', userData.user.id)
+        .select()
+        .single()
+      
+      if (updateError) throw updateError
+      
+      // Update local state
+      const index = invoices.value.findIndex(invoice => invoice.id === id)
+      if (index !== -1) {
+        // Map DB snake_case to JS camelCase
+        invoices.value[index] = {
+          id: data.id,
+          title: data.title,
+          date: data.date,
+          dueDate: data.due_date,
+          from: data.from_details,
+          to: data.to_details,
+          items: data.items,
+          taxRate: data.tax_rate,
+          notes: data.notes,
+          status: data.status,
+          created_at: data.created_at,
+          updated_at: data.updated_at
+        }
+      }
+      
+      return true
+    } catch (err) {
+      error.value = err.message
+      console.error('Update invoice error:', err)
       throw err
     } finally {
       isLoading.value = false
@@ -205,6 +361,7 @@ export const useInvoiceStore = defineStore('invoice', () => {
     currentInvoice,
     isLoading,
     error,
+    isGuestMode,
     subtotal,
     taxAmount,
     total,
@@ -214,7 +371,11 @@ export const useInvoiceStore = defineStore('invoice', () => {
     deleteItem,
     resetInvoice,
     saveInvoice,
+    updateInvoice,
     fetchUserInvoices,
-    getInvoice
+    getInvoice,
+    deleteInvoice,
+    setGuestMode,
+    downloadPDF
   }
 }) 

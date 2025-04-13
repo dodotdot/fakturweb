@@ -37,6 +37,13 @@
           >
             Create Free Account
           </router-link>
+          <router-link 
+            v-if="!isAuthenticated" 
+            to="/invoices/new" 
+            class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-secondary hover:bg-secondary/90 md:text-lg"
+          >
+            Try It Now
+          </router-link>
         </div>
       </div>
     </header>
@@ -48,7 +55,7 @@
           <h2 class="text-3xl font-bold text-center mb-12">
             Everything You Need to Create Professional Invoices
           </h2>
-          <div class="grid md:grid-cols-3 gap-8">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div class="bg-white p-6 rounded-lg shadow-sm">
               <div class="h-12 w-12 bg-primary/10 text-primary flex items-center justify-center rounded-lg mb-4">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -93,12 +100,20 @@
           <p class="text-xl mb-8 max-w-3xl mx-auto">
             Join thousands of freelancers and businesses who use FakturWeb to create professional invoices.
           </p>
-          <router-link 
-            to="/register" 
-            class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-lg font-medium rounded-md text-white bg-primary hover:bg-primary/90"
-          >
-            Create Your Free Account
-          </router-link>
+          <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <router-link 
+              to="/register" 
+              class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-lg font-medium rounded-md text-white bg-primary hover:bg-primary/90"
+            >
+              Create Your Free Account
+            </router-link>
+            <router-link 
+              to="/invoices/new" 
+              class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-lg font-medium rounded-md text-primary bg-white border-primary hover:bg-gray-50"
+            >
+              Try Without Account
+            </router-link>
+          </div>
         </div>
       </section>
     </main>

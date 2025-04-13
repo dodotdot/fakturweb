@@ -27,12 +27,34 @@ export const useAuthStore = defineStore('auth', () => {
       isLoading.value = true
       error.value = null
       
-      const { data, error: signUpError } = await supabase.auth.signUp({
+      console.log('Starting registration process with Supabase', { email })
+      
+      // Set up metadata for the user
+      const userData = {
         email,
         password,
+        options: {
+          data: {
+            email: email,
+            full_name: '',  // Can be updated later
+          }
+        }
+      }
+      
+      const { data, error: signUpError } = await supabase.auth.signUp(userData)
+      
+      console.log('Supabase registration response:', { 
+        success: !signUpError, 
+        user: data?.user ? 'user data received' : 'no user data',
+        error: signUpError ? signUpError.message : 'none'
       })
       
       if (signUpError) throw signUpError
+      
+      // Check if user was actually created
+      if (!data.user) {
+        throw new Error('No user data returned from Supabase')
+      }
       
       user.value = data.user
       return data

@@ -7,6 +7,7 @@ const Login = () => import('../views/Login.vue')
 const Register = () => import('../views/Register.vue')
 const Dashboard = () => import('../views/Dashboard.vue')
 const InvoiceEditor = () => import('../views/InvoiceEditor.vue')
+const InvoiceDetail = () => import('../views/InvoiceDetail.vue')
 const InvoiceList = () => import('../views/InvoiceList.vue')
 const NotFound = () => import('../views/NotFound.vue')
 
@@ -45,10 +46,16 @@ const routes = [
     path: '/invoices/new',
     name: 'NewInvoice',
     component: InvoiceEditor,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: false }
   },
   {
     path: '/invoices/:id',
+    name: 'InvoiceDetail',
+    component: InvoiceDetail,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/invoices/:id/edit',
     name: 'EditInvoice',
     component: InvoiceEditor,
     meta: { requiresAuth: true }
@@ -82,6 +89,11 @@ router.beforeEach(async (to, from, next) => {
     // Redirect to dashboard if the page should be hidden for authenticated users
     next({ name: 'Dashboard' })
   } else {
+    // For NewInvoice route - attach a flag to indicate guest mode if not authenticated
+    if (to.name === 'NewInvoice' && !isAuthenticated) {
+      to.params.guestMode = true
+    }
+    
     // Continue to the requested route
     next()
   }

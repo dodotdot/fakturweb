@@ -1,6 +1,3 @@
--- Enable RLS (Row Level Security)
-ALTER DATABASE postgres SET "app.settings.jwt_secret" TO 'super-secret-jwt-token-with-at-least-32-characters-long';
-
 -- Create users table (extends auth.users)
 CREATE TABLE users (
   id UUID REFERENCES auth.users ON DELETE CASCADE NOT NULL PRIMARY KEY,

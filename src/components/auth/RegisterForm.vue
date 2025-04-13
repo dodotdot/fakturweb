@@ -14,36 +14,41 @@
       
       <form @submit.prevent="handleSubmit" class="space-y-4">
         <div class="space-y-2">
-          <Label for="email">Email</Label>
-          <Input 
+          <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+          <input 
             id="email" 
             v-model="email" 
             type="email" 
             placeholder="your@email.com" 
-            required 
+            required
+            class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </div>
+        
         <div class="space-y-2">
-          <Label for="password">Password</Label>
-          <Input 
+          <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+          <input 
             id="password" 
             v-model="password" 
             type="password" 
             placeholder="••••••••" 
-            required 
+            required
+            class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           />
           <p class="text-xs text-gray-500">
             Password must be at least 8 characters long
           </p>
         </div>
+        
         <div class="space-y-2">
-          <Label for="confirmPassword">Confirm Password</Label>
-          <Input 
+          <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+          <input 
             id="confirmPassword" 
             v-model="confirmPassword" 
             type="password" 
             placeholder="••••••••" 
-            required 
+            required
+            class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </div>
         
@@ -63,9 +68,14 @@
           </label>
         </div>
         
-        <Button :loading="isLoading" type="submit" class="w-full">
+        <button 
+          type="submit"
+          :disabled="isLoading"
+          class="w-full inline-flex justify-center items-center h-10 px-4 py-2 bg-primary text-primary-foreground rounded-md font-medium hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+        >
+          <span v-if="isLoading" class="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"></span>
           Create Account
-        </Button>
+        </button>
       </form>
       
       <div class="text-center text-sm">
@@ -82,9 +92,6 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../../stores/auth';
-import Button from '../ui/Button.vue';
-import Input from '../ui/Input.vue';
-import Label from '../ui/Label.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -98,8 +105,21 @@ const isLoading = ref(false);
 
 async function handleSubmit() {
   try {
-    isLoading.value = true;
+    console.log('Form submitted', { email: email.value, password: password.value });
+    
+    // Clear previous errors
     error.value = '';
+    
+    // Validate form
+    if (!email.value) {
+      error.value = 'Email is required';
+      return;
+    }
+    
+    if (!password.value) {
+      error.value = 'Password is required';
+      return;
+    }
     
     if (password.value !== confirmPassword.value) {
       error.value = 'Passwords do not match';
@@ -116,9 +136,16 @@ async function handleSubmit() {
       return;
     }
     
+    // Start loading
+    isLoading.value = true;
+    
+    // Register user
     await authStore.register(email.value, password.value);
+    
+    // Redirect on success
     router.push('/login?registered=true');
   } catch (err) {
+    console.error('Registration error:', err);
     error.value = err.message || 'Failed to create account. Please try again.';
   } finally {
     isLoading.value = false;
