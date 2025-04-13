@@ -15,23 +15,22 @@ const showNavbar = computed(() => {
 <template>
   <div class="app bg-white min-h-screen flex flex-col">
     <Navbar v-if="showNavbar" />
-    <main class="flex-grow mt-12 bg-gray-300 p-4">
+    <main class="flex-grow">
       <router-view />
     </main>
     <footer v-if="showNavbar" class="text-black py-6">
-      <div class="container mx-auto px-4">
+      <div class="container mx-auto px-4 text-xs">
         <div class="text-center">
           <div class="flex justify-center mb-4">
             <img src="/images/faktur-logo.png" alt="FAKTUR.web.id" class="h-8 w-auto brightness-0 invert">
           </div>
-          <p class="mb-4 text-black/80">The simple and powerful invoice generator</p>
           <div class="flex justify-center space-x-6">
             <a href="#" class="text-black/80 hover:text-black transition-colors">Terms of Service</a>
             <a href="#" class="text-black/80 hover:text-black transition-colors">Privacy Policy</a>
             <a href="#" class="text-black/80 hover:text-black transition-colors">Contact</a>
           </div>
           <p class="mt-4 text-black/60">
-            &copy; {{ new Date().getFullYear() }} FAKTUR.web.id. All rights reserved.
+            &copy; {{ new Date().getFullYear() }} faktur.web.id. All rights reserved.
           </p>
         </div>
       </div>

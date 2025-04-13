@@ -90,6 +90,30 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  async function signInWithGoogle() {
+    try {
+      isLoading.value = true
+      error.value = null
+      
+      const { data, error: signInError } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`
+        }
+      })
+      
+      if (signInError) throw signInError
+      
+      return data
+    } catch (err) {
+      error.value = err.message
+      console.error('Google sign-in error:', err)
+      throw err
+    } finally {
+      isLoading.value = false
+    }
+  }
+
   async function logout() {
     try {
       isLoading.value = true
@@ -112,9 +136,11 @@ export const useAuthStore = defineStore('auth', () => {
     isLoading,
     error,
     isAuthenticated,
+    supabase,
     initialize,
     register,
     login,
+    signInWithGoogle,
     logout
   }
 }) 

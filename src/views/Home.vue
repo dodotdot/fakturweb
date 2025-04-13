@@ -1,70 +1,39 @@
 <template>
   <div class="landing-page">
     <section class="hero">
-      <div class="container">
-        <div class="hero-content">
-          <h1 class="hero-title">Bikin Faktur Jualan<br>Semudah <span class="highlight">Swipe TikTok</span></h1>
-          <p class="hero-subtitle">Ribet ngurusin faktur? Pelanggan kesel nunggu invoice? FAKTUR.web.id bikin semuanya beres dalam hitungan detik. Cobain sekarang, dijamin auto beres!</p>
-          <div class="hero-cta">
-            <router-link v-if="!isAuthenticated" to="/register" class="btn-primary btn-large">Mulai Gratis</router-link>
-            <router-link v-if="isAuthenticated" to="/dashboard" class="btn-primary btn-large">Dashboard</router-link>
-            <router-link v-if="isAuthenticated" to="/invoices/new" class="btn-secondary btn-large">Buat Faktur</router-link>
-            <a v-if="!isAuthenticated" href="#demo" class="btn-secondary btn-large">Lihat Demo <span class="emoji">👀</span></a>
-          </div>
-          <div class="hero-trust">
-            <p>Dipercaya oleh <span class="bold">2,500+</span> UMKM Indonesia</p>
-            <div class="trust-logos">
-              <img src="/images/brands/tokopedia.png" alt="Tokopedia" class="brand-logo">
-              <img src="/images/brands/shopee.png" alt="Shopee" class="brand-logo">
-              <img src="/images/brands/bukalapak.png" alt="Bukalapak" class="brand-logo">
-            </div>
-          </div>
+      <div class="container mx-auto px-4">
+        <!-- Decorative illustrations -->
+        <div class="hero-illustrations">
+          <img src="/images/man-riding-a-rocket.svg" alt="Man riding a rocket" class="hero-illustration rocket-illustration">
+          <img src="/images/work-party.svg" alt="Work party" class="hero-illustration party-illustration">
         </div>
-        <div class="hero-image">
-          <img src="/images/hero/dashboard-preview.webp" alt="FAKTUR.web.id Dashboard Preview" class="hero-preview">
+        
+        <div class="flex flex-col items-center justify-center text-center max-w-4xl mx-auto relative z-20">
+          <h1 class="hero-title mb-6">
+            Faktur Digital<br>Untuk <span class="highlight">Bisnis Modern</span>
+          </h1>
+          <p class="hero-subtitle mb-8">
+            Faktur profesional dalam 30 detik. Hemat waktu, terlihat keren, dan terorganisir dengan baik.
+          </p>
+          <div class="hero-video-wrapper mb-8">
+            <video class="hero-video" autoplay loop muted playsinline>
+              <source src="/images/videos/hero-video.mp4" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+          <div class="hero-cta flex gap-4 justify-center">
+            <!-- <router-link v-if="!isAuthenticated" to="/register" class="btn-primary">Mulai Gratis</router-link> -->
+            <router-link v-if="isAuthenticated" to="/dashboard" class="btn-primary">Dashboard</router-link>
+            <router-link to="/guest-invoice" class="btn-secondary">Buat Faktur Tanpa Daftar <span class="emoji">📝</span></router-link>
+          </div>
         </div>
       </div>
     </section>
 
    
 
-    <section class="faq" id="faq">
-      <div class="container">
-        <div class="section-header">
-          <h2 class="section-title">Masih <span class="highlight">Ragu</span>?</h2>
-          <p class="section-subtitle">Cek dulu pertanyaan yang sering ditanyain</p>
-        </div>
-        
-        <div class="faq-list">
-          <div class="faq-item" v-for="(item, index) in faqItems" :key="index" :class="{ active: item.active }">
-            <div class="faq-question" @click="toggleFaq(index)">
-              <h3>{{ item.question }}</h3>
-              <span class="faq-icon">+</span>
-            </div>
-            <div class="faq-answer">
-              <p>{{ item.answer }}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
 
-    <section class="cta">
-      <div class="container">
-        <div class="cta-content">
-          <h2 class="cta-title">Udah Siap Bikin Faktur yang <span class="highlight">Kece Badai</span>?</h2>
-          <p class="cta-subtitle">Gabung bareng 2,500+ UMKM Indonesia yang udah naik level bisnisnya bareng FAKTUR.web.id</p>
-          <div class="cta-buttons">
-            <router-link v-if="!isAuthenticated" to="/register" class="btn-primary btn-large">Mulai Gratis Sekarang</router-link>
-            <router-link v-if="isAuthenticated" to="/dashboard" class="btn-primary btn-large">Dashboard</router-link>
-            <router-link to="/contact" class="btn-secondary btn-large">Tanya-tanya Dulu</router-link>
-          </div>
-        </div>
-        <div class="cta-image">
-          <img src="/images/cta/start-using.webp" alt="Start Using FAKTUR.web.id" class="cta-preview">
-        </div>
-      </div>
-    </section>
+   
   </div>
 </template>
 
@@ -79,35 +48,29 @@ const isAuthenticated = computed(() => authStore.isAuthenticated);
 const faqItems = ref([
   {
     question: "Apa bisa coba dulu sebelum bayar?",
-    answer: "Tentu! Kamu bisa daftar akun Starter yang gratis selamanya untuk mencoba semua fitur basic FAKTUR.web.id.",
+    answer: "Tentu! Kamu bisa daftar akun Starter yang gratis selamanya untuk mencoba semua fitur basic faktur.web.id.",
     active: false
   },
   {
-    question: "Data saya aman ga nih di FAKTUR.web.id?",
-    answer: "100% aman! Kami pakai teknologi enkripsi kelas dunia dan server yang super secure. Data kamu juga di-backup setiap hari, jadi ga bakal hilang meski ada kendala teknis.",
+    question: "Data saya aman ga nih di faktur.web.id?",
+    answer: "Data kamu 100% aman di faktur.web.id. Kami menggunakan enkripsi end-to-end dan tidak pernah menyimpan data sensitif pelanggan kamu.",
     active: false
   },
   {
-    question: "Faktur dari FAKTUR.web.id sah ga secara hukum?",
-    answer: "Faktur dari FAKTUR.web.id 100% sah dan sesuai dengan ketentuan perpajakan Indonesia. Kami juga menyediakan fitur untuk menambahkan nomor NPWP dan informasi pajak lainnya.",
+    question: "Faktur dari faktur.web.id sah ga secara hukum?",
+    answer: "Faktur dari faktur.web.id 100% sah dan sesuai dengan standar pajak Indonesia. Faktur digital kami sudah memenuhi persyaratan faktur pajak yang berlaku.",
     active: false
   },
   {
-    question: "Bisa integrasi dengan software lain ga?",
-    answer: "Bisa dong! FAKTUR.web.id bisa diintegrasikan dengan berbagai platform e-commerce populer, payment gateway, dan software akuntansi. Untuk detail lebih lanjut, silakan hubungi tim kami.",
+    question: "Bisa ga integrasi dengan software akuntansi lain?",
+    answer: "Ya, faktur.web.id bisa diintegrasikan dengan berbagai software akuntansi populer seperti Jurnal, Accurate, dan Zahir.",
     active: false
   }
 ]);
 
-const toggleFaq = (index) => {
-  faqItems.value = faqItems.value.map((item, i) => {
-    if (i === index) {
-      return { ...item, active: !item.active };
-    } else {
-      return { ...item, active: false };
-    }
-  });
-};
+function toggleFaq(index) {
+  faqItems.value[index].active = !faqItems.value[index].active;
+}
 
 // Smooth scrolling for anchor links
 onMounted(() => {
@@ -189,213 +152,193 @@ onMounted(() => {
 /* Hero section styles */
 .hero {
   padding: 6rem 0;
-  background: linear-gradient(135deg, #ffffff 0%, #f7fafc 100%);
+  background: linear-gradient(to bottom, #f8f9fa, #ffffff);
   position: relative;
   overflow: hidden;
 }
 
-.hero::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 100%;
-  background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23f0f4f8' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E");
-  opacity: 0.5;
-}
-
-.hero .container {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
-  align-items: center;
-}
-
-.hero-content {
-  max-width: 600px;
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
 }
 
 .hero-title {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 3.5rem;
   font-weight: 800;
   line-height: 1.2;
   margin-bottom: 1.5rem;
-  color: #1a202c;
-  letter-spacing: -0.02em;
-}
-
-.hero-title .highlight {
-  color: hsl(var(--primary));
-  position: relative;
-  display: inline-block;
-}
-
-.hero-title .highlight::after {
-  content: '';
-  position: absolute;
-  bottom: 0.2em;
-  left: 0;
-  width: 100%;
-  height: 0.2em;
-  background: hsl(var(--primary));
-  opacity: 0.2;
-  border-radius: 1em;
+  background: linear-gradient(to right, #1a1a1a, #333);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .hero-subtitle {
   font-size: 1.25rem;
-  color: #4a5568;
-  margin-bottom: 2.5rem;
-  line-height: 1.6;
+  color: #666;
+  max-width: 600px;
+  margin: 0 auto 2rem;
+}
+
+.hero-video-wrapper {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto 2.5rem;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.hero-video {
+  width: 100%;
+  display: block;
 }
 
 .hero-cta {
   display: flex;
   gap: 1rem;
-  margin-bottom: 3rem;
+  justify-content: center;
+  margin-top: 2rem;
 }
 
 .btn-primary, .btn-secondary {
-  padding: 1rem 2rem;
-  border-radius: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
   font-weight: 600;
-  font-size: 1.125rem;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
 }
 
 .btn-primary {
-  background: hsl(var(--primary));
+  background-color: #00B74A;
   color: white;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .btn-primary:hover {
+  background-color: #009E42;
   transform: translateY(-2px);
-  box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.1), 0 4px 6px -1px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 12px rgba(0, 183, 74, 0.2);
 }
 
 .btn-secondary {
-  background: white;
-  color: hsl(var(--primary));
-  border: 2px solid hsl(var(--primary));
+  background-color: white;
+  color: #333;
+  border: 1px solid #ddd;
 }
 
 .btn-secondary:hover {
-  background: hsl(var(--primary));
-  color: white;
+  background-color: #f8f9fa;
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-.hero-trust {
-  margin-top: 2rem;
-}
-
-.hero-trust p {
-  font-size: 1rem;
-  color: #718096;
-  margin-bottom: 1rem;
-}
-
-.trust-logos {
-  display: flex;
-  gap: 2rem;
-  align-items: center;
-}
-
-.brand-logo {
-  height: 40px;
-  width: auto;
-  opacity: 0.7;
-  transition: opacity 0.3s ease;
-  filter: grayscale(100%);
-}
-
-.brand-logo:hover {
-  opacity: 1;
-  filter: grayscale(0%);
-}
-
-.hero-image {
+.highlight {
+  color: #00B74A;
+  -webkit-text-fill-color: #00B74A;
   position: relative;
+  display: inline-block;
+  z-index: 21;
 }
 
-.hero-image img {
+.highlight::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
   width: 100%;
-  height: auto;
-  border-radius: 1rem;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  transition: transform 0.3s ease;
+  height: 8px;
+  background-color: rgba(0, 183, 74, 0.2);
+  z-index: -1;
+  border-radius: 4px;
 }
 
-.hero-image img:hover {
-  transform: translateY(-5px);
+.emoji {
+  margin-left: 0.5rem;
 }
 
-.hero-preview {
+/* Hero illustrations */
+.hero-illustrations {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  height: auto;
-  border-radius: 1rem;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  transition: transform 0.3s ease;
-  object-fit: cover;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
 }
 
-.hero-preview:hover {
-  transform: translateY(-5px);
+.hero-illustration {
+  position: absolute;
+  max-width: 300px;
+  height: auto;
+  opacity: 0.8;
+}
+
+.rocket-illustration {
+  top: 10%;
+  right: -10%;
+  transform: rotate(15deg);
+  animation: float 6s ease-in-out infinite;
+}
+
+.party-illustration {
+  bottom: 15%;
+  left: -15%;
+  transform: rotate(-10deg);
+  animation: float 8s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px) rotate(15deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(15deg);
+  }
+  100% {
+    transform: translateY(0px) rotate(15deg);
+  }
 }
 
 /* Responsive styles */
-@media (max-width: 1024px) {
-  .hero .container {
-    grid-template-columns: 1fr;
-    text-align: center;
-  }
-
-  .hero-content {
-    max-width: 100%;
-  }
-
-  .hero-cta {
-    justify-content: center;
-  }
-
-  .trust-logos {
-    justify-content: center;
-  }
-
-  .hero-title {
-    font-size: 3rem;
-  }
-}
-
-@media (max-width: 640px) {
-  .hero {
-    padding: 4rem 0;
-  }
-
+@media (max-width: 768px) {
   .hero-title {
     font-size: 2.5rem;
   }
-
+  
   .hero-subtitle {
-    font-size: 1.125rem;
+    font-size: 1.1rem;
   }
-
+  
   .hero-cta {
     flex-direction: column;
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
   }
-
+  
   .btn-primary, .btn-secondary {
     width: 100%;
+  }
+  
+  .hero-illustration {
+    max-width: 200px;
+  }
+  
+  .rocket-illustration {
+    top: 5%;
+    right: 0;
+  }
+  
+  .party-illustration {
+    bottom: 10%;
+    left: 0;
   }
 }
 

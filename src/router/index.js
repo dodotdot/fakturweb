@@ -10,6 +10,7 @@ const InvoiceEditor = () => import('../views/InvoiceEditor.vue')
 const InvoiceDetail = () => import('../views/InvoiceDetail.vue')
 const InvoiceList = () => import('../views/InvoiceList.vue')
 const NotFound = () => import('../views/NotFound.vue')
+const AuthCallback = () => import('../views/AuthCallback.vue')
 
 const routes = [
   {
@@ -29,6 +30,12 @@ const routes = [
     name: 'Register',
     component: Register,
     meta: { requiresAuth: false, hideForAuth: true }
+  },
+  {
+    path: '/auth/callback',
+    name: 'AuthCallback',
+    component: AuthCallback,
+    meta: { requiresAuth: false }
   },
   {
     path: '/dashboard',
@@ -59,6 +66,11 @@ const routes = [
     name: 'EditInvoice',
     component: InvoiceEditor,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/guest-invoice',
+    name: 'GuestInvoice',
+    component: () => import('../views/GuestInvoice.vue')
   },
   {
     path: '/:pathMatch(.*)*',

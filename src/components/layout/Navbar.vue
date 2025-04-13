@@ -9,18 +9,7 @@
             </router-link>
           </div>
           <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-            <router-link 
-              to="/" 
-              class="inline-flex items-center px-1 pt-1 border-b-2"
-              :class="[
-                isActive('/') 
-                  ? 'border-[#00B74A] text-[#00B74A] dark:text-white' 
-                  : 'border-transparent text-gray-500 hover:text-[#00B74A] dark:text-gray-300 dark:hover:text-white'
-              ]"
-            >
-              Home
-            </router-link>
-            
+          
             <router-link 
               v-if="isAuthenticated"
               to="/dashboard" 

@@ -4,10 +4,10 @@
       <div class="w-full max-w-md">
         <div class="mb-8 text-center">
           <router-link to="/" class="text-2xl font-bold text-primary">
-            FAKTUR.web.id
+            <img src="/images/faktur-logo.png" alt="faktur.web.id" class=" h-16 w-auto mx-auto">
           </router-link>
         </div>
-        
+        <hr class="my-12 h-0.5 border-t-0 bg-neutral-100 dark:bg-white/10" />
         <RegisterForm />
       </div>
     </div>
