@@ -24,7 +24,7 @@
           <div class="hero-cta flex gap-4 justify-center">
             <!-- <router-link v-if="!isAuthenticated" to="/register" class="btn-primary">Mulai Gratis</router-link> -->
             <router-link v-if="isAuthenticated" to="/dashboard" class="btn-primary">Dashboard</router-link>
-            <router-link to="/guest-invoice" class="btn-secondary">Buat Faktur Tanpa Daftar <span class="emoji">📝</span></router-link>
+            <router-link to="/guest-invoice" class="btn-secondary">Buat Faktur Tanpa Daftar</router-link>
           </div>
         </div>
       </div>

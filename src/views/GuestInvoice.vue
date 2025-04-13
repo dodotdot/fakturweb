@@ -2,9 +2,6 @@
   <div class="container mx-auto max-w-4xl ">
     <div class="mb-6 flex justify-between items-center py-8 ">
       <div>
-        <h1 class="text-2xl font-bold text-gray-900">
-          Create Invoice (Guest Mode)
-        </h1>
         <p class="text-gray-500">
           Create and download a one-time invoice without signing up
         </p>
