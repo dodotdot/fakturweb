@@ -152,13 +152,12 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import html2pdf from 'html2pdf.js';
-import { useGtag } from 'vue-gtag';
+import { invoiceEvents } from '../utils/analytics';
 
 const route = useRoute();
 const router = useRouter();
 const invoicePrintRef = ref(null);
 const isGenerating = ref(false);
-const { event } = useGtag();
 
 // Initialize with empty invoice
 const invoice = ref({
@@ -190,7 +189,7 @@ onMounted(() => {
     invoice.value = JSON.parse(storedInvoice);
   } else {
     // Redirect back if no invoice data
-    router.push('/guest-invoice');
+    router.push('/invoice/guest');
   }
 });
 
@@ -231,6 +230,9 @@ function downloadPDF() {
   
   isGenerating.value = true;
 
+  // Track the download event using the utility
+  invoiceEvents.download(invoice.value.title, calculateTotal());
+
   const options = {
     margin: 10,
     filename: `faktur-${invoice.value.title.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.pdf`,
@@ -258,13 +260,6 @@ function downloadPDF() {
       .save()
       .then(() => {
         isGenerating.value = false;
-        
-        // Track PDF download event
-        event('preview_invoice_download', {
-          event_category: 'Invoice',
-          event_label: invoice.value.title,
-          value: calculateTotal()
-        });
       })
       .catch(error => {
         console.error('Error generating PDF:', error);
@@ -283,7 +278,7 @@ function backToEdit() {
   localStorage.setItem('currentInvoice', JSON.stringify(currentData));
   
   // Navigate back to edit form
-  router.push('/guest-invoice');
+  router.push('/invoice/guest');
 }
 </script>
 

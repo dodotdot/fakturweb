@@ -259,13 +259,12 @@
 import { ref, onMounted } from 'vue';
 import html2pdf from 'html2pdf.js';
 import { useRouter } from 'vue-router';
-import { useGtag } from 'vue-gtag'
+import { invoiceEvents } from '../utils/analytics';
 
 const router = useRouter();
 const invoicePrintRef = ref(null);
 const fileInput = ref(null);
 const isGenerating = ref(false);
-const { event } = useGtag()
 
 // Default invoice template
 const defaultInvoice = {
@@ -407,7 +406,7 @@ function previewInvoice() {
   localStorage.setItem('currentInvoice', JSON.stringify(invoice.value));
   
   // Navigate to the preview page
-  router.push('/invoice-preview');
+  router.push('/invoice/preview');
 }
 
 function downloadPDF() {
@@ -443,12 +442,8 @@ function downloadPDF() {
       .then(() => {
         isGenerating.value = false;
         
-        // Track PDF download event
-        event('invoice_download', {
-          event_category: 'Invoice',
-          event_label: invoice.value.title,
-          value: calculateTotal()
-        });
+        // Track PDF download event using our utility
+        invoiceEvents.download(invoice.value.title, calculateTotal());
       })
       .catch(error => {
         console.error('Error generating PDF:', error);

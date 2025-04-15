@@ -17,6 +17,7 @@
 import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
+import { userEvents } from '../utils/analytics';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -31,6 +32,9 @@ onMounted(async () => {
     if (session) {
       // Update the user in the auth store
       authStore.user = session.user;
+      
+      // Track successful Google sign-in
+      userEvents.login('google');
       
       // Redirect to dashboard
       router.push('/dashboard');

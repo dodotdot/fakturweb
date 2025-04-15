@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { supabase } from '../lib/supabase'
+import { userEvents } from '../utils/analytics'
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref(null)
@@ -57,6 +58,10 @@ export const useAuthStore = defineStore('auth', () => {
       }
       
       user.value = data.user
+      
+      // Track registration event
+      userEvents.register('email')
+      
       return data
     } catch (err) {
       error.value = err.message
@@ -80,6 +85,10 @@ export const useAuthStore = defineStore('auth', () => {
       if (signInError) throw signInError
       
       user.value = data.user
+      
+      // Track login event
+      userEvents.login('email')
+      
       return data
     } catch (err) {
       error.value = err.message
@@ -103,6 +112,9 @@ export const useAuthStore = defineStore('auth', () => {
       })
       
       if (signInError) throw signInError
+      
+      // Note: We don't track the event here because the user will be redirected
+      // This should be tracked in the callback component after successful auth
       
       return data
     } catch (err) {

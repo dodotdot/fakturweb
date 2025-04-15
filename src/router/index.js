@@ -148,7 +148,7 @@ const routes = [
       description: 'Lihat detail faktur dan tagihan untuk pelanggan.',
       keywords: 'lihat faktur, tagihan pelanggan, faktur online, cek faktur',
       requiresAuth: false,
-      hideNavbar: true,
+      hideNavbar: false,
       noSidebar: true
     }
   },
@@ -161,7 +161,7 @@ const routes = [
       description: 'Lihat preview faktur Anda sebelum diunduh. Pastikan semua detail sudah benar dan siap dikirim ke klien Anda.',
       keywords: 'preview faktur, lihat preview, unduh faktur, klien faktur',
       requiresAuth: false,
-      hideNavbar: true
+      hideNavbar: false
     }
   },
   {
