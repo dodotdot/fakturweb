@@ -11,6 +11,9 @@ const InvoiceDetail = () => import('../views/InvoiceDetail.vue')
 const InvoiceList = () => import('../views/InvoiceList.vue')
 const NotFound = () => import('../views/NotFound.vue')
 const AuthCallback = () => import('../views/AuthCallback.vue')
+const Profile = () => import('../views/Profile.vue')
+const Settings = () => import('../views/Settings.vue')
+const InvoicePreview = () => import('../views/InvoicePreview.vue')
 
 const routes = [
   {
@@ -44,6 +47,18 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/profile',
+    name: 'Profile',
+    component: Profile,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/settings',
+    name: 'Settings',
+    component: Settings,
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/invoices',
     name: 'InvoiceList',
     component: InvoiceList,
@@ -71,6 +86,12 @@ const routes = [
     path: '/guest-invoice',
     name: 'GuestInvoice',
     component: () => import('../views/GuestInvoice.vue')
+  },
+  {
+    path: '/invoice-preview',
+    name: 'InvoicePreview',
+    component: InvoicePreview,
+    meta: { requiresAuth: false }
   },
   {
     path: '/:pathMatch(.*)*',

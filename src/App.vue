@@ -1,40 +1,63 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
+import { useAuthStore } from './stores/auth';
 import Navbar from './components/layout/Navbar.vue';
+import Sidebar from './components/layout/Sidebar.vue';
 import './assets/landing.css'; // Import landing page styles
 
 const route = useRoute();
+const authStore = useAuthStore();
+const isSidebarOpen = ref(true);
 
-// Hide navbar on login and register pages
+const isAuthenticated = computed(() => authStore.isAuthenticated);
+
+// Show navbar only for authenticated pages
 const showNavbar = computed(() => {
-  return !['Login', 'Register'].includes(route.name);
+  return isAuthenticated.value;
+});
+
+// Show sidebar only when user is authenticated
+const showSidebar = computed(() => {
+  return isAuthenticated.value;
+});
+
+function toggleSidebar() {
+  isSidebarOpen.value = !isSidebarOpen.value;
+}
+
+// Close sidebar when route changes on mobile
+watch(() => route.path, () => {
+  if (window.innerWidth < 768) {
+    isSidebarOpen.value = false;
+  }
 });
 </script>
 
 <template>
-  <div class="app bg-white min-h-screen flex flex-col">
-    <Navbar v-if="showNavbar" />
-    <main class="flex-grow">
-      <router-view />
-    </main>
-    <footer v-if="showNavbar" class="text-black py-6">
-      <div class="container mx-auto px-4 text-xs">
-        <div class="text-center">
-          <div class="flex justify-center mb-4">
-            <img src="/images/faktur-logo.png" alt="FAKTUR.web.id" class="h-8 w-auto brightness-0 invert">
-          </div>
-          <div class="flex justify-center space-x-6">
-            <a href="#" class="text-black/80 hover:text-black transition-colors">Terms of Service</a>
-            <a href="#" class="text-black/80 hover:text-black transition-colors">Privacy Policy</a>
-            <a href="#" class="text-black/80 hover:text-black transition-colors">Contact</a>
-          </div>
-          <p class="mt-4 text-black/60">
-            &copy; {{ new Date().getFullYear() }} faktur.web.id. All rights reserved.
-          </p>
-        </div>
-      </div>
-    </footer>
+  <div class="min-h-screen bg-gray-50">
+    <Navbar />
+    <div class="flex h-screen" :class="{ 'pt-16': showNavbar }">
+      <Sidebar 
+        v-if="showSidebar" 
+        :is-expanded="isSidebarOpen" 
+        @toggle="toggleSidebar"
+        class="sidebar"
+        :class="{ 'collapsed': !isSidebarOpen }"
+      />
+      <main 
+        :class="{ 'ml-64': showSidebar && isSidebarOpen, 'ml-0': !isSidebarOpen }" 
+        class="flex-1 overflow-auto transition-all duration-300"
+      >
+        <router-view v-slot="{ Component }">
+          <transition name="fade" mode="out-in">
+            <div>
+              <component :is="Component" />
+            </div>
+          </transition>
+        </router-view>
+      </main>
+    </div>
   </div>
 </template>
 
@@ -45,6 +68,8 @@ body {
   color: #333;
   line-height: 1.6;
   background-color: white;
+  margin: 0;
+  padding: 0;
 }
 
 .container {
@@ -63,6 +88,77 @@ body {
 @media (min-width: 1024px) {
   .container {
     padding: 0 2rem;
+  }
+}
+
+/* App layout */
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Sidebar styles */
+.sidebar {
+  width: 250px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  position: fixed;
+  top: 64px; /* Height of navbar */
+  left: 0;
+  bottom: 0;
+  z-index: 10;
+  background-color: white;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.sidebar.collapsed {
+  width: 64px;
+}
+
+/* Main content area */
+main {
+  flex: 1;
+  padding: 1rem;
+  transition: margin-left 0.3s ease;
+  min-height: calc(100vh - 64px);
+  width: 100%;
+}
+
+/* When sidebar is closed on mobile */
+@media (max-width: 767px) {
+  .sidebar:not(.open) {
+    width: 0;
+  }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    position: absolute !important;
+    pointer-events: none !important;
+  }
+  
+  @media print {
+    button.no-print {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      position: absolute !important;
+      pointer-events: none !important;
+    }
   }
 }
 </style>

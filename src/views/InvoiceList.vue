@@ -158,9 +158,11 @@ function calculateInvoiceTotal(invoice) {
 }
 
 function formatCurrency(value) {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('id-ID', {
     style: 'currency',
-    currency: 'USD'
+    currency: 'IDR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
   }).format(value);
 }
 

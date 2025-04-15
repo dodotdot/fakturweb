@@ -25,7 +25,7 @@
           <div>
             <p class="text-sm font-medium text-gray-500">Total Amount</p>
             <h2 class="text-3xl font-semibold text-gray-900">
-              {{ totalAmount > 0 ? formatCurrency(totalAmount) : '$0.00' }}
+              {{ totalAmount > 0 ? formatCurrency(totalAmount) : 'Rp0' }}
             </h2>
           </div>
           <div class="h-12 w-12 bg-green-100 text-green-600 flex items-center justify-center rounded-lg">

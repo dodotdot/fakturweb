@@ -13,7 +13,7 @@
             Faktur Digital<br>Untuk <span class="highlight">Bisnis Modern</span>
           </h1>
           <p class="hero-subtitle mb-8">
-            Faktur profesional dalam 30 detik. Hemat waktu, terlihat simple, elegan, dan terorganisir dengan baik.
+            Faktur profesional dalam 30 detik. Hemat waktu, simple, elegan, dan terorganisir dengan baik.
           </p>
           <div class="hero-video-wrapper mb-8">
             <video class="hero-video" autoplay loop muted playsinline>

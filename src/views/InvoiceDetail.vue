@@ -1,147 +1,158 @@
 <template>
-  <div class="container mx-auto py-8 max-w-4xl">
-    <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-      <div>
-        <h1 class="text-2xl font-bold text-gray-900 py-8">
-          Invoice Details
-        </h1>
-        <p class="text-gray-500">
-          View and download your invoice
-        </p>
-      </div>
-      <div class="flex gap-3">
-        <router-link 
-          :to="`/invoices/${invoiceId}/edit`" 
-          class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50"
-        >
-          Edit
-        </router-link>
-        <button 
-          @click="downloadPDF"
-          class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90"
-        >
-          Download PDF
-        </button>
-      </div>
-    </div>
-    
-    <div v-if="error" class="my-4 p-4 bg-red-50 text-red-500 rounded-md">
-      {{ error }}
-    </div>
-    
-    <div v-if="isLoading" class="flex justify-center my-8">
-      <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-    </div>
-    
-    <div v-else class="bg-white rounded-lg shadow-sm p-8 border border-gray-100" ref="invoicePrintRef">
-      <!-- Invoice Header -->
-      <div class="flex flex-col md:flex-row justify-between items-start mb-10">
-        <div class="flex-1">
-          <h2 class="text-3xl font-bold mb-2">{{ invoice.title }}</h2>
-          <div class="flex flex-col space-y-1">
-            <div class="flex items-center">
-              <span class="text-gray-500 w-24">Tanggal:</span>
-              <span>{{ formatDate(invoice.date) }}</span>
-            </div>
-            <div class="flex items-center">
-              <span class="text-gray-500 w-24">Jatuh Tempo:</span>
-              <span>{{ formatDate(invoice.dueDate) }}</span>
-            </div>
+  <div class="min-h-screen py-12">
+    <div class="container mx-auto max-w-4xl">
+      <div class="bg-white shadow-lg p-8 rounded-lg border border-gray-200 transform transition-all duration-300 hover:shadow-xl" ref="invoicePrintRef">
+        <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h1 class="text-2xl font-bold text-gray-900 py-8">
+              Invoice Details
+            </h1>
+            <p class="text-gray-500">
+              View and download your invoice
+            </p>
+          </div>
+          <div class="flex gap-3">
+            <router-link 
+              :to="`/invoices/${invoiceId}/edit`" 
+              class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50"
+            >
+              Edit
+            </router-link>
+            <button 
+              @click="downloadPDF"
+              class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90"
+            >
+              Download PDF
+            </button>
           </div>
         </div>
         
-        <!-- Logo Display -->
-        <div class="w-40 h-40 flex items-center justify-center">
-          <img 
-            v-if="invoice.logo"
-            :src="invoice.logo" 
-            alt="Invoice Logo" 
-            crossorigin="anonymous"
-            class="max-w-full max-h-full object-contain"
-            @load="handleImageLoad"
-          />
-        </div>
-      </div>
-      
-      <!-- Invoice From/To -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-        <div class="from-details">
-          <h3 class="text-gray-400 text-sm uppercase font-medium mb-2">From</h3>
-          <div class="font-semibold text-lg mb-2">{{ invoice.from?.name }}</div>
-          <div class="text-gray-600 whitespace-pre-line mb-2">{{ invoice.from?.address }}</div>
-          <div class="flex items-center mb-1">
-            <span class="text-gray-400 w-16">Email:</span>
-            <div>{{ invoice.from?.email }}</div>
-          </div>
-          <div class="flex items-center">
-            <span class="text-gray-400 w-16">Phone:</span>
-            <div>{{ invoice.from?.phone }}</div>
-          </div>
+        <div v-if="error" class="my-4 p-4 bg-red-50 text-red-500 rounded-md">
+          {{ error }}
         </div>
         
-        <div class="to-details">
-          <h3 class="text-gray-400 text-sm uppercase font-medium mb-2">Bill To</h3>
-          <div class="font-semibold text-lg mb-2">{{ invoice.to?.name }}</div>
-          <div class="text-gray-600 whitespace-pre-line mb-2">{{ invoice.to?.address }}</div>
-          <div class="flex items-center mb-1">
-            <span class="text-gray-400 w-16">Email:</span>
-            <div>{{ invoice.to?.email }}</div>
-          </div>
-          <div class="flex items-center">
-            <span class="text-gray-400 w-16">Phone:</span>
-            <div>{{ invoice.to?.phone }}</div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Invoice Items -->
-      <div class="mb-10">
-        <h3 class="text-gray-400 text-sm uppercase font-medium mb-4">Items</h3>
-        <div class="overflow-x-auto">
-          <table class="w-full">
-            <thead class="border-b">
-              <tr>
-                <th class="text-left p-3 text-gray-500 font-medium">Description</th>
-                <th class="text-right p-3 text-gray-500 font-medium">Qty</th>
-                <th class="text-right p-3 text-gray-500 font-medium">Price</th>
-                <th class="text-right p-3 text-gray-500 font-medium">Amount</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(item, index) in invoice.items" :key="index" class="border-b">
-                <td class="p-3">{{ item.description }}</td>
-                <td class="p-3 text-right">{{ item.quantity }}</td>
-                <td class="p-3 text-right">{{ formatCurrency(item.unitPrice) }}</td>
-                <td class="p-3 text-right">{{ formatCurrency(item.total) }}</td>
-              </tr>
-            </tbody>
-          </table>
+        <div v-if="isLoading" class="flex justify-center my-8">
+          <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
         </div>
         
-        <!-- Invoice Summary -->
-        <div class="flex flex-col items-end mt-6">
-          <div class="w-full max-w-xs">
-            <div class="flex justify-between py-2">
-              <span class="text-gray-600">Subtotal:</span>
-              <span>{{ formatCurrency(calculateSubtotal()) }}</span>
+        <div v-else class="bg-white rounded-lg shadow-sm p-8 border border-gray-100" ref="invoicePrintRef">
+          <!-- Invoice Header -->
+          <div class="flex flex-col md:flex-row justify-between items-start mb-10">
+            <!-- Logo Display -->
+            <div class="w-40 h-40 flex items-center justify-center mb-4 md:mb-0">
+              <div v-if="invoice.logo" class="relative w-full h-full">
+                <img 
+                  :src="invoice.logo" 
+                  alt="Invoice Logo" 
+                  class="max-w-full max-h-full object-contain"
+                />
+              </div>
+              <div v-else class="w-full h-full flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg">
+                <div class="text-center text-gray-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <span class="text-sm">No Logo</span>
+                </div>
+              </div>
             </div>
-            <div class="flex justify-between py-2">
-              <span class="text-gray-600">Tax ({{ invoice.taxRate }}%):</span>
-              <span>{{ formatCurrency(calculateTaxAmount()) }}</span>
-            </div>
-            <div class="flex justify-between py-3 border-t border-gray-200 font-bold text-lg">
-              <span>Total:</span>
-              <span>{{ formatCurrency(calculateTotal()) }}</span>
+            
+            <div class="flex-1 md:ml-8">
+              <h2 class="text-3xl font-bold mb-2 text-right">{{ invoice.title }}</h2>
+              <div class="flex flex-col space-y-1 items-end">
+                <div class="flex items-center">
+                  <span class="text-gray-500 w-24">Tanggal:</span>
+                  <span>{{ formatDate(invoice.date) }}</span>
+                </div>
+                <div class="flex items-center">
+                  <span class="text-gray-500 w-24">Jatuh Tempo:</span>
+                  <span>{{ formatDate(invoice.dueDate) }}</span>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-      
-      <!-- Notes -->
-      <div v-if="invoice.notes">
-        <h3 class="text-gray-400 text-sm uppercase font-medium mb-2">Notes</h3>
-        <div class="p-3 bg-gray-50 rounded-md">
-          {{ invoice.notes }}
+          
+          <!-- Invoice From/To -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+            <div class="from-details">
+              <h3 class="text-gray-400 text-sm uppercase font-medium mb-2">From</h3>
+              <div class="font-semibold text-lg mb-2">{{ invoice.from?.name }}</div>
+              <div class="text-gray-600 whitespace-pre-line mb-2">{{ invoice.from?.address }}</div>
+              <div class="flex items-center mb-1">
+                <span class="text-gray-400 w-16">Email:</span>
+                <div>{{ invoice.from?.email }}</div>
+              </div>
+              <div class="flex items-center">
+                <span class="text-gray-400 w-16">Phone:</span>
+                <div>{{ invoice.from?.phone }}</div>
+              </div>
+            </div>
+            
+            <div class="to-details">
+              <h3 class="text-gray-400 text-sm uppercase font-medium mb-2">Bill To</h3>
+              <div class="font-semibold text-lg mb-2">{{ invoice.to?.name }}</div>
+              <div class="text-gray-600 whitespace-pre-line mb-2">{{ invoice.to?.address }}</div>
+              <div class="flex items-center mb-1">
+                <span class="text-gray-400 w-16">Email:</span>
+                <div>{{ invoice.to?.email }}</div>
+              </div>
+              <div class="flex items-center">
+                <span class="text-gray-400 w-16">Phone:</span>
+                <div>{{ invoice.to?.phone }}</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Invoice Items -->
+          <div class="mb-10">
+            <h3 class="text-gray-400 text-sm uppercase font-medium mb-4">Items</h3>
+            <div class="overflow-x-auto">
+              <table class="w-full">
+                <thead class="border-b">
+                  <tr>
+                    <th class="text-left p-3 text-gray-500 font-medium">Description</th>
+                    <th class="text-right p-3 text-gray-500 font-medium">Qty</th>
+                    <th class="text-right p-3 text-gray-500 font-medium">Price</th>
+                    <th class="text-right p-3 text-gray-500 font-medium">Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(item, index) in invoice.items" :key="index" class="border-b">
+                    <td class="p-3">{{ item.description }}</td>
+                    <td class="p-3 text-right">{{ item.quantity }}</td>
+                    <td class="p-3 text-right">{{ formatCurrency(item.unitPrice) }}</td>
+                    <td class="p-3 text-right">{{ formatCurrency(item.total) }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            
+            <!-- Invoice Summary -->
+            <div class="flex flex-col items-end mt-6">
+              <div class="w-full max-w-xs">
+                <div class="flex justify-between py-2">
+                  <span class="text-gray-600">Subtotal:</span>
+                  <span>{{ formatCurrency(calculateSubtotal()) }}</span>
+                </div>
+                <div class="flex justify-between py-2">
+                  <span class="text-gray-600">Tax ({{ invoice.taxRate }}%):</span>
+                  <span>{{ formatCurrency(calculateTaxAmount()) }}</span>
+                </div>
+                <div class="flex justify-between py-3 border-t border-gray-200 font-bold text-lg">
+                  <span>Total:</span>
+                  <span>{{ formatCurrency(calculateTotal()) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Notes -->
+          <div v-if="invoice.notes">
+            <h3 class="text-gray-400 text-sm uppercase font-medium mb-2">Notes</h3>
+            <div class="p-3 bg-gray-50 rounded-md">
+              {{ invoice.notes }}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -192,9 +203,11 @@ function calculateTotal() {
 }
 
 function formatCurrency(value) {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('id-ID', {
     style: 'currency',
-    currency: 'USD'
+    currency: 'IDR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
   }).format(value);
 }
 
