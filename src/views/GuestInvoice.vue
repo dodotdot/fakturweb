@@ -259,11 +259,13 @@
 import { ref, onMounted } from 'vue';
 import html2pdf from 'html2pdf.js';
 import { useRouter } from 'vue-router';
+import { useGtag } from 'vue-gtag'
 
 const router = useRouter();
 const invoicePrintRef = ref(null);
 const fileInput = ref(null);
 const isGenerating = ref(false);
+const { event } = useGtag()
 
 // Default invoice template
 const defaultInvoice = {
@@ -406,6 +408,54 @@ function previewInvoice() {
   
   // Navigate to the preview page
   router.push('/invoice-preview');
+}
+
+function downloadPDF() {
+  if (!invoicePrintRef.value) return;
+  
+  isGenerating.value = true;
+
+  const options = {
+    margin: 10,
+    filename: `faktur-${invoice.value.title.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.pdf`,
+    image: { 
+      type: 'jpeg', 
+      quality: 0.98 
+    },
+    html2canvas: { 
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      logging: true
+    },
+    jsPDF: { 
+      unit: 'mm', 
+      format: 'a4', 
+      orientation: 'portrait'
+    }
+  };
+
+  setTimeout(() => {
+    html2pdf()
+      .from(invoicePrintRef.value)
+      .set(options)
+      .save()
+      .then(() => {
+        isGenerating.value = false;
+        
+        // Track PDF download event
+        event('invoice_download', {
+          event_category: 'Invoice',
+          event_label: invoice.value.title,
+          value: calculateTotal()
+        });
+      })
+      .catch(error => {
+        console.error('Error generating PDF:', error);
+        isGenerating.value = false;
+        alert('Error generating PDF. Please try again.');
+      });
+  }, 500);
 }
 </script>
 

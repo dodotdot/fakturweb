@@ -1,63 +1,102 @@
 <script setup>
-import { computed, ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAuthStore } from './stores/auth';
+import SeoHead from './components/SeoHead.vue';
 import Navbar from './components/layout/Navbar.vue';
 import Sidebar from './components/layout/Sidebar.vue';
 import './assets/landing.css'; // Import landing page styles
 
 const route = useRoute();
 const authStore = useAuthStore();
-const isSidebarOpen = ref(true);
+const isSidebarOpen = ref(false);
 
-const isAuthenticated = computed(() => authStore.isAuthenticated);
+// Computed SEO properties
+const pageTitle = computed(() => route.meta.title || 'Faktur.web.id - Solusi Faktur Online');
+const pageDescription = computed(() => route.meta.description || 'Platform faktur online terbaik untuk UMKM Indonesia');
+const pageKeywords = computed(() => route.meta.keywords || 'faktur online, invoice generator, buat faktur, faktur gratis');
+const pageImage = computed(() => route.meta.image || '/images/og-image.png');
+const pageType = computed(() => route.meta.type || 'website');
 
-// Show navbar only for authenticated pages
-const showNavbar = computed(() => {
-  return isAuthenticated.value;
-});
-
-// Show sidebar only when user is authenticated
-const showSidebar = computed(() => {
-  return isAuthenticated.value;
-});
-
-function toggleSidebar() {
-  isSidebarOpen.value = !isSidebarOpen.value;
-}
-
-// Close sidebar when route changes on mobile
+// Close sidebar when route changes on mobile devices
 watch(() => route.path, () => {
   if (window.innerWidth < 768) {
     isSidebarOpen.value = false;
   }
 });
+
+// Toggle sidebar
+function toggleSidebar() {
+  isSidebarOpen.value = !isSidebarOpen.value;
+}
+
+// Close sidebar
+function closeSidebar() {
+  if (window.innerWidth < 768) {
+    isSidebarOpen.value = false;
+  }
+}
+
+// Compute whether we can show the navbar based on the route
+const canShowNavbar = computed(() => {
+  return !route.meta.hideNavbar
+})
+
+// Add class to disable prints for the sidebar
+const printStyles = document.createElement('style')
+printStyles.textContent = `
+  @media print {
+    .app-container { display: block !important; }
+    nav, aside, footer, .no-print { display: none !important; }
+    main { margin-left: 0 !important; width: 100% !important; }
+    body { background: white !important; }
+  }
+`
+document.head.appendChild(printStyles)
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <Navbar />
-    <div class="flex h-screen" :class="{ 'pt-16': showNavbar }">
-      <Sidebar 
-        v-if="showSidebar" 
-        :is-expanded="isSidebarOpen" 
-        @toggle="toggleSidebar"
-        class="sidebar"
-        :class="{ 'collapsed': !isSidebarOpen }"
+  <!-- SEO meta tags -->
+  <SeoHead
+    :title="pageTitle"
+    :description="pageDescription"
+    :keywords="pageKeywords"
+    :image="pageImage"
+    :type="pageType"
+  />
+
+  <div class="print:hidden flex min-h-screen bg-gray-50">
+    <!-- Sidebar -->
+    <Sidebar 
+      v-if="authStore.isAuthenticated && !route.meta.noSidebar" 
+      :is-expanded="isSidebarOpen" 
+      @toggle="toggleSidebar"
+      class="print:hidden" 
+    />
+
+    <!-- Main Content -->
+    <div class="flex flex-1 relative print:block" 
+      :class="{
+        'md:ml-20': authStore.isAuthenticated && !isSidebarOpen && !route.meta.noSidebar,
+        'md:ml-64': authStore.isAuthenticated && isSidebarOpen && !route.meta.noSidebar,
+      }">
+      <!-- Navbar -->
+      <Navbar v-if="!route.meta.hideNavbar" 
+        @toggle-sidebar="toggleSidebar"
+        :is-sidebar-open="isSidebarOpen"
       />
-      <main 
-        :class="{ 'ml-64': showSidebar && isSidebarOpen, 'ml-0': !isSidebarOpen }" 
-        class="flex-1 overflow-auto transition-all duration-300"
-      >
-        <router-view v-slot="{ Component }">
-          <transition name="fade" mode="out-in">
-            <div>
-              <component :is="Component" />
-            </div>
-          </transition>
-        </router-view>
+      <!-- Page content -->
+      <main class="flex-1 transition-all duration-300 p-4 md:p-6 overflow-x-hidden">
+        <router-view></router-view>
       </main>
     </div>
+  </div>
+
+  <!-- Print-only view -->
+  <div class="hidden print:block">
+    <router-view v-slot="{ Component }">
+      <component :is="Component" />
+    </router-view>
   </div>
 </template>
 
@@ -143,22 +182,22 @@ main {
 }
 
 @media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+  }
+  
   .no-print {
     display: none !important;
     visibility: hidden !important;
-    opacity: 0 !important;
+    height: 0 !important;
     position: absolute !important;
-    pointer-events: none !important;
-  }
-  
-  @media print {
-    button.no-print {
-      display: none !important;
-      visibility: hidden !important;
-      opacity: 0 !important;
-      position: absolute !important;
-      pointer-events: none !important;
-    }
+    overflow: hidden !important;
   }
 }
 </style>

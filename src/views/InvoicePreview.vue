@@ -152,11 +152,13 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import html2pdf from 'html2pdf.js';
+import { useGtag } from 'vue-gtag';
 
 const route = useRoute();
 const router = useRouter();
 const invoicePrintRef = ref(null);
 const isGenerating = ref(false);
+const { event } = useGtag();
 
 // Initialize with empty invoice
 const invoice = ref({
@@ -256,6 +258,13 @@ function downloadPDF() {
       .save()
       .then(() => {
         isGenerating.value = false;
+        
+        // Track PDF download event
+        event('preview_invoice_download', {
+          event_category: 'Invoice',
+          event_label: invoice.value.title,
+          value: calculateTotal()
+        });
       })
       .catch(error => {
         console.error('Error generating PDF:', error);
