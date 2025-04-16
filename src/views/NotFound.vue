@@ -12,4 +12,17 @@
       </router-link>
     </div>
   </div>
-</template> 
+</template>
+
+<script setup>
+import { onMounted } from 'vue';
+import { trackPageView, trackEvent } from '../utils/analytics';
+
+onMounted(() => {
+  // Track 404 page view
+  trackPageView('/404', '404 - Halaman Tidak Ditemukan');
+  
+  // Track 404 error event with the URL that caused it
+  trackEvent('404_error', 'error', `404 Page Not Found: ${window.location.pathname}`);
+});
+</script> 

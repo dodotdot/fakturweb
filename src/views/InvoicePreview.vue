@@ -152,7 +152,7 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import html2pdf from 'html2pdf.js';
-import { invoiceEvents } from '../utils/analytics';
+import { invoiceEvents, trackPageView } from '../utils/analytics';
 
 const route = useRoute();
 const router = useRouter();
@@ -183,6 +183,9 @@ const invoice = ref({
 });
 
 onMounted(() => {
+  // Track invoice preview page view
+  trackPageView('/invoice/preview', 'Preview Faktur Online - Faktur.web.id');
+  
   // Get invoice data from local storage
   const storedInvoice = localStorage.getItem('currentInvoice');
   if (storedInvoice) {

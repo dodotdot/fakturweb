@@ -129,6 +129,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useAuthStore } from '../stores/auth';
 import { useInvoiceStore } from '../stores/invoice';
+import { trackPageView } from '../utils/analytics';
 
 const authStore = useAuthStore();
 const invoiceStore = useInvoiceStore();
@@ -190,6 +191,9 @@ function formatDate(dateString) {
 }
 
 onMounted(async () => {
+  // Track dashboard page view
+  trackPageView('/dashboard', 'Dashboard - Ringkasan Bisnis Anda');
+  
   try {
     isLoading.value = true;
     await invoiceStore.fetchUserInvoices();

@@ -259,7 +259,7 @@
 import { ref, onMounted } from 'vue';
 import html2pdf from 'html2pdf.js';
 import { useRouter } from 'vue-router';
-import { invoiceEvents } from '../utils/analytics';
+import { invoiceEvents, trackPageView } from '../utils/analytics';
 
 const router = useRouter();
 const invoicePrintRef = ref(null);
@@ -301,6 +301,9 @@ const invoice = ref({...defaultInvoice});
 
 // Load saved data if available
 onMounted(() => {
+  // Track guest invoice page view
+  trackPageView('/invoice/guest', 'Buat Faktur Tanpa Daftar - Faktur.web.id');
+  
   const savedInvoice = localStorage.getItem('currentInvoice');
   if (savedInvoice) {
     try {

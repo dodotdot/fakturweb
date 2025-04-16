@@ -9,5 +9,12 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue';
 import RegisterForm from '../components/auth/RegisterForm.vue';
+import { trackPageView } from '../utils/analytics';
+
+onMounted(() => {
+  // Track register page view
+  trackPageView('/register', 'Register - Buat Akun Faktur Online Baru');
+});
 </script> 

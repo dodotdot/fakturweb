@@ -40,6 +40,7 @@
 <script setup>
 import { computed, ref, onMounted } from 'vue';
 import { useAuthStore } from '../stores/auth';
+import { trackPageView } from '../utils/analytics';
 
 const authStore = useAuthStore();
 const isAuthenticated = computed(() => authStore.isAuthenticated);
@@ -74,6 +75,9 @@ function toggleFaq(index) {
 
 // Smooth scrolling for anchor links
 onMounted(() => {
+  // Track home page view
+  trackPageView('/', 'Faktur.web.id - Solusi Faktur Online Terbaik untuk UMKM Indonesia');
+  
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
       e.preventDefault();
