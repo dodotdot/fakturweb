@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen py-12">
     <div class="container mx-auto max-w-4xl">
-      <div class="mb-6 flex justify-between items-center py-8">
+      <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center py-8 gap-4">
         <div>
           <h1 class="text-2xl font-bold text-gray-800">Preview Faktur</h1>
           <p class="text-gray-500">
@@ -30,9 +30,74 @@
           </button>
         </div>
       </div>
+      
+      <!-- Theme Selector -->
+      <div class="mb-6">
+        <h3 class="text-lg font-semibold mb-3">Pilih Tema Invoice</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div 
+            class="border rounded-lg p-3 cursor-pointer transition-all hover:shadow-md"
+            :class="{ 'ring-2 ring-primary': selectedTheme === 'classic' }"
+            @click="selectedTheme = 'classic'"
+          >
+            <div class="bg-white p-3 rounded">
+              <div class="h-10 border-b border-gray-200 mb-2"></div>
+              <div class="flex space-x-2 mb-2">
+                <div class="w-10 h-10 bg-gray-100 rounded"></div>
+                <div class="flex-1 h-10 bg-gray-100 rounded"></div>
+              </div>
+              <div class="h-4 bg-gray-100 w-1/2 rounded mb-2"></div>
+            </div>
+            <p class="mt-2 text-center font-medium">Klasik</p>
+          </div>
+          
+          <div 
+            class="border rounded-lg p-3 cursor-pointer transition-all hover:shadow-md"
+            :class="{ 'ring-2 ring-primary': selectedTheme === 'modern' }"
+            @click="selectedTheme = 'modern'"
+          >
+            <div class="bg-blue-50 p-3 rounded">
+              <div class="h-10 border-b border-blue-200 mb-2"></div>
+              <div class="flex space-x-2 mb-2">
+                <div class="w-10 h-10 bg-blue-100 rounded-full"></div>
+                <div class="flex-1 h-10 bg-blue-100 rounded"></div>
+              </div>
+              <div class="h-4 bg-blue-100 w-1/2 rounded mb-2"></div>
+            </div>
+            <p class="mt-2 text-center font-medium">Modern</p>
+          </div>
+          
+          <div 
+            class="border rounded-lg p-3 cursor-pointer transition-all hover:shadow-md"
+            :class="{ 'ring-2 ring-primary': selectedTheme === 'elegant' }"
+            @click="selectedTheme = 'elegant'"
+          >
+            <div class="bg-gray-900 p-3 rounded">
+              <div class="h-10 border-b border-gray-700 mb-2"></div>
+              <div class="flex space-x-2 mb-2">
+                <div class="w-10 h-10 bg-yellow-500 rounded-lg"></div>
+                <div class="flex-1 h-10 bg-gray-800 rounded"></div>
+              </div>
+              <div class="h-4 bg-gray-800 w-1/2 rounded mb-2"></div>
+            </div>
+            <p class="mt-2 text-center font-medium">Elegan</p>
+          </div>
+        </div>
+      </div>
     </div>  
+    
     <div class="container mx-auto max-w-4xl">
-      <div class="bg-white shadow-lg p-8 rounded-lg border border-gray-200" ref="invoicePrintRef">
+      <div 
+        :class="[
+          'shadow-lg p-8 rounded-lg border',
+          {
+            'bg-white border-gray-200': selectedTheme === 'classic',
+            'bg-blue-50 border-blue-200': selectedTheme === 'modern',
+            'bg-gray-900 text-white border-gray-700': selectedTheme === 'elegant'
+          }
+        ]" 
+        ref="invoicePrintRef"
+      >
         <!-- Invoice Header -->
         <div class="flex flex-col md:flex-row justify-between items-start mb-10">
           <!-- Logo -->
@@ -44,20 +109,51 @@
                 class="max-w-full max-h-full object-contain"
               />
             </div>
-            <div v-else class="w-full h-full flex items-center justify-center border-2 border-gray-300 rounded-lg">
-              <span class="text-gray-400">No Logo</span>
+            <div 
+              v-else 
+              :class="[
+                'w-full h-full flex items-center justify-center border-2 rounded-lg',
+                {
+                  'border-gray-300': selectedTheme === 'classic',
+                  'border-blue-300': selectedTheme === 'modern',
+                  'border-gray-700': selectedTheme === 'elegant'
+                }
+              ]"
+            >
+              <span :class="{
+                'text-gray-400': selectedTheme === 'classic',
+                'text-blue-400': selectedTheme === 'modern',
+                'text-gray-500': selectedTheme === 'elegant'
+              }">No Logo</span>
             </div>
           </div>
           
           <div class="flex-1 md:ml-8">
-            <div class="text-3xl font-bold mb-2 text-right">{{ invoice.title }}</div>
+            <div 
+              :class="[
+                'text-3xl font-bold mb-2 text-right',
+                {
+                  'text-gray-800': selectedTheme === 'classic',
+                  'text-blue-800': selectedTheme === 'modern',
+                  'text-yellow-500': selectedTheme === 'elegant'
+                }
+              ]"
+            >{{ invoice.title }}</div>
             <div class="flex flex-col space-y-1 items-end">
               <div class="flex items-center">
-                <span class="text-gray-500 w-24">Tanggal:</span>
+                <span :class="{
+                  'text-gray-500': selectedTheme === 'classic',
+                  'text-blue-500': selectedTheme === 'modern',
+                  'text-gray-400': selectedTheme === 'elegant'
+                }" class="w-24">Tanggal:</span>
                 <span>{{ formatDate(invoice.date) }}</span>
               </div>
               <div class="flex items-center">
-                <span class="text-gray-500 w-24">Jatuh Tempo:</span>
+                <span :class="{
+                  'text-gray-500': selectedTheme === 'classic',
+                  'text-blue-500': selectedTheme === 'modern',
+                  'text-gray-400': selectedTheme === 'elegant'
+                }" class="w-24">Jatuh Tempo:</span>
                 <span>{{ formatDate(invoice.dueDate) }}</span>
               </div>
             </div>
@@ -67,29 +163,69 @@
         <!-- Invoice From/To -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
           <div class="from-details">
-            <h3 class="text-gray-400 text-sm uppercase font-medium mb-2">Dari</h3>
-            <div class="font-semibold text-lg mb-2">{{ invoice.from.name }}</div>
-            <div class="text-gray-600 mb-2">{{ invoice.from.address }}</div>
+            <h3 :class="{
+              'text-gray-400': selectedTheme === 'classic',
+              'text-blue-500': selectedTheme === 'modern',
+              'text-yellow-500': selectedTheme === 'elegant'
+            }" class="text-sm uppercase font-medium mb-2">Dari</h3>
+            <div :class="{
+              'text-gray-900': selectedTheme === 'classic',
+              'text-blue-900': selectedTheme === 'modern',
+              'text-white': selectedTheme === 'elegant'
+            }" class="font-semibold text-lg mb-2">{{ invoice.from.name }}</div>
+            <div :class="{
+              'text-gray-600': selectedTheme === 'classic',
+              'text-blue-700': selectedTheme === 'modern',
+              'text-gray-300': selectedTheme === 'elegant'
+            }" class="mb-2">{{ invoice.from.address }}</div>
             <div class="flex items-center mb-1">
-              <span class="text-gray-400 w-16">Email:</span>
+              <span :class="{
+                'text-gray-400': selectedTheme === 'classic',
+                'text-blue-500': selectedTheme === 'modern',
+                'text-gray-400': selectedTheme === 'elegant'
+              }" class="w-16">Email:</span>
               <span>{{ invoice.from.email }}</span>
             </div>
             <div class="flex items-center">
-              <span class="text-gray-400 w-16">Telepon:</span>
+              <span :class="{
+                'text-gray-400': selectedTheme === 'classic',
+                'text-blue-500': selectedTheme === 'modern',
+                'text-gray-400': selectedTheme === 'elegant'
+              }" class="w-16">Telepon:</span>
               <span>{{ invoice.from.phone }}</span>
             </div>
           </div>
           
           <div class="to-details">
-            <h3 class="text-gray-400 text-sm uppercase font-medium mb-2">Tagih Kepada</h3>
-            <div class="font-semibold text-lg mb-2">{{ invoice.to.name }}</div>
-            <div class="text-gray-600 mb-2">{{ invoice.to.address }}</div>
+            <h3 :class="{
+              'text-gray-400': selectedTheme === 'classic',
+              'text-blue-500': selectedTheme === 'modern',
+              'text-yellow-500': selectedTheme === 'elegant'
+            }" class="text-sm uppercase font-medium mb-2">Tagih Kepada</h3>
+            <div :class="{
+              'text-gray-900': selectedTheme === 'classic',
+              'text-blue-900': selectedTheme === 'modern',
+              'text-white': selectedTheme === 'elegant'
+            }" class="font-semibold text-lg mb-2">{{ invoice.to.name }}</div>
+            <div :class="{
+              'text-gray-600': selectedTheme === 'classic',
+              'text-blue-700': selectedTheme === 'modern',
+              'text-gray-300': selectedTheme === 'elegant'
+            }" class="mb-2">{{ invoice.to.address }}</div>
             <div class="flex items-center mb-1">
-              <span class="text-gray-400 w-16">Email:</span>
+              <span :class="{
+                'text-gray-400': selectedTheme === 'classic',
+                'text-blue-500': selectedTheme === 'modern',
+                'text-gray-400': selectedTheme === 'elegant'
+              }" class="w-16">Email:</span>
               <span>{{ invoice.to.email }}</span>
             </div>
             <div class="flex items-center">
-              <span class="text-gray-400 w-16">Telepon:</span>
+              <span :class="{
+                'text-gray-400': selectedTheme === 'classic',
+                'text-blue-500': selectedTheme === 'modern',
+                'text-gray-400': selectedTheme === 'elegant'
+              }" class="w-16">Telepon:</span>
               <span>{{ invoice.to.phone }}</span>
             </div>
           </div>
@@ -97,19 +233,47 @@
 
         <!-- Invoice Items -->
         <div class="mb-10">
-          <h3 class="text-gray-400 text-sm uppercase font-medium mb-4">Item</h3>
+          <h3 :class="{
+            'text-gray-400': selectedTheme === 'classic',
+            'text-blue-500': selectedTheme === 'modern',
+            'text-yellow-500': selectedTheme === 'elegant'
+          }" class="text-sm uppercase font-medium mb-4">Item</h3>
           <div class="overflow-x-auto">
             <table class="w-full">
-              <thead class="border-b">
+              <thead :class="{
+                'border-b border-gray-200': selectedTheme === 'classic',
+                'border-b border-blue-300': selectedTheme === 'modern',
+                'border-b border-gray-700': selectedTheme === 'elegant'
+              }">
                 <tr>
-                  <th class="text-left p-3 text-gray-500 font-medium">Deskripsi</th>
-                  <th class="text-right p-3 text-gray-500 font-medium w-24">Jumlah</th>
-                  <th class="text-right p-3 text-gray-500 font-medium w-32">Harga</th>
-                  <th class="text-right p-3 text-gray-500 font-medium w-32">Total</th>
+                  <th :class="{
+                    'text-gray-500': selectedTheme === 'classic',
+                    'text-blue-700': selectedTheme === 'modern',
+                    'text-gray-300': selectedTheme === 'elegant'
+                  }" class="text-left p-3 font-medium">Deskripsi</th>
+                  <th :class="{
+                    'text-gray-500': selectedTheme === 'classic',
+                    'text-blue-700': selectedTheme === 'modern',
+                    'text-gray-300': selectedTheme === 'elegant'
+                  }" class="text-right p-3 font-medium w-24">Jumlah</th>
+                  <th :class="{
+                    'text-gray-500': selectedTheme === 'classic',
+                    'text-blue-700': selectedTheme === 'modern',
+                    'text-gray-300': selectedTheme === 'elegant'
+                  }" class="text-right p-3 font-medium w-32">Harga</th>
+                  <th :class="{
+                    'text-gray-500': selectedTheme === 'classic',
+                    'text-blue-700': selectedTheme === 'modern',
+                    'text-gray-300': selectedTheme === 'elegant'
+                  }" class="text-right p-3 font-medium w-32">Total</th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(item, index) in invoice.items" :key="index" class="border-b">
+                <tr v-for="(item, index) in invoice.items" :key="index" :class="{
+                  'border-b border-gray-200': selectedTheme === 'classic',
+                  'border-b border-blue-300': selectedTheme === 'modern',
+                  'border-b border-gray-700': selectedTheme === 'elegant'
+                }">
                   <td class="p-3">{{ item.description }}</td>
                   <td class="p-3 text-right">{{ item.quantity }}</td>
                   <td class="p-3 text-right">{{ formatCurrency(item.unitPrice) }}</td>
@@ -123,16 +287,32 @@
           <div class="flex flex-col items-end mt-6">
             <div class="w-full max-w-xs">
               <div class="flex justify-between py-2">
-                <span class="text-gray-600">Subtotal:</span>
+                <span :class="{
+                  'text-gray-600': selectedTheme === 'classic',
+                  'text-blue-700': selectedTheme === 'modern',
+                  'text-gray-300': selectedTheme === 'elegant'
+                }">Subtotal:</span>
                 <span>{{ formatCurrency(calculateSubtotal()) }}</span>
               </div>
               <div class="flex justify-between py-2">
-                <span class="text-gray-600">Pajak ({{ invoice.taxRate }}%):</span>
+                <span :class="{
+                  'text-gray-600': selectedTheme === 'classic',
+                  'text-blue-700': selectedTheme === 'modern',
+                  'text-gray-300': selectedTheme === 'elegant'
+                }">Pajak ({{ invoice.taxRate }}%):</span>
                 <span>{{ formatCurrency(calculateTaxAmount()) }}</span>
               </div>
-              <div class="flex justify-between py-3 border-t border-gray-200 font-bold text-lg">
+              <div :class="{
+                'border-t border-gray-200': selectedTheme === 'classic',
+                'border-t border-blue-300': selectedTheme === 'modern',
+                'border-t border-gray-700': selectedTheme === 'elegant'
+              }" class="flex justify-between py-3 font-bold text-lg">
                 <span>Total:</span>
-                <span>{{ formatCurrency(calculateTotal()) }}</span>
+                <span :class="{
+                  'text-gray-900': selectedTheme === 'classic',
+                  'text-blue-900': selectedTheme === 'modern',
+                  'text-yellow-500': selectedTheme === 'elegant'
+                }">{{ formatCurrency(calculateTotal()) }}</span>
               </div>
             </div>
           </div>
@@ -140,8 +320,16 @@
         
         <!-- Notes -->
         <div v-if="invoice.notes">
-          <h3 class="text-gray-400 text-sm uppercase font-medium mb-2">Catatan</h3>
-          <div class="p-3 bg-gray-50 rounded-md">{{ invoice.notes }}</div>
+          <h3 :class="{
+            'text-gray-400': selectedTheme === 'classic',
+            'text-blue-500': selectedTheme === 'modern',
+            'text-yellow-500': selectedTheme === 'elegant'
+          }" class="text-sm uppercase font-medium mb-2">Catatan</h3>
+          <div :class="{
+            'bg-gray-50': selectedTheme === 'classic',
+            'bg-blue-100': selectedTheme === 'modern',
+            'bg-gray-800': selectedTheme === 'elegant'
+          }" class="p-3 rounded-md">{{ invoice.notes }}</div>
         </div>
       </div>
     </div>
@@ -158,6 +346,7 @@ const route = useRoute();
 const router = useRouter();
 const invoicePrintRef = ref(null);
 const isGenerating = ref(false);
+const selectedTheme = ref('classic'); // Default theme
 
 // Initialize with empty invoice
 const invoice = ref({
@@ -190,6 +379,11 @@ onMounted(() => {
   const storedInvoice = localStorage.getItem('currentInvoice');
   if (storedInvoice) {
     invoice.value = JSON.parse(storedInvoice);
+    
+    // Check if there's a saved theme preference
+    if (invoice.value._theme) {
+      selectedTheme.value = invoice.value._theme;
+    }
   } else {
     // Redirect back if no invoice data
     router.push('/invoice/guest');
@@ -263,6 +457,13 @@ function downloadPDF() {
       .save()
       .then(() => {
         isGenerating.value = false;
+        
+        // Remove the currentInvoice data from localStorage after successful download
+        localStorage.removeItem('currentInvoice');
+        console.log('Invoice data cleared from localStorage after PDF download');
+        
+        // Show success message
+        alert('PDF berhasil diunduh. Data invoice telah dihapus dari penyimpanan sementara.');
       })
       .catch(error => {
         console.error('Error generating PDF:', error);
@@ -273,18 +474,42 @@ function downloadPDF() {
 }
 
 function backToEdit() {
-  // The data is already in localStorage as 'currentInvoice'
-  // When we navigate back to GuestInvoice, it will reuse this data
-  // but we'll update the timestamp to ensure it's the latest version
-  const currentData = JSON.parse(localStorage.getItem('currentInvoice'));
-  currentData._lastEdited = new Date().getTime();
-  localStorage.setItem('currentInvoice', JSON.stringify(currentData));
+  // Check if the currentInvoice data exists in localStorage
+  const storedInvoice = localStorage.getItem('currentInvoice');
   
-  // Navigate back to edit form
-  router.push('/invoice/guest');
+  if (storedInvoice) {
+    try {
+      // Parse the current data and update the timestamp
+      const currentData = JSON.parse(storedInvoice);
+      currentData._lastEdited = new Date().getTime();
+      
+      // Save the selected theme preference
+      currentData._theme = selectedTheme.value;
+      
+      // Save it back to localStorage
+      localStorage.setItem('currentInvoice', JSON.stringify(currentData));
+      
+      // Track edit event
+      invoiceEvents.update(currentData.title || 'Untitled Invoice');
+      
+      // Navigate back to edit form
+      router.push('/invoice/guest');
+    } catch (error) {
+      console.error('Error processing invoice data:', error);
+      alert('Terjadi kesalahan saat kembali ke halaman edit. Mencoba kembali...');
+      router.push('/invoice/guest');
+    }
+  } else {
+    // If no invoice data exists, just navigate back
+    console.warn('No invoice data found in localStorage, redirecting to empty form');
+    router.push('/invoice/guest');
+  }
 }
 </script>
 
 <style scoped>
-/* Add any preview-specific styles here */
+/* Theme transition effects */
+.container, .bg-white, .border, .text-gray-500, .text-gray-400, .text-gray-600, .border-gray-200, .bg-gray-50 {
+  transition: all 0.3s ease-in-out;
+}
 </style> 
