@@ -177,22 +177,22 @@
               'text-gray-600': selectedTheme === 'classic',
               'text-blue-700': selectedTheme === 'modern',
               'text-gray-300': selectedTheme === 'elegant'
-            }" class="mb-2">{{ invoice.from.address }}</div>
+            }" class="mb-2 text-base">{{ invoice.from.address }}</div>
             <div class="flex items-center mb-1">
               <span :class="{
                 'text-gray-400': selectedTheme === 'classic',
                 'text-blue-500': selectedTheme === 'modern',
                 'text-gray-400': selectedTheme === 'elegant'
-              }" class="w-16">Email:</span>
-              <span>{{ invoice.from.email }}</span>
+              }" class="w-16 text-sm">Email:</span>
+              <span class="text-base">{{ invoice.from.email }}</span>
             </div>
             <div class="flex items-center">
               <span :class="{
                 'text-gray-400': selectedTheme === 'classic',
                 'text-blue-500': selectedTheme === 'modern',
                 'text-gray-400': selectedTheme === 'elegant'
-              }" class="w-16">Telepon:</span>
-              <span>{{ invoice.from.phone }}</span>
+              }" class="w-16 text-sm">Telepon:</span>
+              <span class="text-base">{{ invoice.from.phone }}</span>
             </div>
           </div>
           
@@ -211,22 +211,22 @@
               'text-gray-600': selectedTheme === 'classic',
               'text-blue-700': selectedTheme === 'modern',
               'text-gray-300': selectedTheme === 'elegant'
-            }" class="mb-2">{{ invoice.to.address }}</div>
+            }" class="mb-2 text-base">{{ invoice.to.address }}</div>
             <div class="flex items-center mb-1">
               <span :class="{
                 'text-gray-400': selectedTheme === 'classic',
                 'text-blue-500': selectedTheme === 'modern',
                 'text-gray-400': selectedTheme === 'elegant'
-              }" class="w-16">Email:</span>
-              <span>{{ invoice.to.email }}</span>
+              }" class="w-16 text-sm">Email:</span>
+              <span class="text-base">{{ invoice.to.email }}</span>
             </div>
             <div class="flex items-center">
               <span :class="{
                 'text-gray-400': selectedTheme === 'classic',
                 'text-blue-500': selectedTheme === 'modern',
                 'text-gray-400': selectedTheme === 'elegant'
-              }" class="w-16">Telepon:</span>
-              <span>{{ invoice.to.phone }}</span>
+              }" class="w-16 text-sm">Telepon:</span>
+              <span class="text-base">{{ invoice.to.phone }}</span>
             </div>
           </div>
         </div>
@@ -250,22 +250,22 @@
                     'text-gray-500': selectedTheme === 'classic',
                     'text-blue-700': selectedTheme === 'modern',
                     'text-gray-300': selectedTheme === 'elegant'
-                  }" class="text-left p-3 font-medium">Deskripsi</th>
+                  }" class="text-left p-3 font-medium text-base">Deskripsi</th>
                   <th :class="{
                     'text-gray-500': selectedTheme === 'classic',
                     'text-blue-700': selectedTheme === 'modern',
                     'text-gray-300': selectedTheme === 'elegant'
-                  }" class="text-right p-3 font-medium w-24">Jumlah</th>
+                  }" class="text-right p-3 font-medium w-24 text-base">Jumlah</th>
                   <th :class="{
                     'text-gray-500': selectedTheme === 'classic',
                     'text-blue-700': selectedTheme === 'modern',
                     'text-gray-300': selectedTheme === 'elegant'
-                  }" class="text-right p-3 font-medium w-32">Harga</th>
+                  }" class="text-right p-3 font-medium w-32 text-base">Harga</th>
                   <th :class="{
                     'text-gray-500': selectedTheme === 'classic',
                     'text-blue-700': selectedTheme === 'modern',
                     'text-gray-300': selectedTheme === 'elegant'
-                  }" class="text-right p-3 font-medium w-32">Total</th>
+                  }" class="text-right p-3 font-medium w-32 text-base">Total</th>
                 </tr>
               </thead>
               <tbody>
@@ -274,10 +274,10 @@
                   'border-b border-blue-300': selectedTheme === 'modern',
                   'border-b border-gray-700': selectedTheme === 'elegant'
                 }">
-                  <td class="p-3">{{ item.description }}</td>
-                  <td class="p-3 text-right">{{ item.quantity }}</td>
-                  <td class="p-3 text-right">{{ formatCurrency(item.unitPrice) }}</td>
-                  <td class="p-3 text-right">{{ formatCurrency(item.total) }}</td>
+                  <td class="p-3 text-base">{{ item.description }}</td>
+                  <td class="p-3 text-right text-base">{{ item.quantity }}</td>
+                  <td class="p-3 text-right text-base">{{ formatCurrency(item.unitPrice) }}</td>
+                  <td class="p-3 text-right text-base">{{ formatCurrency(item.total) }}</td>
                 </tr>
               </tbody>
             </table>
@@ -291,16 +291,16 @@
                   'text-gray-600': selectedTheme === 'classic',
                   'text-blue-700': selectedTheme === 'modern',
                   'text-gray-300': selectedTheme === 'elegant'
-                }">Subtotal:</span>
-                <span>{{ formatCurrency(calculateSubtotal()) }}</span>
+                }" class="text-base">Subtotal:</span>
+                <span class="text-base">{{ formatCurrency(calculateSubtotal()) }}</span>
               </div>
               <div class="flex justify-between py-2">
                 <span :class="{
                   'text-gray-600': selectedTheme === 'classic',
                   'text-blue-700': selectedTheme === 'modern',
                   'text-gray-300': selectedTheme === 'elegant'
-                }">Pajak ({{ invoice.taxRate }}%):</span>
-                <span>{{ formatCurrency(calculateTaxAmount()) }}</span>
+                }" class="text-base">Pajak ({{ invoice.taxRate }}%):</span>
+                <span class="text-base">{{ formatCurrency(calculateTaxAmount()) }}</span>
               </div>
               <div :class="{
                 'border-t border-gray-200': selectedTheme === 'classic',
@@ -329,7 +329,146 @@
             'bg-gray-50': selectedTheme === 'classic',
             'bg-blue-100': selectedTheme === 'modern',
             'bg-gray-800': selectedTheme === 'elegant'
-          }" class="p-3 rounded-md">{{ invoice.notes }}</div>
+          }" class="p-3 rounded-md text-base">{{ invoice.notes }}</div>
+        </div>
+
+        <!-- Add watermark footer at the bottom of the invoice -->
+        <div class="watermark-footer">
+          <p 
+            :class="{
+              'text-gray-700': selectedTheme === 'classic',
+              'text-blue-700': selectedTheme === 'modern',
+              'text-gray-300': selectedTheme === 'elegant'
+            }"
+          >
+            Powered by https://faktur.web.id
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Registration Benefits Modal -->
+  <div v-if="showRegisterModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+      <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+      
+      <!-- This element is to trick the browser into centering the modal contents. -->
+      <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+      
+      <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-5xl sm:w-full">
+        <div class="flex flex-col md:flex-row">
+          <!-- Left side (benefits) -->
+          <div class="bg-gray-800 text-white p-6 md:p-8 md:w-1/2">
+            <button @click="showRegisterModal = false" class="absolute top-4 right-4 text-white hover:text-gray-300">
+              <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            
+            <h2 class="text-2xl font-bold mb-4">MAU SIMPAN INVOICE-MU? 🔥</h2>
+            <p class="text-gray-300 mb-6">Bikin invoice ga perlu ribet lagi! Daftar sekarang dan nikmati semua fitur keren ini:</p>
+            
+            <div class="space-y-4">
+              <div class="flex items-start">
+                <svg class="h-6 w-6 mr-3 text-primary flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div>
+                  <h3 class="font-semibold">Invoice Tanpa Watermark</h3>
+                  <p class="text-gray-300 text-sm">Tampilan invoice jadi lebih pro & branded sesuai bisnismu!</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start">
+                <svg class="h-6 w-6 mr-3 text-primary flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <div>
+                  <h3 class="font-semibold">Kelola Klien</h3>
+                  <p class="text-gray-300 text-sm">Simpan data klien sekali, pakai berkali-kali. Praktis, kan?</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start">
+                <svg class="h-6 w-6 mr-3 text-primary flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+                <div>
+                  <h3 class="font-semibold">Bikin Quotation</h3>
+                  <p class="text-gray-300 text-sm">Penawaran harga jadi lebih gampang & langsung bisa jadi invoice!</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start">
+                <svg class="h-6 w-6 mr-3 text-primary flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div>
+                  <h3 class="font-semibold">Tracking Waktu & Biaya</h3>
+                  <p class="text-gray-300 text-sm">Hitung jam kerja & biaya otomatis. Ga perlu Excel lagi!</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start">
+                <svg class="h-6 w-6 mr-3 text-primary flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <div>
+                  <h3 class="font-semibold">Invoice Berulang</h3>
+                  <p class="text-gray-300 text-sm">Set jadwal kirim invoice otomatis. Tinggal duduk manis, duit ngalir!</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start">
+                <svg class="h-6 w-6 mr-3 text-primary flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                </svg>
+                <div>
+                  <h3 class="font-semibold">Terima Pembayaran Online</h3>
+                  <p class="text-gray-300 text-sm">Integrasi dengan payment gateway. Duit cair lebih cepat!</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mt-8">
+              <router-link 
+                to="/register" 
+                class="w-full inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+              >
+                DAFTAR SEKARANG
+              </router-link>
+              <p class="text-center mt-2 text-sm italic text-gray-300">Gratis kok, ga pake tipu-tipu! 😉</p>
+            </div>
+          </div>
+          
+          <!-- Right side (PDF download) -->
+          <div class="p-6 md:p-8 md:w-1/2 flex flex-col items-center justify-center">
+            <div class="text-center mb-8">
+              <h3 class="text-2xl font-light text-gray-400">Download</h3>
+              <h2 class="text-4xl font-light text-gray-400 mb-4">invoice di sini</h2>
+              
+              <svg class="h-16 w-16 mx-auto text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+              </svg>
+            </div>
+            
+            <button 
+              @click="processDownload"
+              class="w-full mb-4 py-3 px-6 bg-gray-200 text-gray-800 font-medium rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+              :disabled="isGenerating"
+            >
+              <span v-if="isGenerating">
+                <svg class="animate-spin -ml-1 mr-2 h-5 w-5 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                LAGI PROSES...
+              </span>
+              <span v-else>DOWNLOAD INVOICE PDF</span>
+            </button>
+            <p class="text-center text-sm text-gray-500">Bisa download dulu, tapi coba deh daftar juga, nanti jadi lebih gampang!</p>
+          </div>
         </div>
       </div>
     </div>
@@ -347,6 +486,7 @@ const router = useRouter();
 const invoicePrintRef = ref(null);
 const isGenerating = ref(false);
 const selectedTheme = ref('classic'); // Default theme
+const showRegisterModal = ref(false);
 
 // Initialize with empty invoice
 const invoice = ref({
@@ -423,15 +563,27 @@ function formatDate(dateString) {
 }
 
 function downloadPDF() {
+  // Show the registration modal instead of immediately downloading
+  showRegisterModal.value = true;
+  
+  // Track the modal view
+  invoiceEvents.view('registration_modal', {
+    source: 'invoice_preview',
+    invoice_title: invoice.value.title || 'Untitled Invoice'
+  });
+}
+
+function processDownload() {
   if (!invoicePrintRef.value) return;
   
   isGenerating.value = true;
+  showRegisterModal.value = false; // Close the modal
 
   // Track the download event using the utility
   invoiceEvents.download(invoice.value.title, calculateTotal());
 
   const options = {
-    margin: 10,
+    margin: [10, 10, 15, 10], // top, right, bottom, left - increased bottom margin to accommodate watermark
     filename: `faktur-${invoice.value.title.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.pdf`,
     image: { 
       type: 'jpeg', 
@@ -441,22 +593,30 @@ function downloadPDF() {
       scale: 2,
       useCORS: true,
       allowTaint: true,
-      logging: true
+      logging: true,
+      letterRendering: true,
+      scrollY: 0
     },
     jsPDF: { 
       unit: 'mm', 
       format: 'a4', 
-      orientation: 'portrait'
+      orientation: 'portrait',
+      compress: true
     }
   };
 
+  // Small delay to ensure all elements are properly rendered
   setTimeout(() => {
+    // Add a temporary class to the body for better print handling
+    document.body.classList.add('generating-pdf');
+    
     html2pdf()
       .from(invoicePrintRef.value)
       .set(options)
       .save()
       .then(() => {
         isGenerating.value = false;
+        document.body.classList.remove('generating-pdf');
         
         // Remove the currentInvoice data from localStorage after successful download
         localStorage.removeItem('currentInvoice');
@@ -468,6 +628,7 @@ function downloadPDF() {
       .catch(error => {
         console.error('Error generating PDF:', error);
         isGenerating.value = false;
+        document.body.classList.remove('generating-pdf');
         alert('Error generating PDF. Please try again.');
       });
   }, 500);
@@ -511,5 +672,78 @@ function backToEdit() {
 /* Theme transition effects */
 .container, .bg-white, .border, .text-gray-500, .text-gray-400, .text-gray-600, .border-gray-200, .bg-gray-50 {
   transition: all 0.3s ease-in-out;
+}
+
+/* Watermark footer styling */
+.watermark-footer {
+  margin-top: 50px;
+  padding-top: 15px;
+  text-align: center;
+  position: relative;
+  clear: both;
+}
+
+.watermark-footer p {
+  font-size: 8px;
+  opacity: 0.5;
+  letter-spacing: 0.5px;
+  font-family: 'Arial', sans-serif;
+}
+
+@media print {
+  .watermark-footer {
+    position: fixed;
+    bottom: 5mm;
+    left: 0;
+    right: 0;
+    text-align: center;
+    z-index: 999;
+    margin-top: 0;
+    padding-top: 0;
+  }
+  
+  /* Make sure base fonts are not too small in the invoice */
+  p, span, div {
+    font-size: 11pt !important;
+  }
+  
+  /* Header size for better readability */
+  h3 {
+    font-size: 12pt !important;
+  }
+  
+  /* Ensure table content is readable */
+  table td, table th {
+    font-size: 10pt !important;
+    padding: 4mm !important;
+  }
+}
+
+/* PDF generation specific styles */
+:global(.generating-pdf) {
+  height: auto !important;
+  overflow: visible !important;
+}
+
+:global(.generating-pdf *) {
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+:global(.generating-pdf) .watermark-footer p {
+  font-size: 8px !important;
+  opacity: 0.5 !important;
+}
+
+/* Adjust general text sizing to prevent small text */
+.text-sm {
+  font-size: 0.875rem !important;
+  line-height: 1.25rem !important;
+}
+
+/* Ensure From/To section text is readable */
+.from-details div, .to-details div,
+.from-details span, .to-details span {
+  font-size: 0.875rem !important;
 }
 </style> 
