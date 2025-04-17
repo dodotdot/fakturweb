@@ -1,17 +1,17 @@
 <template>
   <div class="min-h-screen py-12">
     <div class="container mx-auto max-w-4xl">
-      <div class="bg-white shadow-lg p-8 rounded-lg border border-gray-200 transform transition-all duration-300 hover:shadow-xl" ref="invoicePrintRef">
+      <div class="bg-white shadow-lg p-8 rounded-lg border border-gray-200 transform transition-all duration-300 hover:shadow-xl">
         <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 class="text-2xl font-bold text-gray-900 py-8">
+            <h1 class="text-2xl font-bold text-gray-900 py-8 no-print">
               Invoice Details
             </h1>
-            <p class="text-gray-500">
+            <p class="text-gray-500 no-print">
               View and download your invoice
             </p>
           </div>
-          <div class="flex gap-3">
+          <div class="flex gap-3 no-print">
             <router-link 
               :to="`/invoice/${invoiceId}/edit`" 
               class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50"
@@ -20,18 +20,19 @@
             </router-link>
             <button 
               @click="downloadPDF"
-              class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90"
+              class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 disabled:opacity-70"
+              :disabled="isPrinting"
             >
-              Download PDF
+              {{ isPrinting ? 'Generating PDF...' : 'Download PDF' }}
             </button>
           </div>
         </div>
         
-        <div v-if="error" class="my-4 p-4 bg-red-50 text-red-500 rounded-md">
+        <div v-if="error" class="my-4 p-4 bg-red-50 text-red-500 rounded-md no-print">
           {{ error }}
         </div>
         
-        <div v-if="isLoading" class="flex justify-center my-8">
+        <div v-if="isLoading" class="flex justify-center my-8 no-print">
           <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
         </div>
         
@@ -294,46 +295,114 @@ async function removeLogo() {
   }
 }
 
-function downloadPDF() {
-  if (!invoicePrintRef.value) return;
-  
+const downloadPDF = async () => {
+  if (!invoice.value || !invoicePrintRef.value) {
+    alert('Invoice content is not ready. Please try again.');
+    return;
+  }
+
   isPrinting.value = true;
 
-  // Configure html2pdf options
-  const options = {
-    margin: 10,
-    filename: `invoice-${invoice.value.title.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.pdf`,
-    image: { 
-      type: 'jpeg', 
-      quality: 0.98 
-    },
-    html2canvas: { 
-      scale: 2,
-      useCORS: true,
-      allowTaint: true,
-      logging: true
-    },
-    jsPDF: { 
-      unit: 'mm', 
-      format: 'a4', 
-      orientation: 'portrait'
-    }
-  };
+  try {
+    // Create a temporary wrapper
+    const printWrapper = document.createElement('div');
+    printWrapper.className = 'pdf-content-wrapper';
+    document.body.appendChild(printWrapper);
+    
+    // Clone the invoice content
+    const contentClone = invoicePrintRef.value.cloneNode(true);
+    
+    // Remove any no-print elements from the clone
+    const noPrintElements = contentClone.querySelectorAll('.no-print');
+    noPrintElements.forEach(el => el.remove());
+    
+    // Add the cloned content to the wrapper
+    printWrapper.appendChild(contentClone);
+    
+    // Configure html2pdf options
+    const options = {
+      margin: 10,
+      filename: `invoice-${invoice.value.title.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.pdf`,
+      image: { 
+        type: 'jpeg', 
+        quality: 0.98 
+      },
+      html2canvas: { 
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        logging: true, // Enable logging for debugging
+      },
+      jsPDF: { 
+        unit: 'mm', 
+        format: 'a4', 
+        orientation: 'portrait'
+      }
+    };
 
-  // Wait for a brief moment to ensure all content is rendered
-  setTimeout(() => {
-    html2pdf()
-      .from(invoicePrintRef.value)
+    // Generate PDF from the clone
+    await html2pdf()
+      .from(printWrapper)
       .set(options)
-      .save()
-      .then(() => {
-        isPrinting.value = false;
-      })
-      .catch(error => {
-        console.error('Error generating PDF:', error);
-        isPrinting.value = false;
-        alert('Error generating PDF. Please try again.');
-      });
-  }, 500);
+      .save();
+    
+    // Clean up
+    document.body.removeChild(printWrapper);
+    
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+    alert('Error generating PDF. Please try again.');
+  } finally {
+    isPrinting.value = false;
+  }
+};
+</script>
+
+<style scoped>
+@media print {
+  .no-print {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    position: absolute !important;
+    pointer-events: none !important;
+  }
+  
+  /* Ensure proper page breaks and background colors */
+  @page {
+    size: A4;
+    margin: 0;
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: white !important;
+  }
+  
+  /* Force background colors to show in PDF */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
 }
-</script> 
+
+/* Class added to the PDF wrapper element */
+:global(.pdf-content-wrapper) {
+  background-color: white !important;
+  color: black !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+/* Ensure SVG and images are properly rendered */
+img, svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Make sure table cells have consistent widths in PDF */
+table {
+  table-layout: fixed;
+  width: 100%;
+}
+</style> 

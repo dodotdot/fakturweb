@@ -3,7 +3,7 @@
     <div class="mb-8">
       <h1 class="text-3xl font-bold text-gray-900 py-8">Dashboard</h1>
       <p class="text-gray-500">Welcome back, {{ userName }}</p>
-    </div>
+    </div>  
     
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
       <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
@@ -54,7 +54,7 @@
     <div class="mb-6 flex justify-between items-center">
       <h2 class="text-xl font-semibold text-gray-900">Recent Invoices</h2>
       <router-link 
-        to="/invoices" 
+        to="/invoice" 
         class="text-primary hover:underline flex items-center"
       >
         View All 

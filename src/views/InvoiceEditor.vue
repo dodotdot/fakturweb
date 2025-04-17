@@ -264,7 +264,7 @@
         </div>
 
         <!-- Action Buttons -->
-        <div class="mt-8 flex justify-end gap-3">
+        <div class="mt-8 flex justify-end gap-3 no-print">
           <Button 
             variant="outline" 
             @click="goBack"
@@ -413,7 +413,17 @@ function downloadPDF() {
   // Create a temporary wrapper div
   const printWrapper = document.createElement('div');
   printWrapper.className = 'print-wrapper';
-  printWrapper.appendChild(document.querySelector('.bg-white.rounded-lg').cloneNode(true));
+  
+  // Clone the invoice content
+  const invoiceContent = document.querySelector('.bg-white.rounded-lg').cloneNode(true);
+  
+  // Remove action buttons from the cloned content before generating PDF
+  const actionButtons = invoiceContent.querySelector('.mt-8.flex.justify-end.gap-3');
+  if (actionButtons) {
+    actionButtons.remove();
+  }
+  
+  printWrapper.appendChild(invoiceContent);
   document.body.appendChild(printWrapper);
   
   // Configure html2pdf
@@ -441,7 +451,10 @@ async function saveInvoice() {
     }
     
     if (isEditMode.value) {
-      await invoiceStore.updateInvoice(invoiceId.value);
+      // Pass the entire invoice object instead of just the ID
+      // Make sure the current invoice has the ID set
+      const currentInvoice = { ...invoice.value, id: invoiceId.value };
+      await invoiceStore.updateInvoice(currentInvoice);
       router.push(`/invoice/${invoiceId.value}`);
     } else {
       const newInvoiceId = await invoiceStore.saveInvoice();
@@ -543,5 +556,11 @@ async function removeLogo() {
   content: attr(placeholder);
   color: #aaa;
   cursor: text;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
 }
 </style> 
