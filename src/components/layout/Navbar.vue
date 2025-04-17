@@ -1,8 +1,21 @@
 <template>
-  <nav class="bg-white shadow-sm fixed w-full z-10">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between h-16">
+  <nav class="bg-white shadow-sm border-b border-gray-200 h-16 w-full">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
+      <div class="flex justify-between items-center h-full">
         <div class="flex items-center">
+          <!-- Toggle sidebar button (only for mobile devices) -->
+          <button 
+            v-if="isAuthenticated" 
+            @click="$emit('toggle-sidebar')" 
+            class="p-1.5 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 mr-3 -ml-1.5 md:hidden"
+          >
+            <span class="sr-only">Toggle sidebar</span>
+            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          
+          <!-- Logo -->
           <RouterLink to="/" class="flex items-center">
             <img class="h-8 w-auto" src="/images/faktur-logo.svg" alt="faktur.web.id">
           </RouterLink>
@@ -12,31 +25,37 @@
           <template v-if="!isAuthenticated">
             <RouterLink 
               to="/login" 
-              class="text-sm font-medium text-gray-700 hover:text-primary px-3 py-2 rounded-md"
+              class="text-sm font-medium text-gray-700 hover:text-primary-500 px-3 py-2 rounded-md transition-colors"
             >
               Login
             </RouterLink>
             <RouterLink 
               to="/register" 
-              class="text-sm font-medium text-white bg-primary hover:bg-primary-dark px-4 py-2 rounded-md ml-2"
+              class="text-sm font-medium text-white bg-primary-500 hover:bg-primary-600 px-4 py-2 rounded-md ml-2 transition-colors"
             >
               Sign Up
             </RouterLink>
           </template>
           
-          <!-- Show user email and logout for authenticated users -->
+          <!-- Show user profile for authenticated users -->
           <template v-else>
-            <RouterLink to="/profile" class="text-sm text-gray-500 mr-4">
-              <div class="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold">
+            <!-- Create invoice button -->
+            <RouterLink 
+              to="/invoice/new" 
+              class="mr-4 hidden md:flex items-center text-sm font-medium text-white bg-primary-500 hover:bg-primary-600 px-3 py-2 rounded-md transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+              New Invoice
+            </RouterLink>
+            
+            <!-- User profile dropdown (simplified for now) -->
+            <RouterLink to="/profile" class="text-sm text-gray-500 mr-2">
+              <div class="h-10 w-10 rounded-full bg-primary-50 flex items-center justify-center text-primary-600 font-semibold border border-primary-100">
                 {{ user?.email?.substring(0, 2).toUpperCase() }}
               </div>
             </RouterLink>
-            <button 
-              @click="handleLogout" 
-              class="text-sm text-gray-500 hover:text-gray-700"
-            >
-              Logout
-            </button>
           </template>
         </div>
       </div>
@@ -54,19 +73,22 @@ const authStore = useAuthStore();
 const user = computed(() => authStore.user);
 const isAuthenticated = computed(() => authStore.isAuthenticated);
 
-async function handleLogout() {
-  try {
-    await authStore.logout();
-    router.push('/login');
-  } catch (error) {
-    console.error('Logout error:', error);
+defineProps({
+  isSidebarOpen: {
+    type: Boolean,
+    default: false
   }
-}
+});
+
+defineEmits(['toggle-sidebar']);
 </script>
 
 <style scoped>
 nav {
-  height: 64px;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
 }
 </style> 

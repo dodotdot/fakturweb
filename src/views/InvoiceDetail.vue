@@ -13,7 +13,7 @@
           </div>
           <div class="flex gap-3">
             <router-link 
-              :to="`/invoices/${invoiceId}/edit`" 
+              :to="`/invoice/${invoiceId}/edit`" 
               class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50"
             >
               Edit

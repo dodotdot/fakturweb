@@ -101,7 +101,7 @@
               <div class="text-sm text-gray-900">{{ formatDate(invoice.date) }}</div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-              <router-link :to="`/invoices/${invoice.id}`" class="text-primary hover:text-primary/80">
+              <router-link :to="`/invoice/${invoice.id}`" class="text-primary hover:text-primary/80">
                 View
               </router-link>
             </td>
@@ -112,7 +112,7 @@
             <td colspan="5" class="px-6 py-10 text-center text-gray-500">
               <p class="mb-4">No invoices found</p>
               <router-link 
-                to="/invoices/new" 
+                to="/invoice/new" 
                 class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90"
               >
                 Create Your First Invoice

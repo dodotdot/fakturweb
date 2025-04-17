@@ -442,14 +442,14 @@ async function saveInvoice() {
     
     if (isEditMode.value) {
       await invoiceStore.updateInvoice(invoiceId.value);
-      router.push(`/invoices/${invoiceId.value}`);
+      router.push(`/invoice/${invoiceId.value}`);
     } else {
       const newInvoiceId = await invoiceStore.saveInvoice();
       if (newInvoiceId === 'guest-mode') {
         // If in guest mode, don't redirect
         alert('Faktur telah dibuat. Anda dapat mengunduhnya sebagai PDF.');
       } else {
-        router.push(`/invoices/${newInvoiceId}`);
+        router.push(`/invoice/${newInvoiceId}`);
       }
     }
   } catch (err) {
@@ -459,7 +459,7 @@ async function saveInvoice() {
 
 function goBack() {
   if (isEditMode.value) {
-    router.push(`/invoices/${invoiceId.value}`);
+    router.push(`/invoice/${invoiceId.value}`);
   } else {
     router.push('/invoices');
   }

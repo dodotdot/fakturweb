@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, computed } from 'vue';
+import { ref, watch, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAuthStore } from './stores/auth';
 import SeoHead from './components/SeoHead.vue';
@@ -18,6 +18,20 @@ const pageKeywords = computed(() => route.meta.keywords || 'faktur online, invoi
 const pageImage = computed(() => route.meta.image || '/images/og-image.png');
 const pageType = computed(() => route.meta.type || 'website');
 
+// Determine if the current route requires authentication
+const isAuthPage = computed(() => route.meta.requiresAuth);
+
+// Initialize sidebar state from localStorage on component mount
+onMounted(() => {
+  const savedState = localStorage.getItem('sidebarOpen');
+  if (savedState !== null) {
+    isSidebarOpen.value = savedState === 'true';
+  } else {
+    // Default to open on desktop, closed on mobile
+    isSidebarOpen.value = window.innerWidth >= 768;
+  }
+});
+
 // Close sidebar when route changes on mobile devices
 watch(() => route.path, () => {
   if (window.innerWidth < 768) {
@@ -28,6 +42,8 @@ watch(() => route.path, () => {
 // Toggle sidebar
 function toggleSidebar() {
   isSidebarOpen.value = !isSidebarOpen.value;
+  // Save preference to localStorage
+  localStorage.setItem('sidebarOpen', isSidebarOpen.value);
 }
 
 // Close sidebar
@@ -39,20 +55,25 @@ function closeSidebar() {
 
 // Compute whether we can show the navbar based on the route
 const canShowNavbar = computed(() => {
-  return !route.meta.hideNavbar
-})
+  return !route.meta.hideNavbar;
+});
+
+// Compute whether we should show the sidebar
+const showSidebar = computed(() => {
+  return authStore.isAuthenticated && !route.meta.noSidebar;
+});
 
 // Add class to disable prints for the sidebar
-const printStyles = document.createElement('style')
+const printStyles = document.createElement('style');
 printStyles.textContent = `
   @media print {
     .app-container { display: block !important; }
     nav, aside, footer, .no-print { display: none !important; }
-    main { margin-left: 0 !important; width: 100% !important; }
+    main { margin-left: 0 !important; width: 100% !important; padding: 0 !important; }
     body { background: white !important; }
   }
-`
-document.head.appendChild(printStyles)
+`;
+document.head.appendChild(printStyles);
 </script>
 
 <template>
@@ -65,28 +86,58 @@ document.head.appendChild(printStyles)
     :type="pageType"
   />
 
-  <div class="print:hidden flex min-h-screen bg-gray-50">
-    <!-- Sidebar -->
-    <Sidebar 
-      v-if="authStore.isAuthenticated && !route.meta.noSidebar" 
-      :is-expanded="isSidebarOpen" 
-      @toggle="toggleSidebar"
-      class="print:hidden" 
-    />
-
-    <!-- Main Content -->
-    <div class="flex flex-1 relative print:block" 
-      :class="{
-        'md:ml-20': authStore.isAuthenticated && !isSidebarOpen && !route.meta.noSidebar,
-        'md:ml-64': authStore.isAuthenticated && isSidebarOpen && !route.meta.noSidebar,
-      }">
-      <!-- Navbar -->
-      <Navbar v-if="!route.meta.hideNavbar" 
-        @toggle-sidebar="toggleSidebar"
-        :is-sidebar-open="isSidebarOpen"
+  <!-- App Layout Container -->
+  <div class="app-container min-h-screen bg-gray-50 print:bg-white">
+    <!-- Authenticated Layout with Sidebar -->
+    <div v-if="showSidebar" class="flex h-screen print:hidden">
+      <!-- Sidebar -->
+      <Sidebar 
+        :is-expanded="isSidebarOpen" 
+        @toggle="toggleSidebar"
+        class="fixed inset-y-0 left-0 print:hidden z-20"
+        :class="{
+          'w-64': isSidebarOpen,
+          'w-20': !isSidebarOpen,
+          'transform -translate-x-full md:translate-x-0': !isSidebarOpen,
+          'transform translate-x-0': isSidebarOpen
+        }"
       />
-      <!-- Page content -->
-      <main class="flex-1 transition-all duration-300 p-4 md:p-6 overflow-x-hidden">
+      
+      <!-- Mobile overlay -->
+      <div 
+        v-if="isSidebarOpen" 
+        class="md:hidden fixed inset-0 bg-gray-600 bg-opacity-50 z-10 transition-opacity duration-300"
+        @click="closeSidebar"
+      ></div>
+
+      <!-- Main Content Area -->
+      <div class="flex-1 flex flex-col transition-all duration-300 ease-in-out"
+        :class="{
+          'md:ml-64': isSidebarOpen,
+          'md:ml-20': !isSidebarOpen,
+        }">
+        <!-- Navbar -->
+        <Navbar 
+          v-if="canShowNavbar" 
+          class="sticky top-0 z-10 print:hidden"
+          @toggle-sidebar="toggleSidebar"
+          :is-sidebar-open="isSidebarOpen"
+        />
+        
+        <!-- Main Content -->
+        <main class="flex-1 p-4 md:p-6 mt-16 overflow-auto">
+          <router-view></router-view>
+        </main>
+      </div>
+    </div>
+
+    <!-- Non-Authenticated Layout or NoSidebar Layout -->
+    <div v-else class="flex flex-col min-h-screen">
+      <!-- Navbar (if not hidden) -->
+      <Navbar v-if="canShowNavbar" class="sticky top-0 z-10 print:hidden" />
+      
+      <!-- Content -->
+      <main class="flex-1 pt-16">
         <router-view></router-view>
       </main>
     </div>
@@ -106,9 +157,10 @@ body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: #333;
   line-height: 1.6;
-  background-color: white;
+  background-color: #f9fafb; /* gray-50 */
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
 }
 
 .container {
@@ -131,46 +183,40 @@ body {
 }
 
 /* App layout */
-.app {
+.app-container {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
 /* Sidebar styles */
-.sidebar {
-  width: 250px;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  position: fixed;
-  top: 64px; /* Height of navbar */
-  left: 0;
-  bottom: 0;
-  z-index: 10;
+aside {
+  height: 100%;
+  transition: all 0.3s ease-in-out;
   background-color: white;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-}
-
-.sidebar.collapsed {
-  width: 64px;
 }
 
 /* Main content area */
 main {
   flex: 1;
-  padding: 1rem;
-  transition: margin-left 0.3s ease;
-  min-height: calc(100vh - 64px);
+  transition: margin-left 0.3s ease-in-out;
   width: 100%;
 }
 
-/* When sidebar is closed on mobile */
-@media (max-width: 767px) {
-  .sidebar:not(.open) {
-    width: 0;
-  }
+/* Adding a mobile overlay when sidebar is open */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 15;
+  transition: opacity 0.3s ease;
 }
 
+/* Animation for transitions */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;
@@ -192,6 +238,7 @@ main {
     padding: 0;
   }
   
+  .print\:hidden,
   .no-print {
     display: none !important;
     visibility: hidden !important;
