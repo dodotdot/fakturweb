@@ -1,5 +1,11 @@
 <template>
   <div class="container mx-auto px-4 py-8">
+      <!-- Breadcrumb -->
+      <Breadcrumb :breadcrumbItems="[
+        { text: 'Dashboard', to: '/dashboard' },
+        { text: 'Profile' }
+      ]" class="mb-4" />
+      
       <h1 class="text-2xl font-bold mb-6 text-gray-800 dark:text-white">Profile</h1>
       
       <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
@@ -240,6 +246,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
+import Breadcrumb from '../components/ui/Breadcrumb.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();

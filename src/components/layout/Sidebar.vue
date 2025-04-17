@@ -17,32 +17,14 @@
     <div class="px-2 py-3 border-b border-gray-100 flex justify-center">
       <button 
         @click="$emit('toggle')" 
-        class="p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 w-full flex items-center transition-colors"
-        :class="isExpanded ? 'justify-between bg-gray-50 text-gray-700' : 'justify-center bg-gray-50 text-gray-700'"
+        class="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 w-full flex items-center transition-colors"
+        :class="isExpanded ? 'justify-between text-gray-700' : 'justify-center text-gray-700'"
         :title="isExpanded ? 'Collapse menu' : 'Expand menu'"
       >
-        <span v-if="isExpanded" class="text-sm font-medium">Collapse Menu</span>
+        <span v-if="isExpanded" class="text-sm font-medium">Menu</span>
         <span v-else class="sr-only">Expand Menu</span>
-        <svg 
-          v-if="isExpanded"
-          class="h-5 w-5 text-gray-500" 
-          xmlns="http://www.w3.org/2000/svg" 
-          fill="none" 
-          viewBox="0 0 24 24" 
-          stroke="currentColor"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
-        </svg>
-        <svg 
-          v-else
-          class="h-5 w-5 text-gray-500" 
-          xmlns="http://www.w3.org/2000/svg" 
-          fill="none" 
-          viewBox="0 0 24 24" 
-          stroke="currentColor"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
-        </svg>
+        <span class="text-xl" v-if="isExpanded"> <svg class="h-5 w-5 text-gray-500" width="64px" height="64px" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M31.8839 8.36612C32.372 8.85427 32.372 9.64573 31.8839 10.1339L18.0178 24L31.8839 37.8661C32.372 38.3543 32.372 39.1457 31.8839 39.6339C31.3957 40.122 30.6043 40.122 30.1161 39.6339L15.3661 24.8839C14.878 24.3957 14.878 23.6043 15.3661 23.1161L30.1161 8.36612C30.6043 7.87796 31.3957 7.87796 31.8839 8.36612Z" fill="#212121"></path> </g></svg> </span>
+        <span class="text-xl" v-else><svg class="h-5 w-5 text-gray-500" width="64px" height="64px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M9 6L15 12L9 18" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg></span>
       </button>
     </div>
 
@@ -59,16 +41,7 @@
             ]"
             @click="$emit('close')"
           >
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              class="h-5 w-5" 
-              :class="{ 'mr-3': isExpanded }" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-            </svg>
+            <span class="text-xl" :class="{ 'mr-3': isExpanded }">🏠</span>
             <span v-if="isExpanded">Dashboard</span>
           </router-link>
         </li>
@@ -82,16 +55,7 @@
             ]"
             @click="$emit('close')"
           >
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              class="h-5 w-5" 
-              :class="{ 'mr-3': isExpanded }" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
+            <span class="text-xl" :class="{ 'mr-3': isExpanded }">📄</span>
             <span v-if="isExpanded">Invoices</span>
           </router-link>
         </li>
@@ -105,16 +69,7 @@
             ]"
             @click="$emit('close')"
           >
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              class="h-5 w-5" 
-              :class="{ 'mr-3': isExpanded }" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
+            <span class="text-xl" :class="{ 'mr-3': isExpanded }">👤</span>
             <span v-if="isExpanded">Profile</span>
           </router-link>
         </li>
@@ -128,17 +83,7 @@
             ]"
             @click="$emit('close')"
           >
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              class="h-5 w-5" 
-              :class="{ 'mr-3': isExpanded }" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
+            <span class="text-xl" :class="{ 'mr-3': isExpanded }">⚙️</span>
             <span v-if="isExpanded">Settings</span>
           </router-link>
         </li>
@@ -152,16 +97,7 @@
         class="flex items-center py-2 rounded-md text-red-600 hover:bg-red-50 transition-colors w-full"
         :class="isExpanded ? 'px-4 justify-start' : 'px-2 justify-center'"
       >
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          class="h-5 w-5" 
-          :class="{ 'mr-3': isExpanded }" 
-          fill="none" 
-          viewBox="0 0 24 24" 
-          stroke="currentColor"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-        </svg>
+        <span class="text-xl" :class="{ 'mr-3': isExpanded }">🚪</span>
         <span v-if="isExpanded">Logout</span>
       </button>
     </div>

@@ -25,7 +25,8 @@ const routes = [
       title: 'Faktur.web.id - Solusi Faktur Online Terbaik untuk UMKM Indonesia',
       description: 'Buat faktur profesional dengan mudah menggunakan faktur.web.id. Platform faktur online terbaik untuk UMKM Indonesia.',
       keywords: 'faktur online, invoice generator, buat faktur, faktur gratis, aplikasi faktur, faktur umkm, faktur pajak, invoice umkm, indonesia',
-      requiresAuth: false
+      requiresAuth: false,
+      noSidebar: true
     }
   },
   {
@@ -36,7 +37,8 @@ const routes = [
       title: 'Login - Akses Akun Faktur Online Anda',
       description: 'Login ke akun faktur.web.id Anda untuk membuat dan mengelola faktur online bisnis Anda.',
       keywords: 'login faktur online, masuk akun faktur, akses faktur, faktur umkm login',
-      requiresAuth: false
+      requiresAuth: false,
+      noSidebar: true
     }
   },
   {
@@ -47,7 +49,8 @@ const routes = [
       title: 'Register - Buat Akun Faktur Online Baru',
       description: 'Daftar dan buat akun faktur online gratis untuk bisnis Anda sekarang di faktur.web.id.',
       keywords: 'daftar faktur online, buat akun faktur, register faktur gratis, akun faktur bisnis',
-      requiresAuth: false
+      requiresAuth: false,
+      noSidebar: true
     }
   },
   {

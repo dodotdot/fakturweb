@@ -60,7 +60,7 @@
           @click="handleGoogleSignIn" 
           :loading="isGoogleLoading" 
           type="button" 
-          class="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
+          class="w-full flex items-center justify-center gap-2 bg-white border text-black border-gray-300 dark:border-gray-600  hover:bg-gray-50 dark:hover:bg-gray-700"
         >
           <svg class="w-5 h-5" viewBox="0 0 24 24">
             <path

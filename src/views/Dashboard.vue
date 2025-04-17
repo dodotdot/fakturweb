@@ -1,7 +1,7 @@
 <template>
   <div class="container mx-auto py-8 px-4">
     <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 py-8">Dashboard</h1>
+      <h1 class="text-3xl font-bold text-gray-900 pb-2">Dashboard</h1>
       <p class="text-gray-500">Welcome back, {{ userName }}</p>
     </div>  
     

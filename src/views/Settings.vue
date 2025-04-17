@@ -1,5 +1,11 @@
 <template>
   <div class="container mx-auto px-4 py-8">
+      <!-- Breadcrumb -->
+      <Breadcrumb :breadcrumbItems="[
+        { text: 'Dashboard', to: '/dashboard' },
+        { text: 'Settings' }
+      ]" class="mb-4" />
+  
       <h1 class="text-2xl font-bold mb-6 text-gray-800 dark:text-white">Settings</h1>
       
       <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
@@ -121,6 +127,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useAuthStore } from '../stores/auth';
+import Breadcrumb from '../components/ui/Breadcrumb.vue';
 
 const authStore = useAuthStore();
 const isLoading = ref(false);

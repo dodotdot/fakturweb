@@ -1,6 +1,13 @@
 <template>
-  <div class="min-h-screen py-12">
+  <div class="min-h-screen">
     <div class="container mx-auto max-w-4xl">
+      <!-- Breadcrumb -->
+      <Breadcrumb :breadcrumbItems="[
+        { text: 'Dashboard', to: '/dashboard' },
+        { text: 'Invoices', to: '/invoice' },
+        { text: isEditMode ? `Edit ${invoice.title}` : 'Create New Invoice' }
+      ]" class="mb-4" />
+      
       <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 class="text-2xl font-bold text-gray-900">
@@ -298,6 +305,7 @@ import { useAuthStore } from '../stores/auth';
 import Button from '../components/ui/Button.vue';
 import html2pdf from 'html2pdf.js';
 import { uploadLogo, deleteLogo } from '../lib/supabase';
+import Breadcrumb from '../components/ui/Breadcrumb.vue';
 
 const router = useRouter();
 const route = useRoute();

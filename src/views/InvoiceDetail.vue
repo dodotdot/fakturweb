@@ -1,6 +1,13 @@
 <template>
-  <div class="min-h-screen py-12">
+  <div class="min-h-screen">
     <div class="container mx-auto max-w-4xl">
+      <!-- Breadcrumb -->
+      <Breadcrumb :breadcrumbItems="[
+        { text: 'Dashboard', to: '/dashboard' },
+        { text: 'Invoices', to: '/invoice' },
+        { text: invoice?.title || 'Invoice Details' }
+      ]" class="mb-4" />
+      
       <div class="bg-white shadow-lg p-8 rounded-lg border border-gray-200 transform transition-all duration-300 hover:shadow-xl">
         <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
@@ -167,6 +174,7 @@ import { useInvoiceStore } from '../stores/invoice';
 import { useAuthStore } from '../stores/auth';
 import { uploadLogo, deleteLogo } from '../lib/supabase';
 import html2pdf from 'html2pdf.js';
+import Breadcrumb from '../components/ui/Breadcrumb.vue';
 
 const router = useRouter();
 const route = useRoute();
