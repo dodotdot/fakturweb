@@ -20,7 +20,7 @@
                 </svg>
               </div>
               <div class="text-center mt-1">
-                <div class="text-xs font-medium text-primary">{{ t('ui.fillData') }}</div>
+                <div class="text-xs font-medium text-primary">{{ translations.fillData }}</div>
               </div>
             </div>
             
@@ -33,7 +33,7 @@
                 </svg>
               </div>
               <div class="text-center mt-1">
-                <div class="text-xs font-medium text-primary">{{ t('ui.chooseTheme') }}</div>
+                <div class="text-xs font-medium text-primary">{{ translations.chooseTheme }}</div>
               </div>
             </div>
             
@@ -45,7 +45,7 @@
                 </svg>
               </div>
               <div class="text-center mt-1">
-                <div class="text-xs font-medium text-gray-500">{{ t('ui.downloadPDF') }}</div>
+                <div class="text-xs font-medium text-gray-500">{{ translations.downloadPDF }}</div>
               </div>
             </div>
           </div>
@@ -54,9 +54,9 @@
       
       <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center py-8 gap-4">
         <div>
-          <h1 class="text-2xl font-bold text-gray-800">{{ t('ui.preview') }} Faktur</h1>
+          <h1 class="text-2xl font-bold text-gray-800">{{ translations.preview }} Faktur</h1>
           <p class="text-gray-500">
-            {{ t('ui.createInvoiceMessage') }}
+            {{ translations.createInvoiceMessage }}
           </p>
         </div>
         <div class="flex space-x-4">
@@ -85,7 +85,7 @@
       <!-- Theme Selector -->
       <div class="mb-6">
         <div class="flex items-center justify-between mb-5">
-          <h3 class="text-lg font-semibold mb-0">{{ t('ui.chooseTheme') }}</h3>
+          <h3 class="text-lg font-semibold mb-0">{{ translations.chooseTheme }}</h3>
           
           <!-- Language Toggle -->
           <div class="inline-flex items-center rounded-md border border-gray-300 overflow-hidden">
@@ -93,7 +93,7 @@
               @click="setLanguage('id')"
               :class="[
                 'px-3 py-1.5 text-sm',
-                locale === 'id' 
+                currentLocale === 'id' 
                   ? 'bg-primary text-white font-medium' 
                   : 'bg-white text-gray-700 hover:bg-gray-50'
               ]"
@@ -104,7 +104,7 @@
               @click="setLanguage('en')"
               :class="[
                 'px-3 py-1.5 text-sm',
-                locale === 'en' 
+                currentLocale === 'en' 
                   ? 'bg-primary text-white font-medium' 
                   : 'bg-white text-gray-700 hover:bg-gray-50'
               ]"
@@ -203,7 +203,7 @@
                 'text-gray-400': selectedTheme === 'classic',
                 'text-blue-400': selectedTheme === 'modern',
                 'text-gray-500': selectedTheme === 'elegant'
-              }">{{ t('invoice.uploadLogo') }}</span>
+              }">{{ translations.uploadLogo }}</span>
             </div>
           </div>
           
@@ -224,7 +224,7 @@
                   'text-gray-500': selectedTheme === 'classic',
                   'text-blue-500': selectedTheme === 'modern',
                   'text-gray-400': selectedTheme === 'elegant'
-                }" class="w-24">{{ t('invoice.date') }}:</span>
+                }" class="w-24">{{ translations.date }}:</span>
                 <span>{{ formatDate(invoice.date) }}</span>
               </div>
               <div class="flex items-center">
@@ -232,7 +232,7 @@
                   'text-gray-500': selectedTheme === 'classic',
                   'text-blue-500': selectedTheme === 'modern',
                   'text-gray-400': selectedTheme === 'elegant'
-                }" class="w-24">{{ t('invoice.dueDate') }}:</span>
+                }" class="w-24">{{ translations.dueDate }}:</span>
                 <span>{{ formatDate(invoice.dueDate) }}</span>
               </div>
             </div>
@@ -246,7 +246,7 @@
               'text-gray-400': selectedTheme === 'classic',
               'text-blue-500': selectedTheme === 'modern',
               'text-yellow-500': selectedTheme === 'elegant'
-            }" class="text-sm uppercase font-medium mb-2">{{ t('invoice.from') }}</h3>
+            }" class="text-sm uppercase font-medium mb-2">{{ translations.from }}</h3>
             <div :class="{
               'text-gray-900': selectedTheme === 'classic',
               'text-blue-900': selectedTheme === 'modern',
@@ -280,7 +280,7 @@
               'text-gray-400': selectedTheme === 'classic',
               'text-blue-500': selectedTheme === 'modern',
               'text-yellow-500': selectedTheme === 'elegant'
-            }" class="text-sm uppercase font-medium mb-2">{{ t('invoice.billTo') }}</h3>
+            }" class="text-sm uppercase font-medium mb-2">{{ translations.billTo }}</h3>
             <div :class="{
               'text-gray-900': selectedTheme === 'classic',
               'text-blue-900': selectedTheme === 'modern',
@@ -316,7 +316,7 @@
             'text-gray-400': selectedTheme === 'classic',
             'text-blue-500': selectedTheme === 'modern',
             'text-yellow-500': selectedTheme === 'elegant'
-          }" class="text-sm uppercase font-medium mb-4">{{ t('invoice.items') }}</h3>
+          }" class="text-sm uppercase font-medium mb-4">{{ translations.items }}</h3>
           <div class="overflow-x-auto">
             <table class="w-full">
               <thead :class="{
@@ -325,10 +325,10 @@
                 'border-b border-gray-700': selectedTheme === 'elegant'
               }">
                 <tr>
-                  <th class="text-left p-3 text-gray-500 font-medium">{{ t('invoice.description') }}</th>
-                  <th class="text-right p-3 text-gray-500 font-medium">{{ t('invoice.quantity') }}</th>
-                  <th class="text-right p-3 text-gray-500 font-medium">{{ t('invoice.price') }}</th>
-                  <th class="text-right p-3 text-gray-500 font-medium">{{ t('invoice.total') }}</th>
+                  <th class="text-left p-3 text-gray-500 font-medium">{{ translations.description }}</th>
+                  <th class="text-right p-3 text-gray-500 font-medium">{{ translations.quantity }}</th>
+                  <th class="text-right p-3 text-gray-500 font-medium">{{ translations.price }}</th>
+                  <th class="text-right p-3 text-gray-500 font-medium">{{ translations.total }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -354,7 +354,7 @@
                   'text-gray-600': selectedTheme === 'classic',
                   'text-blue-700': selectedTheme === 'modern',
                   'text-gray-300': selectedTheme === 'elegant'
-                }" class="text-base">{{ t('invoice.subtotal') }}:</span>
+                }" class="text-base">{{ translations.subtotal }}:</span>
                 <span class="text-base">{{ formatCurrency(calculateSubtotal()) }}</span>
               </div>
               <div class="flex justify-between py-2">
@@ -362,7 +362,7 @@
                   'text-gray-600': selectedTheme === 'classic',
                   'text-blue-700': selectedTheme === 'modern',
                   'text-gray-300': selectedTheme === 'elegant'
-                }" class="text-base">{{ t('invoice.taxRate') }}: {{ invoice.taxRate }}%</span>
+                }" class="text-base">{{ translations.taxRate }}: {{ invoice.taxRate }}%</span>
                 <span class="text-base">{{ formatCurrency(calculateTaxAmount()) }}</span>
               </div>
               <div :class="{
@@ -370,7 +370,7 @@
                 'border-t border-blue-300': selectedTheme === 'modern',
                 'border-t border-gray-700': selectedTheme === 'elegant'
               }" class="flex justify-between py-3 font-bold text-lg">
-                <span>{{ t('invoice.total') }}:</span>
+                <span>{{ translations.total }}:</span>
                 <span :class="{
                   'text-gray-900': selectedTheme === 'classic',
                   'text-blue-900': selectedTheme === 'modern',
@@ -387,7 +387,7 @@
             'text-gray-400': selectedTheme === 'classic',
             'text-blue-500': selectedTheme === 'modern',
             'text-yellow-500': selectedTheme === 'elegant'
-          }" class="text-sm uppercase font-medium mb-2">{{ t('invoice.notes') }}</h3>
+          }" class="text-sm uppercase font-medium mb-2">{{ translations.notes }}</h3>
           <div :class="{
             'bg-gray-50': selectedTheme === 'classic',
             'bg-blue-100': selectedTheme === 'modern',
@@ -544,7 +544,7 @@ import { useRoute, useRouter } from 'vue-router';
 import html2pdf from 'html2pdf.js';
 import { invoiceEvents, trackPageView } from '../utils/analytics';
 import { trackGuestPdfGeneration } from '../utils/guest-tracker';
-import { useI18n } from 'vue-i18n';
+import { getTranslation, getPreferredLanguage } from '../i18n/direct-translations';
 
 const route = useRoute();
 const router = useRouter();
@@ -552,36 +552,10 @@ const invoicePrintRef = ref(null);
 const isGenerating = ref(false);
 const selectedTheme = ref('classic'); // Default theme
 const showRegisterModal = ref(false);
+const successMessage = ref('');
 
-// Setup i18n
-const { t, locale } = useI18n();
-
-// Computed translations to match format used in GuestInvoice
-const translations = computed(() => ({
-  // UI elements
-  fillData: t('ui.fillData'),
-  chooseTheme: t('ui.chooseTheme'),
-  downloadPDF: t('ui.downloadPDF'),
-  createInvoiceMessage: t('ui.createInvoiceMessage'),
-  preview: t('ui.preview'),
-  
-  // Invoice content
-  uploadLogo: t('invoice.uploadLogo'),
-  date: t('invoice.date'),
-  dueDate: t('invoice.dueDate'),
-  from: t('invoice.from'),
-  billTo: t('invoice.billTo'),
-  items: t('invoice.items'),
-  addItem: t('invoice.addItem'),
-  description: t('invoice.description'),
-  quantity: t('invoice.quantity'),
-  price: t('invoice.price'),
-  total: t('invoice.total'),
-  subtotal: t('invoice.subtotal'),
-  taxRate: t('invoice.taxRate'),
-  taxAmount: t('invoice.taxAmount'),
-  notes: t('invoice.notes')
-}));
+// Direct language management
+const currentLocale = ref(getPreferredLanguage());
 
 // Initialize with empty invoice
 const invoice = ref({
@@ -622,7 +596,7 @@ onMounted(() => {
 
     // Check if there's a language preference in the invoice data
     if (invoice.value._language) {
-      locale.value = invoice.value._language;
+      currentLocale.value = invoice.value._language;
     }
   } else {
     // Redirect back if no invoice data
@@ -749,7 +723,7 @@ function backToEdit() {
       currentData._theme = selectedTheme.value;
       
       // Save the language preference
-      currentData._language = locale.value;
+      currentData._language = currentLocale.value;
       
       // Save it back to localStorage
       localStorage.setItem('currentInvoice', JSON.stringify(currentData));
@@ -771,17 +745,80 @@ function backToEdit() {
   }
 }
 
-// Tambahkan fungsi untuk mengganti bahasa
+// Function to set language
 function setLanguage(lang) {
-  locale.value = lang;
-  localStorage.setItem('preferred_language', lang);
-  
-  // Also save language preference to invoice data
-  if (invoice.value) {
-    invoice.value._language = lang;
-    localStorage.setItem('currentInvoice', JSON.stringify(invoice.value));
+  if (['id', 'en'].includes(lang)) {
+    currentLocale.value = lang;
+    console.log('Language set directly to:', lang);
+    
+    // Try to save to localStorage if available
+    if (isLocalStorageAvailable()) {
+      try {
+        localStorage.setItem('preferred_language', lang);
+      } catch (e) {
+        console.warn('Failed to save language to localStorage:', e);
+      }
+    }
+    
+    // If we have invoice data, update its language preference
+    if (invoice.value) {
+      invoice.value._language = lang;
+    }
   }
 }
+
+// Check if localStorage is available
+function isLocalStorageAvailable() {
+  try {
+    const testKey = '__test_key__';
+    localStorage.setItem(testKey, testKey);
+    localStorage.removeItem(testKey);
+    return true;
+  } catch (e) {
+    console.warn('localStorage is not available:', e);
+    return false;
+  }
+}
+
+// Computed translations using our direct method
+const translations = computed(() => {
+  // Get current language
+  const lang = currentLocale.value;
+  
+  return {
+    // UI elements
+    fillData: getTranslation(lang, 'ui', 'fillData'),
+    chooseTheme: getTranslation(lang, 'ui', 'chooseTheme'),
+    downloadPDF: getTranslation(lang, 'ui', 'downloadPDF'),
+    createInvoiceMessage: getTranslation(lang, 'ui', 'createInvoiceMessage'),
+    preview: getTranslation(lang, 'ui', 'preview'),
+    
+    // Invoice content
+    uploadLogo: getTranslation(lang, 'invoice', 'uploadLogo'),
+    date: getTranslation(lang, 'invoice', 'date'),
+    dueDate: getTranslation(lang, 'invoice', 'dueDate'),
+    from: getTranslation(lang, 'invoice', 'from'),
+    billTo: getTranslation(lang, 'invoice', 'billTo'),
+    items: getTranslation(lang, 'invoice', 'items'),
+    addItem: getTranslation(lang, 'invoice', 'addItem'),
+    description: getTranslation(lang, 'invoice', 'description'),
+    quantity: getTranslation(lang, 'invoice', 'quantity'),
+    price: getTranslation(lang, 'invoice', 'price'),
+    total: getTranslation(lang, 'invoice', 'total'),
+    subtotal: getTranslation(lang, 'invoice', 'subtotal'),
+    taxRate: getTranslation(lang, 'invoice', 'taxRate'),
+    taxAmount: getTranslation(lang, 'invoice', 'taxAmount'),
+    notes: getTranslation(lang, 'invoice', 'notes'),
+    nameCompanyPlaceholder: getTranslation(lang, 'invoice', 'nameCompanyPlaceholder'),
+    addressPlaceholder: getTranslation(lang, 'invoice', 'addressPlaceholder'),
+    email: getTranslation(lang, 'invoice', 'email'),
+    phone: getTranslation(lang, 'invoice', 'phone'),
+    clientNamePlaceholder: getTranslation(lang, 'invoice', 'clientNamePlaceholder'),
+    clientAddressPlaceholder: getTranslation(lang, 'invoice', 'clientAddressPlaceholder'),
+    itemDescriptionPlaceholder: getTranslation(lang, 'invoice', 'itemDescriptionPlaceholder'),
+    notesPlaceholder: getTranslation(lang, 'invoice', 'notesPlaceholder')
+  };
+});
 </script>
 
 <style scoped>

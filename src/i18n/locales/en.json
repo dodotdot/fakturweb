@@ -1,0 +1,34 @@
+{
+  "ui": {
+    "fillData": "Fill Data",
+    "chooseTheme": "Choose Theme",
+    "downloadPDF": "Download PDF",
+    "createInvoiceMessage": "Create and download one-time invoice without registration",
+    "preview": "Preview"
+  },
+  "invoice": {
+    "uploadLogo": "Upload Logo",
+    "date": "Date",
+    "dueDate": "Due Date",
+    "from": "From",
+    "billTo": "Bill To",
+    "items": "Items",
+    "addItem": "Add Item",
+    "description": "Description",
+    "quantity": "Qty",
+    "price": "Price",
+    "total": "Total",
+    "subtotal": "Subtotal",
+    "taxRate": "Tax Rate",
+    "taxAmount": "Tax Amount",
+    "notes": "Notes",
+    "nameCompanyPlaceholder": "Your Name / Company",
+    "addressPlaceholder": "Your Address",
+    "email": "Email",
+    "phone": "Phone",
+    "clientNamePlaceholder": "Client Name",
+    "clientAddressPlaceholder": "Client Address",
+    "itemDescriptionPlaceholder": "Item description",
+    "notesPlaceholder": "Add notes or payment terms..."
+  }
+} 

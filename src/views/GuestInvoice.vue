@@ -62,7 +62,7 @@
             @click="setLanguage('id')"
             :class="[
               'px-3 py-1.5 text-sm',
-              locale === 'id' 
+              currentLocale === 'id' 
                 ? 'bg-primary text-white font-medium' 
                 : 'bg-white text-gray-700 hover:bg-gray-50'
             ]"
@@ -73,7 +73,7 @@
             @click="setLanguage('en')"
             :class="[
               'px-3 py-1.5 text-sm',
-              locale === 'en' 
+              currentLocale === 'en' 
                 ? 'bg-primary text-white font-medium' 
                 : 'bg-white text-gray-700 hover:bg-gray-50'
             ]"
@@ -335,15 +335,15 @@ import html2pdf from 'html2pdf.js';
 import { useRouter } from 'vue-router';
 import { invoiceEvents, trackPageView } from '../utils/analytics';
 import { trackGuestPdfGeneration } from '../utils/guest-tracker';
-import { useI18n } from 'vue-i18n';
+import { getTranslation, getPreferredLanguage } from '../i18n/direct-translations';
 
 const router = useRouter();
 const invoicePrintRef = ref(null);
 const fileInput = ref(null);
 const isGenerating = ref(false);
 
-// Setup i18n
-const { t, locale } = useI18n();
+// Use direct language management instead of Vue i18n
+const currentLocale = ref(getPreferredLanguage());
 
 // Check if localStorage is available
 function isLocalStorageAvailable() {
@@ -358,58 +358,62 @@ function isLocalStorageAvailable() {
   }
 }
 
-// This function explicitly sets the locale and updates localStorage
+// This function sets the locale directly
 function setLanguage(lang) {
-  try {
-    locale.value = lang;
+  // Only accept valid languages
+  if (['id', 'en'].includes(lang)) {
+    currentLocale.value = lang;
+    console.log('Language set directly to:', lang);
+    
+    // Try to save to localStorage if available
     if (isLocalStorageAvailable()) {
-      localStorage.setItem('preferred_language', lang);
-      console.log('Language set successfully to:', lang);
+      try {
+        localStorage.setItem('preferred_language', lang);
+      } catch (e) {
+        console.warn('Failed to save language to localStorage:', e);
+      }
     }
-  } catch (error) {
-    console.warn('Failed to save language preference to localStorage:', error);
-    // Still set the locale in memory even if localStorage fails
-    locale.value = lang;
   }
 }
 
-// Computed translations that preserve the format we used before
+// Computed translations using our direct method
 const translations = computed(() => {
-  // Force recomputation when locale changes
-  const currentLocale = locale.value;
+  // Get current language
+  const lang = currentLocale.value;
+  console.log('Computing translations for language:', lang);
   
   return {
-    // UI elements translation
-    fillData: t('ui.fillData'),
-    chooseTheme: t('ui.chooseTheme'),
-    downloadPDF: t('ui.downloadPDF'),
-    createInvoiceMessage: t('ui.createInvoiceMessage'),
-    preview: t('ui.preview'),
+    // UI elements
+    fillData: getTranslation(lang, 'ui', 'fillData'),
+    chooseTheme: getTranslation(lang, 'ui', 'chooseTheme'),
+    downloadPDF: getTranslation(lang, 'ui', 'downloadPDF'),
+    createInvoiceMessage: getTranslation(lang, 'ui', 'createInvoiceMessage'),
+    preview: getTranslation(lang, 'ui', 'preview'),
     
-    // Invoice content is translated based on selected language
-    uploadLogo: t('invoice.uploadLogo'),
-    date: t('invoice.date'),
-    dueDate: t('invoice.dueDate'),
-    from: t('invoice.from'),
-    billTo: t('invoice.billTo'),
-    items: t('invoice.items'),
-    addItem: t('invoice.addItem'),
-    description: t('invoice.description'),
-    quantity: t('invoice.quantity'),
-    price: t('invoice.price'),
-    total: t('invoice.total'),
-    subtotal: t('invoice.subtotal'),
-    taxRate: t('invoice.taxRate'),
-    taxAmount: t('invoice.taxAmount'),
-    notes: t('invoice.notes'),
-    nameCompanyPlaceholder: t('invoice.nameCompanyPlaceholder'),
-    addressPlaceholder: t('invoice.addressPlaceholder'),
-    email: t('invoice.email'),
-    phone: t('invoice.phone'),
-    clientNamePlaceholder: t('invoice.clientNamePlaceholder'),
-    clientAddressPlaceholder: t('invoice.clientAddressPlaceholder'),
-    itemDescriptionPlaceholder: t('invoice.itemDescriptionPlaceholder'),
-    notesPlaceholder: t('invoice.notesPlaceholder')
+    // Invoice content
+    uploadLogo: getTranslation(lang, 'invoice', 'uploadLogo'),
+    date: getTranslation(lang, 'invoice', 'date'),
+    dueDate: getTranslation(lang, 'invoice', 'dueDate'),
+    from: getTranslation(lang, 'invoice', 'from'),
+    billTo: getTranslation(lang, 'invoice', 'billTo'),
+    items: getTranslation(lang, 'invoice', 'items'),
+    addItem: getTranslation(lang, 'invoice', 'addItem'),
+    description: getTranslation(lang, 'invoice', 'description'),
+    quantity: getTranslation(lang, 'invoice', 'quantity'),
+    price: getTranslation(lang, 'invoice', 'price'),
+    total: getTranslation(lang, 'invoice', 'total'),
+    subtotal: getTranslation(lang, 'invoice', 'subtotal'),
+    taxRate: getTranslation(lang, 'invoice', 'taxRate'),
+    taxAmount: getTranslation(lang, 'invoice', 'taxAmount'),
+    notes: getTranslation(lang, 'invoice', 'notes'),
+    nameCompanyPlaceholder: getTranslation(lang, 'invoice', 'nameCompanyPlaceholder'),
+    addressPlaceholder: getTranslation(lang, 'invoice', 'addressPlaceholder'),
+    email: getTranslation(lang, 'invoice', 'email'),
+    phone: getTranslation(lang, 'invoice', 'phone'),
+    clientNamePlaceholder: getTranslation(lang, 'invoice', 'clientNamePlaceholder'),
+    clientAddressPlaceholder: getTranslation(lang, 'invoice', 'clientAddressPlaceholder'),
+    itemDescriptionPlaceholder: getTranslation(lang, 'invoice', 'itemDescriptionPlaceholder'),
+    notesPlaceholder: getTranslation(lang, 'invoice', 'notesPlaceholder')
   };
 });
 
@@ -448,38 +452,7 @@ const invoice = ref({...defaultInvoice});
 
 // Load saved language preference
 onMounted(() => {
-  console.log('GuestInvoice mounted - Current locale:', locale.value);
-  
-  // Check if localStorage is available and get saved language
-  if (isLocalStorageAvailable()) {
-    try {
-      // Check for saved language preference
-      const savedLanguage = localStorage.getItem('preferred_language');
-      console.log('Saved language from localStorage:', savedLanguage);
-      
-      if (savedLanguage && ['id', 'en'].includes(savedLanguage)) {
-        console.log('Setting locale to saved language:', savedLanguage);
-        locale.value = savedLanguage;
-      } else {
-        // If no valid language found in localStorage, default to Indonesian
-        console.log('No valid language in localStorage, defaulting to Indonesian');
-        locale.value = 'id';
-        // Try to save the default
-        localStorage.setItem('preferred_language', 'id');
-      }
-    } catch (error) {
-      console.warn('Error accessing localStorage for language preference:', error);
-      // Default to Indonesian if localStorage fails
-      locale.value = 'id';
-    }
-  } else {
-    // If localStorage is not available, just set the default locale in memory
-    console.log('localStorage not available, defaulting locale to: id');
-    locale.value = 'id';
-  }
-  
-  // Log after setting the locale
-  console.log('Locale after possible update:', locale.value);
+  console.log('GuestInvoice mounted - Current locale:', currentLocale.value);
   
   // Track guest invoice page view
   trackPageView('/invoice/guest', 'Buat Faktur Tanpa Daftar - Faktur.web.id');
@@ -491,6 +464,13 @@ onMounted(() => {
       if (savedInvoice) {
         try {
           const parsedInvoice = JSON.parse(savedInvoice);
+          
+          // If the saved invoice has a language preference, use it
+          if (parsedInvoice._language && ['id', 'en'].includes(parsedInvoice._language)) {
+            currentLocale.value = parsedInvoice._language;
+            console.log('Language loaded from saved invoice:', currentLocale.value);
+          }
+          
           // Copy saved values to invoice
           invoice.value = parsedInvoice;
           
@@ -593,8 +573,8 @@ function removeLogo() {
 }
 
 function previewInvoice() {
-  // Make sure we're saving the language preference in memory
-  invoice.value._language = locale.value;
+  // Make sure we're saving the language preference with the invoice
+  invoice.value._language = currentLocale.value;
   
   // Save current invoice data to localStorage if available
   if (isLocalStorageAvailable()) {

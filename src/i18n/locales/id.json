@@ -1,0 +1,34 @@
+{
+  "ui": {
+    "fillData": "Isi Data",
+    "chooseTheme": "Pilih Tema",
+    "downloadPDF": "Unduh PDF",
+    "createInvoiceMessage": "Buat dan unduh faktur sekali pakai tanpa perlu mendaftar",
+    "preview": "Preview"
+  },
+  "invoice": {
+    "uploadLogo": "Unggah Logo",
+    "date": "Tanggal",
+    "dueDate": "Jatuh Tempo",
+    "from": "Dari",
+    "billTo": "Tagih Kepada",
+    "items": "Item",
+    "addItem": "Tambah Item",
+    "description": "Deskripsi",
+    "quantity": "Jumlah",
+    "price": "Harga",
+    "total": "Total",
+    "subtotal": "Subtotal",
+    "taxRate": "Persentase Pajak",
+    "taxAmount": "Jumlah Pajak",
+    "notes": "Catatan",
+    "nameCompanyPlaceholder": "Nama Anda / Perusahaan",
+    "addressPlaceholder": "Alamat Anda",
+    "email": "Email",
+    "phone": "Telepon",
+    "clientNamePlaceholder": "Nama Klien",
+    "clientAddressPlaceholder": "Alamat Klien",
+    "itemDescriptionPlaceholder": "Deskripsi item",
+    "notesPlaceholder": "Tambahkan catatan atau syarat pembayaran..."
+  }
+} 
