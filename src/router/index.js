@@ -20,6 +20,8 @@ const AdminUsers = () => import('../views/admin/AdminUsers.vue')
 const AdminInvoices = () => import('../views/admin/AdminInvoices.vue')
 const AdminSettings = () => import('../views/admin/AdminSettings.vue')
 const PublicInvoiceDetail = () => import('../views/PublicInvoiceDetail.vue')
+const ClientList = () => import('../views/ClientList.vue')
+const ClientEditor = () => import('../views/ClientEditor.vue')
 
 const routes = [
   {
@@ -157,6 +159,39 @@ const routes = [
       title: 'Pengaturan Akun - Faktur.web.id',
       description: 'Sesuaikan pengaturan faktur, notifikasi, dan preferensi akun Anda untuk pengalaman yang lebih baik.',
       keywords: 'pengaturan akun, faktur, notifikasi, preferensi',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/clients',
+    name: 'ClientList',
+    component: ClientList,
+    meta: {
+      title: 'Client Management - Faktur.web.id',
+      description: 'Manage your clients - add, edit, and delete client information.',
+      keywords: 'client management, customer management, client database',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/clients/new',
+    name: 'NewClient',
+    component: ClientEditor,
+    meta: {
+      title: 'Add New Client - Faktur.web.id',
+      description: 'Add a new client to your client database.',
+      keywords: 'add client, new client, create client',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/clients/:id/edit',
+    name: 'EditClient',
+    component: ClientEditor,
+    meta: {
+      title: 'Edit Client - Faktur.web.id',
+      description: 'Edit existing client information.',
+      keywords: 'edit client, update client, client details',
       requiresAuth: true
     }
   },

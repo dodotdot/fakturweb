@@ -129,7 +129,20 @@
           </div>
           
           <div class="to-details">
-            <h3 class="text-gray-400 text-sm uppercase font-medium mb-2">Tagihan Untuk</h3>
+            <div class="flex justify-between items-center mb-2">
+              <h3 class="text-gray-400 text-sm uppercase font-medium">Tagihan Untuk</h3>
+              <button 
+                @click="showClientSelectModal = true"
+                type="button" 
+                class="text-sm text-primary hover:text-primary-dark flex items-center"
+                title="Tekan Alt+K untuk membuka pemilihan klien"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
+                </svg>
+                Pilih Klien
+              </button>
+            </div>
             <div 
               class="font-semibold text-lg mb-2 focus:outline-none focus:border-b-2 focus:border-green-500 hover:bg-yellow-50 p-1 rounded" 
               contenteditable 
@@ -295,13 +308,83 @@
       </div>
     </div>
   </div>
+
+  <!-- Client Selection Modal -->
+  <div v-if="showClientSelectModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg max-w-3xl w-full p-6 max-h-[80vh] flex flex-col">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-medium text-gray-900">Pilih Klien</h3>
+        <button @click="showClientSelectModal = false" class="text-gray-400 hover:text-gray-500">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Search -->
+      <div class="mb-4">
+        <input 
+          v-model="clientSearchQuery" 
+          type="text" 
+          placeholder="Cari klien..." 
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"
+        />
+      </div>
+
+      <!-- Loading State -->
+      <div v-if="isLoadingClients" class="flex-1 flex justify-center items-center">
+        <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+      </div>
+
+      <!-- Empty State -->
+      <div v-else-if="filteredClients.length === 0" class="flex-1 flex flex-col items-center justify-center py-6">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
+        <p class="text-gray-500">Tidak ada klien ditemukan</p>
+        <router-link to="/clients/new" class="mt-4 text-primary hover:underline">+ Tambah Klien Baru</router-link>
+      </div>
+
+      <!-- Client List -->
+      <div v-else class="flex-1 overflow-y-auto">
+        <div class="divide-y divide-gray-200">
+          <div 
+            v-for="client in filteredClients" 
+            :key="client.id" 
+            class="py-3 px-2 flex items-center hover:bg-gray-50 cursor-pointer rounded-md"
+            @click="selectClient(client)"
+          >
+            <div class="flex-1">
+              <div class="font-medium text-gray-900">{{ client.name }}</div>
+              <div class="text-sm text-gray-500 truncate">{{ client.email }}</div>
+            </div>
+            <button class="text-primary hover:text-primary-dark">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 pt-4 border-t border-gray-200 flex justify-end">
+        <button 
+          @click="showClientSelectModal = false" 
+          class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+        >
+          Batal
+        </button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useInvoiceStore } from '../stores/invoice';
 import { useAuthStore } from '../stores/auth';
+import { useClientStore } from '../stores/client';
 import Button from '../components/ui/Button.vue';
 import html2pdf from 'html2pdf.js';
 import { uploadLogo, deleteLogo } from '../lib/supabase';
@@ -311,6 +394,7 @@ const router = useRouter();
 const route = useRoute();
 const invoiceStore = useInvoiceStore();
 const authStore = useAuthStore();
+const clientStore = useClientStore();
 const invoicePrintRef = ref(null);
 const fileInput = ref(null);
 const isUploading = ref(false);
@@ -321,6 +405,54 @@ const invoiceId = computed(() => route.params.id);
 const isEditMode = computed(() => !!invoiceId.value);
 const invoice = computed(() => invoiceStore.currentInvoice);
 const isGuestMode = computed(() => route.params.guestMode || false);
+
+// Client selection functionality
+const showClientSelectModal = ref(false);
+const clientSearchQuery = ref('');
+const clients = ref([]);
+const isLoadingClients = ref(false);
+
+// Filter clients based on search query
+const filteredClients = computed(() => {
+  if (!clientSearchQuery.value) {
+    return clients.value;
+  }
+  
+  const query = clientSearchQuery.value.toLowerCase();
+  return clients.value.filter(
+    client => 
+      client.name.toLowerCase().includes(query) || 
+      (client.email && client.email.toLowerCase().includes(query))
+  );
+});
+
+// Fetch clients when modal is opened
+watch(showClientSelectModal, async (isOpen) => {
+  if (isOpen && clients.value.length === 0) {
+    await fetchClients();
+  }
+});
+
+// Fetch all clients
+async function fetchClients() {
+  try {
+    isLoadingClients.value = true;
+    clients.value = await clientStore.fetchClients();
+  } catch (err) {
+    console.error('Failed to load clients:', err);
+  } finally {
+    isLoadingClients.value = false;
+  }
+}
+
+// Select client and populate invoice fields
+function selectClient(client) {
+  invoice.value.to.name = client.name || '';
+  invoice.value.to.address = client.address || '';
+  invoice.value.to.email = client.email || '';
+  invoice.value.to.phone = client.phone || '';
+  showClientSelectModal.value = false;
+}
 
 onMounted(async () => {
   if (isEditMode.value) {
@@ -337,7 +469,24 @@ onMounted(async () => {
       invoiceStore.setGuestMode(true);
     }
   }
+  
+  // Add keyboard shortcut for client selection
+  document.addEventListener('keydown', handleKeyDown);
 });
+
+// Clean up event listener when component is unmounted
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleKeyDown);
+});
+
+// Handle keyboard shortcuts
+function handleKeyDown(event) {
+  // Alt+K to open client selection modal
+  if (event.altKey && event.key === 'k') {
+    event.preventDefault();
+    showClientSelectModal.value = true;
+  }
+}
 
 // Helper functions for contenteditable fields
 function selectElementContents(el) {

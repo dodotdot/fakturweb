@@ -66,6 +66,20 @@
           </li>
           <li>
             <router-link 
+              to="/clients" 
+              class="flex items-center py-2 rounded-md hover:bg-gray-100 transition-colors"
+              :class="[
+                $route.path.includes('/clients') ? 'bg-gray-100 text-primary-600 font-medium' : 'text-gray-700',
+                isExpanded ? 'px-4 justify-start' : 'px-2 justify-center'
+              ]"
+              @click="$emit('close')"
+            >
+              <span class="text-xl" :class="{ 'mr-3': isExpanded }">👨‍👩‍👧‍👧</span>
+              <span v-if="isExpanded">Clients</span>
+            </router-link>
+          </li>
+          <li>
+            <router-link 
               to="/profile" 
               class="flex items-center py-2 rounded-md hover:bg-gray-100 transition-colors"
               :class="[
