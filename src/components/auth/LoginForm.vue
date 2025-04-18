@@ -27,7 +27,7 @@
           <div class="flex items-center justify-between">
             <Label for="password">Password</Label>
             <router-link 
-              to="/reset-password" 
+              to="/forgot-password" 
               class="text-sm text-primary hover:underline"
             >
               Forgot password?

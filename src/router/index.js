@@ -22,6 +22,8 @@ const AdminSettings = () => import('../views/admin/AdminSettings.vue')
 const PublicInvoiceDetail = () => import('../views/PublicInvoiceDetail.vue')
 const ClientList = () => import('../views/ClientList.vue')
 const ClientEditor = () => import('../views/ClientEditor.vue')
+const ForgotPassword = () => import('../views/ForgotPassword.vue')
+const ResetPasswordConfirm = () => import('../views/ResetPasswordConfirm.vue')
 
 const routes = [
   {
@@ -56,6 +58,30 @@ const routes = [
       title: 'Register - Buat Akun Faktur Online Baru',
       description: 'Daftar dan buat akun faktur online gratis untuk bisnis Anda sekarang di faktur.web.id.',
       keywords: 'daftar faktur online, buat akun faktur, register faktur gratis, akun faktur bisnis',
+      requiresAuth: false,
+      noSidebar: true
+    }
+  },
+  {
+    path: '/forgot-password',
+    name: 'ForgotPassword',
+    component: ForgotPassword,
+    meta: {
+      title: 'Reset Password - Recover Your Account',
+      description: 'Reset your password for your faktur.web.id account.',
+      keywords: 'reset password, forgot password, recover account, account recovery',
+      requiresAuth: false,
+      noSidebar: true
+    }
+  },
+  {
+    path: '/reset-password/confirm',
+    name: 'ResetPasswordConfirm',
+    component: ResetPasswordConfirm,
+    meta: {
+      title: 'Set New Password - Secure Your Account',
+      description: 'Set a new password for your faktur.web.id account.',
+      keywords: 'reset password, new password, secure account',
       requiresAuth: false,
       noSidebar: true
     }
