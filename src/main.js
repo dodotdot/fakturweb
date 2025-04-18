@@ -38,6 +38,19 @@ app.use(i18n)
 // Import and initialize auth store
 import { useAuthStore } from './stores/auth'
 
+// Check if localStorage is available
+function isLocalStorageAvailable() {
+  try {
+    const testKey = '__test_key__';
+    localStorage.setItem(testKey, testKey);
+    localStorage.removeItem(testKey);
+    return true;
+  } catch (e) {
+    console.warn('localStorage is not available:', e);
+    return false;
+  }
+}
+
 // Initialize the app and mount after auth is checked
 const init = async () => {
   try {
@@ -46,14 +59,27 @@ const init = async () => {
     await authStore.initialize()
     
     // Initialize i18n with stored preference if available
-    try {
-      const storedLocale = localStorage.getItem('preferred_language')
-      if (storedLocale && ['id', 'en'].includes(storedLocale)) {
-        i18n.global.locale.value = storedLocale
-        console.log('Setting global locale from localStorage:', storedLocale)
+    if (isLocalStorageAvailable()) {
+      try {
+        const storedLocale = localStorage.getItem('preferred_language')
+        if (storedLocale && ['id', 'en'].includes(storedLocale)) {
+          i18n.global.locale.value = storedLocale
+          console.log('Setting global locale from localStorage:', storedLocale)
+        } else {
+          // If no valid language in localStorage, set a default
+          console.log('No valid language in localStorage, using default: id')
+          i18n.global.locale.value = 'id'
+          // Try to save the default to localStorage
+          localStorage.setItem('preferred_language', 'id')
+        }
+      } catch (e) {
+        console.warn('Failed to initialize locale from localStorage:', e)
+        // Set default locale if localStorage access fails
+        i18n.global.locale.value = 'id'
       }
-    } catch (e) {
-      console.warn('Failed to initialize locale from localStorage', e)
+    } else {
+      console.log('localStorage not available, using default locale: id')
+      i18n.global.locale.value = 'id'
     }
     
     // Mount the app

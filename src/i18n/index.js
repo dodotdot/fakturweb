@@ -79,12 +79,20 @@ const messages = {
 // Mendapatkan bahasa yang disimpan atau menggunakan default
 let savedLocale = 'id'
 try {
-  const storedLocale = localStorage.getItem('preferred_language')
-  if (storedLocale && ['id', 'en'].includes(storedLocale)) {
-    savedLocale = storedLocale
+  // Check if localStorage is available in this environment
+  if (typeof localStorage !== 'undefined') {
+    const storedLocale = localStorage.getItem('preferred_language')
+    if (storedLocale && ['id', 'en'].includes(storedLocale)) {
+      savedLocale = storedLocale
+      console.log('i18n: Using stored locale from localStorage:', savedLocale)
+    } else {
+      console.log('i18n: No valid locale in localStorage, using default:', savedLocale)
+    }
+  } else {
+    console.warn('i18n: localStorage is not available in this environment')
   }
 } catch (e) {
-  console.warn('Failed to access localStorage for language preference')
+  console.warn('i18n: Failed to access localStorage for language preference:', e)
 }
 
 // Buat instance i18n
@@ -92,7 +100,12 @@ const i18n = createI18n({
   legacy: false, // Gunakan Composition API
   locale: savedLocale, // Default language
   fallbackLocale: 'id', // Fallback language
-  messages
+  messages,
+  // Enable logging in development mode
+  silentTranslationWarn: process.env.NODE_ENV === 'production',
+  silentFallbackWarn: process.env.NODE_ENV === 'production',
+  missingWarn: process.env.NODE_ENV !== 'production',
+  fallbackWarn: process.env.NODE_ENV !== 'production'
 })
 
 export default i18n 

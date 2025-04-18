@@ -345,10 +345,32 @@ const isGenerating = ref(false);
 // Setup i18n
 const { t, locale } = useI18n();
 
+// Check if localStorage is available
+function isLocalStorageAvailable() {
+  try {
+    const testKey = '__test_key__';
+    localStorage.setItem(testKey, testKey);
+    localStorage.removeItem(testKey);
+    return true;
+  } catch (e) {
+    console.warn('localStorage is not available:', e);
+    return false;
+  }
+}
+
 // This function explicitly sets the locale and updates localStorage
 function setLanguage(lang) {
-  locale.value = lang;
-  localStorage.setItem('preferred_language', lang);
+  try {
+    locale.value = lang;
+    if (isLocalStorageAvailable()) {
+      localStorage.setItem('preferred_language', lang);
+      console.log('Language set successfully to:', lang);
+    }
+  } catch (error) {
+    console.warn('Failed to save language preference to localStorage:', error);
+    // Still set the locale in memory even if localStorage fails
+    locale.value = lang;
+  }
 }
 
 // Computed translations that preserve the format we used before
@@ -428,13 +450,32 @@ const invoice = ref({...defaultInvoice});
 onMounted(() => {
   console.log('GuestInvoice mounted - Current locale:', locale.value);
   
-  // Check for saved language preference
-  const savedLanguage = localStorage.getItem('preferred_language');
-  console.log('Saved language from localStorage:', savedLanguage);
-  
-  if (savedLanguage && ['id', 'en'].includes(savedLanguage)) {
-    console.log('Setting locale to saved language:', savedLanguage);
-    locale.value = savedLanguage;
+  // Check if localStorage is available and get saved language
+  if (isLocalStorageAvailable()) {
+    try {
+      // Check for saved language preference
+      const savedLanguage = localStorage.getItem('preferred_language');
+      console.log('Saved language from localStorage:', savedLanguage);
+      
+      if (savedLanguage && ['id', 'en'].includes(savedLanguage)) {
+        console.log('Setting locale to saved language:', savedLanguage);
+        locale.value = savedLanguage;
+      } else {
+        // If no valid language found in localStorage, default to Indonesian
+        console.log('No valid language in localStorage, defaulting to Indonesian');
+        locale.value = 'id';
+        // Try to save the default
+        localStorage.setItem('preferred_language', 'id');
+      }
+    } catch (error) {
+      console.warn('Error accessing localStorage for language preference:', error);
+      // Default to Indonesian if localStorage fails
+      locale.value = 'id';
+    }
+  } else {
+    // If localStorage is not available, just set the default locale in memory
+    console.log('localStorage not available, defaulting locale to: id');
+    locale.value = 'id';
   }
   
   // Log after setting the locale
@@ -443,20 +484,28 @@ onMounted(() => {
   // Track guest invoice page view
   trackPageView('/invoice/guest', 'Buat Faktur Tanpa Daftar - Faktur.web.id');
   
-  const savedInvoice = localStorage.getItem('currentInvoice');
-  if (savedInvoice) {
+  // Load saved invoice if localStorage is available
+  if (isLocalStorageAvailable()) {
     try {
-      const parsedInvoice = JSON.parse(savedInvoice);
-      // Copy saved values to invoice
-      invoice.value = parsedInvoice;
-      
-      // Recalculate item totals to ensure they're correct
-      invoice.value.items.forEach((item, index) => {
-        calculateItemTotal(index);
-      });
-    } catch (error) {
-      console.error('Error loading saved invoice:', error);
-      // If error loading, use defaults
+      const savedInvoice = localStorage.getItem('currentInvoice');
+      if (savedInvoice) {
+        try {
+          const parsedInvoice = JSON.parse(savedInvoice);
+          // Copy saved values to invoice
+          invoice.value = parsedInvoice;
+          
+          // Recalculate item totals to ensure they're correct
+          invoice.value.items.forEach((item, index) => {
+            calculateItemTotal(index);
+          });
+        } catch (parseError) {
+          console.error('Error parsing saved invoice:', parseError);
+          // If error parsing, use defaults
+        }
+      }
+    } catch (storageError) {
+      console.warn('Error accessing localStorage for invoice data:', storageError);
+      // Continue with default invoice
     }
   }
 });
@@ -544,11 +593,17 @@ function removeLogo() {
 }
 
 function previewInvoice() {
-  // Make sure we're saving the language preference in localStorage
+  // Make sure we're saving the language preference in memory
   invoice.value._language = locale.value;
   
-  // Save current invoice data to localStorage
-  localStorage.setItem('currentInvoice', JSON.stringify(invoice.value));
+  // Save current invoice data to localStorage if available
+  if (isLocalStorageAvailable()) {
+    try {
+      localStorage.setItem('currentInvoice', JSON.stringify(invoice.value));
+    } catch (error) {
+      console.warn('Failed to save invoice to localStorage:', error);
+    }
+  }
   
   // Navigate to the preview page
   router.push('/invoice/preview');
