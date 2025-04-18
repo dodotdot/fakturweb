@@ -19,6 +19,7 @@ const AdminDashboard = () => import('../views/AdminDashboard.vue')
 const AdminUsers = () => import('../views/admin/AdminUsers.vue')
 const AdminInvoices = () => import('../views/admin/AdminInvoices.vue')
 const AdminSettings = () => import('../views/admin/AdminSettings.vue')
+const PublicInvoiceDetail = () => import('../views/PublicInvoiceDetail.vue')
 
 const routes = [
   {
@@ -111,6 +112,19 @@ const routes = [
       description: 'Lihat detail lengkap faktur Anda termasuk pembayaran dan riwayat.',
       keywords: 'detail faktur, info faktur lengkap, status faktur, riwayat faktur',
       requiresAuth: true
+    }
+  },
+  {
+    path: '/invoice/public/:id',
+    name: 'PublicInvoiceDetail',
+    component: PublicInvoiceDetail,
+    meta: {
+      title: 'Invoice - View & Download',
+      description: 'View and download shared invoice.',
+      keywords: 'view invoice, share invoice, download invoice, public invoice',
+      requiresAuth: false,
+      noSidebar: true,
+      hideNavbar: true
     }
   },
   {

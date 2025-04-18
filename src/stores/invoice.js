@@ -277,16 +277,56 @@ export const useInvoiceStore = defineStore('invoice', () => {
       
       if (deleteError) throw deleteError
       
-      // Remove from local state
-      const index = invoices.value.findIndex(invoice => invoice.id === id)
-      if (index !== -1) {
-        invoices.value.splice(index, 1)
-      }
+      // Remove from local array
+      invoices.value = invoices.value.filter(invoice => invoice.id !== id)
       
       return true
     } catch (err) {
       error.value = err.message
       console.error('Delete invoice error:', err)
+      throw err
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  async function generateShareLink(invoiceId) {
+    try {
+      isLoading.value = true
+      error.value = null
+      
+      const { data: userData } = await supabase.auth.getUser()
+      if (!userData.user) throw new Error('User not authenticated')
+      
+      // First check if the invoice exists and belongs to this user
+      const { data: invoiceData, error: fetchError } = await supabase
+        .from('invoices')
+        .select('id, is_public')
+        .eq('id', invoiceId)
+        .eq('user_id', userData.user.id)
+        .single()
+      
+      if (fetchError) throw fetchError
+      
+      // Update the invoice to make it public if it's not already
+      if (!invoiceData.is_public) {
+        const { error: updateError } = await supabase
+          .from('invoices')
+          .update({ is_public: true })
+          .eq('id', invoiceId)
+          .eq('user_id', userData.user.id)
+        
+        if (updateError) throw updateError
+      }
+      
+      // Generate the share link
+      const baseUrl = window.location.origin
+      const shareLink = `${baseUrl}/invoice/public/${invoiceId}`
+      
+      return shareLink
+    } catch (err) {
+      error.value = err.message
+      console.error('Generate share link error:', err)
       throw err
     } finally {
       isLoading.value = false
@@ -362,6 +402,7 @@ export const useInvoiceStore = defineStore('invoice', () => {
     getInvoice,
     deleteInvoice,
     setGuestMode,
-    downloadPDF
+    downloadPDF,
+    generateShareLink
   }
 }) 

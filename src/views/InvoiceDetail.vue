@@ -26,12 +26,77 @@
               Edit
             </router-link>
             <button 
+              @click="shareInvoice" 
+              class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50"
+              v-tooltip="'Share Invoice'"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+              </svg>
+            </button>
+            <button 
               @click="downloadPDF"
               class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 disabled:opacity-70"
               :disabled="isPrinting"
             >
               {{ isPrinting ? 'Generating PDF...' : 'Download PDF' }}
             </button>
+          </div>
+        </div>
+        
+        <!-- Share Invoice Modal -->
+        <div v-if="showShareModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 no-print">
+          <div class="bg-white rounded-lg p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-lg font-medium">Share Invoice</h3>
+              <button @click="showShareModal = false" class="text-gray-500 hover:text-gray-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <div v-if="isGeneratingShareLink" class="flex justify-center my-8">
+              <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+            </div>
+            
+            <div v-else-if="shareError" class="text-red-500 mb-4">
+              {{ shareError }}
+            </div>
+            
+            <div v-else>
+              <p class="mb-4 text-gray-600">Share this invoice with anyone using this link. No login required to view.</p>
+              
+              <div class="flex items-center border border-gray-300 rounded-md overflow-hidden mb-4">
+                <input
+                  ref="shareLinkInput"
+                  type="text"
+                  readonly
+                  :value="shareLink"
+                  class="w-full px-3 py-2 focus:outline-none text-sm"
+                />
+                <button
+                  @click="copyShareLink"
+                  class="bg-gray-100 text-gray-700 px-3 py-2 hover:bg-gray-200 border-l border-gray-300"
+                >
+                  <svg v-if="linkCopied" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            
+            <div class="flex justify-end space-x-3 mt-6">
+              <button
+                @click="showShareModal = false"
+                class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
         
@@ -376,6 +441,12 @@ const isPrinting = ref(false);
 const selectedTheme = ref('classic'); // Default theme
 const invoiceId = computed(() => route.params.id);
 const invoice = computed(() => invoiceStore.currentInvoice);
+const showShareModal = ref(false);
+const isGeneratingShareLink = ref(false);
+const shareError = ref('');
+const shareLink = ref('');
+const linkCopied = ref(false);
+const shareLinkInput = ref(null);
 
 onMounted(async () => {
   try {
@@ -570,6 +641,42 @@ const downloadPDF = async () => {
     alert('Error generating PDF. Please try again.');
   } finally {
     isPrinting.value = false;
+  }
+};
+
+const shareInvoice = async () => {
+  if (!invoice.value) {
+    alert('Invoice is not loaded');
+    return;
+  }
+
+  showShareModal.value = true;
+  isGeneratingShareLink.value = true;
+  shareError.value = '';
+  linkCopied.value = false;
+
+  try {
+    // Generate share link
+    const url = await invoiceStore.generateShareLink(invoiceId.value);
+    shareLink.value = url;
+  } catch (err) {
+    console.error('Error generating share link:', err);
+    shareError.value = 'Failed to generate share link. Please try again.';
+  } finally {
+    isGeneratingShareLink.value = false;
+  }
+};
+
+const copyShareLink = () => {
+  if (shareLinkInput.value) {
+    shareLinkInput.value.select();
+    document.execCommand('copy');
+    linkCopied.value = true;
+    
+    // Reset copied status after 3 seconds
+    setTimeout(() => {
+      linkCopied.value = false;
+    }, 3000);
   }
 };
 </script>
