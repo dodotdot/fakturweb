@@ -334,6 +334,7 @@ import { ref, onMounted, computed } from 'vue';
 import html2pdf from 'html2pdf.js';
 import { useRouter } from 'vue-router';
 import { invoiceEvents, trackPageView } from '../utils/analytics';
+import { trackGuestPdfGeneration } from '../utils/guest-tracker';
 import { useI18n } from 'vue-i18n';
 
 const router = useRouter();
@@ -573,8 +574,12 @@ function downloadPDF() {
       .then(() => {
         isGenerating.value = false;
         
-        // Track PDF download event using our utility
-        invoiceEvents.download(invoice.value.title, calculateTotal());
+        // Track guest PDF generation with comprehensive data
+        trackGuestPdfGeneration({
+          invoiceTitle: invoice.value.title,
+          invoiceTotal: calculateTotal(),
+          userAgent: navigator.userAgent
+        });
       })
       .catch(error => {
         console.error('Error generating PDF:', error);

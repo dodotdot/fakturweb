@@ -30,64 +30,136 @@
 
     <!-- Navigation Links -->
     <nav class="flex-1 py-4 overflow-y-auto">
-      <ul class="space-y-1 px-2">
-        <li>
-          <router-link 
-            to="/dashboard" 
-            class="flex items-center py-2 rounded-md hover:bg-gray-100 transition-colors"
-            :class="[
-              $route.path === '/dashboard' ? 'bg-gray-100 text-primary-600 font-medium' : 'text-gray-700',
-              isExpanded ? 'px-4 justify-start' : 'px-2 justify-center'
-            ]"
-            @click="$emit('close')"
-          >
-            <span class="text-xl" :class="{ 'mr-3': isExpanded }">🏠</span>
-            <span v-if="isExpanded">Dashboard</span>
-          </router-link>
-        </li>
-        <li>
-          <router-link 
-            to="/invoice" 
-            class="flex items-center py-2 rounded-md hover:bg-gray-100 transition-colors"
-            :class="[
-              $route.path.includes('/invoice') ? 'bg-gray-100 text-primary-600 font-medium' : 'text-gray-700',
-              isExpanded ? 'px-4 justify-start' : 'px-2 justify-center'
-            ]"
-            @click="$emit('close')"
-          >
-            <span class="text-xl" :class="{ 'mr-3': isExpanded }">📄</span>
-            <span v-if="isExpanded">Invoices</span>
-          </router-link>
-        </li>
-        <li>
-          <router-link 
-            to="/profile" 
-            class="flex items-center py-2 rounded-md hover:bg-gray-100 transition-colors"
-            :class="[
-              $route.path === '/profile' ? 'bg-gray-100 text-primary-600 font-medium' : 'text-gray-700',
-              isExpanded ? 'px-4 justify-start' : 'px-2 justify-center'
-            ]"
-            @click="$emit('close')"
-          >
-            <span class="text-xl" :class="{ 'mr-3': isExpanded }">👤</span>
-            <span v-if="isExpanded">Profile</span>
-          </router-link>
-        </li>
-        <li>
-          <router-link 
-            to="/settings" 
-            class="flex items-center py-2 rounded-md hover:bg-gray-100 transition-colors"
-            :class="[
-              $route.path === '/settings' ? 'bg-gray-100 text-primary-600 font-medium' : 'text-gray-700',
-              isExpanded ? 'px-4 justify-start' : 'px-2 justify-center'
-            ]"
-            @click="$emit('close')"
-          >
-            <span class="text-xl" :class="{ 'mr-3': isExpanded }">⚙️</span>
-            <span v-if="isExpanded">Settings</span>
-          </router-link>
-        </li>
-      </ul>
+      <!-- User Menu Section -->
+      <div class="mb-6">
+        <div v-if="isExpanded" class="px-4 mb-2">
+          <span class="text-xs font-semibold uppercase tracking-wider text-gray-500">User Menu</span>
+        </div>
+        <ul class="space-y-1 px-2">
+          <li>
+            <router-link 
+              to="/dashboard" 
+              class="flex items-center py-2 rounded-md hover:bg-gray-100 transition-colors"
+              :class="[
+                $route.path === '/dashboard' ? 'bg-gray-100 text-primary-600 font-medium' : 'text-gray-700',
+                isExpanded ? 'px-4 justify-start' : 'px-2 justify-center'
+              ]"
+              @click="$emit('close')"
+            >
+              <span class="text-xl" :class="{ 'mr-3': isExpanded }">🏠</span>
+              <span v-if="isExpanded">Dashboard</span>
+            </router-link>
+          </li>
+          <li>
+            <router-link 
+              to="/invoice" 
+              class="flex items-center py-2 rounded-md hover:bg-gray-100 transition-colors"
+              :class="[
+                $route.path.includes('/invoice') ? 'bg-gray-100 text-primary-600 font-medium' : 'text-gray-700',
+                isExpanded ? 'px-4 justify-start' : 'px-2 justify-center'
+              ]"
+              @click="$emit('close')"
+            >
+              <span class="text-xl" :class="{ 'mr-3': isExpanded }">📄</span>
+              <span v-if="isExpanded">Invoices</span>
+            </router-link>
+          </li>
+          <li>
+            <router-link 
+              to="/profile" 
+              class="flex items-center py-2 rounded-md hover:bg-gray-100 transition-colors"
+              :class="[
+                $route.path === '/profile' ? 'bg-gray-100 text-primary-600 font-medium' : 'text-gray-700',
+                isExpanded ? 'px-4 justify-start' : 'px-2 justify-center'
+              ]"
+              @click="$emit('close')"
+            >
+              <span class="text-xl" :class="{ 'mr-3': isExpanded }">👤</span>
+              <span v-if="isExpanded">Profile</span>
+            </router-link>
+          </li>
+          <li>
+            <router-link 
+              to="/settings" 
+              class="flex items-center py-2 rounded-md hover:bg-gray-100 transition-colors"
+              :class="[
+                $route.path === '/settings' ? 'bg-gray-100 text-primary-600 font-medium' : 'text-gray-700',
+                isExpanded ? 'px-4 justify-start' : 'px-2 justify-center'
+              ]"
+              @click="$emit('close')"
+            >
+              <span class="text-xl" :class="{ 'mr-3': isExpanded }">⚙️</span>
+              <span v-if="isExpanded">Settings</span>
+            </router-link>
+          </li>
+        </ul>
+      </div>
+      
+      <!-- Admin Menu Section - Only visible to superadmins -->
+      <div v-if="isSuperAdmin" class="mb-6">
+        <div v-if="isExpanded" class="px-4 mb-2">
+          <span class="text-xs font-semibold uppercase tracking-wider text-primary-600">Admin Menu</span>
+        </div>
+        <div v-else class="border-t my-4 border-gray-200"></div>
+        <ul class="space-y-1 px-2">
+          <li>
+            <router-link 
+              to="/admin" 
+              class="flex items-center py-2 rounded-md hover:bg-gray-100 transition-colors"
+              :class="[
+                $route.path === '/admin' ? 'bg-gray-100 text-primary-600 font-medium' : 'text-gray-700',
+                isExpanded ? 'px-4 justify-start' : 'px-2 justify-center'
+              ]"
+              @click="$emit('close')"
+            >
+              <span class="text-xl" :class="{ 'mr-3': isExpanded }">👑</span>
+              <span v-if="isExpanded">Admin Dashboard</span>
+            </router-link>
+          </li>
+          <li>
+            <router-link 
+              to="/admin/users" 
+              class="flex items-center py-2 rounded-md hover:bg-gray-100 transition-colors"
+              :class="[
+                $route.path === '/admin/users' ? 'bg-gray-100 text-primary-600 font-medium' : 'text-gray-700',
+                isExpanded ? 'px-4 justify-start' : 'px-2 justify-center'
+              ]"
+              @click="$emit('close')"
+            >
+              <span class="text-xl" :class="{ 'mr-3': isExpanded }">👥</span>
+              <span v-if="isExpanded">User Management</span>
+            </router-link>
+          </li>
+          <li>
+            <router-link 
+              to="/admin/invoices" 
+              class="flex items-center py-2 rounded-md hover:bg-gray-100 transition-colors"
+              :class="[
+                $route.path === '/admin/invoices' ? 'bg-gray-100 text-primary-600 font-medium' : 'text-gray-700',
+                isExpanded ? 'px-4 justify-start' : 'px-2 justify-center'
+              ]"
+              @click="$emit('close')"
+            >
+              <span class="text-xl" :class="{ 'mr-3': isExpanded }">📊</span>
+              <span v-if="isExpanded">Invoice Analytics</span>
+            </router-link>
+          </li>
+          <li>
+            <router-link 
+              to="/admin/settings" 
+              class="flex items-center py-2 rounded-md hover:bg-gray-100 transition-colors"
+              :class="[
+                $route.path === '/admin/settings' ? 'bg-gray-100 text-primary-600 font-medium' : 'text-gray-700',
+                isExpanded ? 'px-4 justify-start' : 'px-2 justify-center'
+              ]"
+              @click="$emit('close')"
+            >
+              <span class="text-xl" :class="{ 'mr-3': isExpanded }">🔧</span>
+              <span v-if="isExpanded">System Settings</span>
+            </router-link>
+          </li>
+        </ul>
+      </div>
     </nav>
 
     <!-- Logout Button -->
@@ -115,6 +187,7 @@ const authStore = useAuthStore();
 
 const isAuthenticated = computed(() => authStore.isAuthenticated);
 const user = computed(() => authStore.user);
+const isSuperAdmin = computed(() => authStore.isSuperAdmin);
 
 const userInitials = computed(() => {
   if (!user.value?.email) return '?';

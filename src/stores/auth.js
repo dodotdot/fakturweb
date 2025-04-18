@@ -5,21 +5,44 @@ import { userEvents } from '../utils/analytics'
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref(null)
+  const userRole = ref('user')
   const isLoading = ref(false)
   const error = ref(null)
 
   const isAuthenticated = computed(() => !!user.value)
+  const isSuperAdmin = computed(() => userRole.value === 'superadmin')
 
   async function initialize() {
     try {
       isLoading.value = true
       const { data } = await supabase.auth.getSession()
       user.value = data.session?.user || null
+      
+      if (user.value) {
+        await fetchUserRole()
+      }
     } catch (err) {
       error.value = err.message
       console.error('Error initializing auth:', err)
     } finally {
       isLoading.value = false
+    }
+  }
+
+  async function fetchUserRole() {
+    try {
+      const { data, error: fetchError } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.value.id)
+        .single()
+      
+      if (fetchError) throw fetchError
+      
+      userRole.value = data.role || 'user'
+    } catch (err) {
+      console.error('Error fetching user role:', err)
+      userRole.value = 'user'
     }
   }
 
@@ -86,6 +109,9 @@ export const useAuthStore = defineStore('auth', () => {
       
       user.value = data.user
       
+      // Fetch user role after login
+      await fetchUserRole()
+      
       // Track login event
       userEvents.login('email')
       
@@ -135,6 +161,7 @@ export const useAuthStore = defineStore('auth', () => {
       if (signOutError) throw signOutError
       
       user.value = null
+      userRole.value = 'user'
     } catch (err) {
       error.value = err.message
       console.error('Logout error:', err)
@@ -145,9 +172,11 @@ export const useAuthStore = defineStore('auth', () => {
 
   return {
     user,
+    userRole,
     isLoading,
     error,
     isAuthenticated,
+    isSuperAdmin,
     supabase,
     initialize,
     register,

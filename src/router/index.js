@@ -15,6 +15,10 @@ const AuthCallback = () => import('../views/AuthCallback.vue')
 const Profile = () => import('../views/Profile.vue')
 const Settings = () => import('../views/Settings.vue')
 const InvoicePreview = () => import('../views/InvoicePreview.vue')
+const AdminDashboard = () => import('../views/AdminDashboard.vue')
+const AdminUsers = () => import('../views/admin/AdminUsers.vue')
+const AdminInvoices = () => import('../views/admin/AdminInvoices.vue')
+const AdminSettings = () => import('../views/admin/AdminSettings.vue')
 
 const routes = [
   {
@@ -164,7 +168,8 @@ const routes = [
       description: 'Lihat preview faktur Anda sebelum diunduh. Pastikan semua detail sudah benar dan siap dikirim ke klien Anda.',
       keywords: 'preview faktur, lihat preview, unduh faktur, klien faktur',
       requiresAuth: false,
-      hideNavbar: false
+      hideNavbar: false,
+      noSidebar: true
     }
   },
   {
@@ -185,6 +190,54 @@ const routes = [
       title: 'Kebijakan Privasi - Faktur.web.id',
       description: 'Kebijakan privasi penggunaan layanan Faktur.web.id',
       keywords: 'kebijakan privasi, privacy policy, keamanan data, perlindungan data'
+    }
+  },
+  {
+    path: '/admin',
+    name: 'AdminDashboard',
+    component: AdminDashboard,
+    meta: {
+      title: 'Admin Dashboard - System Monitoring',
+      description: 'Administrator dashboard for monitoring system usage and managing users',
+      keywords: 'admin dashboard, super admin, system management, user management',
+      requiresAuth: true,
+      requiresAdmin: true
+    }
+  },
+  {
+    path: '/admin/users',
+    name: 'AdminUsers',
+    component: AdminUsers,
+    meta: {
+      title: 'User Management - Admin',
+      description: 'Manage system users, roles and permissions',
+      keywords: 'admin users, user management, system management, user roles',
+      requiresAuth: true,
+      requiresAdmin: true
+    }
+  },
+  {
+    path: '/admin/invoices',
+    name: 'AdminInvoices',
+    component: AdminInvoices,
+    meta: {
+      title: 'Invoice Analytics - Admin',
+      description: 'View invoice analytics and reports across all users',
+      keywords: 'admin invoices, invoice analytics, invoice reporting, system analytics',
+      requiresAuth: true,
+      requiresAdmin: true
+    }
+  },
+  {
+    path: '/admin/settings',
+    name: 'AdminSettings',
+    component: AdminSettings,
+    meta: {
+      title: 'System Settings - Admin',
+      description: 'Configure system-wide settings and preferences',
+      keywords: 'admin settings, system settings, global configuration, admin console',
+      requiresAuth: true,
+      requiresAdmin: true
     }
   },
   {
@@ -218,6 +271,7 @@ router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
   const hideForAuth = to.matched.some(record => record.meta.hideForAuth)
+  const requiresAdmin = to.matched.some(record => record.meta.requiresAdmin)
   
   // Initialize auth store if not already initialized
   if (!authStore.initialized) {
@@ -233,6 +287,9 @@ router.beforeEach(async (to, from, next) => {
     next({ name: 'Login', query: { redirect: to.fullPath } })
   } else if (hideForAuth && isAuthenticated) {
     // Redirect to dashboard if the page should be hidden for authenticated users
+    next({ name: 'Dashboard' })
+  } else if (requiresAdmin && !authStore.isSuperAdmin) {
+    // Redirect non-admin users to dashboard
     next({ name: 'Dashboard' })
   } else {
     // For NewInvoice route - attach a flag to indicate guest mode if not authenticated

@@ -543,6 +543,7 @@ import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import html2pdf from 'html2pdf.js';
 import { invoiceEvents, trackPageView } from '../utils/analytics';
+import { trackGuestPdfGeneration } from '../utils/guest-tracker';
 import { useI18n } from 'vue-i18n';
 
 const route = useRoute();
@@ -678,8 +679,12 @@ function processDownload() {
   isGenerating.value = true;
   showRegisterModal.value = false; // Close the modal
 
-  // Track the download event using the utility
-  invoiceEvents.download(invoice.value.title, calculateTotal());
+  // Track the download event using the utility with comprehensive data
+  trackGuestPdfGeneration({
+    invoiceTitle: invoice.value.title,
+    invoiceTotal: calculateTotal(),
+    userAgent: navigator.userAgent
+  });
 
   const options = {
     margin: [10, 10, 15, 10], // top, right, bottom, left - increased bottom margin to accommodate watermark

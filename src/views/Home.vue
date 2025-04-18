@@ -17,23 +17,37 @@
           </p>
           <div class="hero-video-wrapper mb-8">
             <video class="hero-video" autoplay loop muted playsinline>
-              <source src="/images/videos/hero-video.mp4" type="video/mp4">
+              <source src="/images/videos/hero-video1.mp4" type="video/mp4">
               Your browser does not support the video tag.
             </video>
           </div>
           <div class="hero-cta flex gap-4 justify-center">
             
             
-            <router-link to="/invoice/guest" class="btn-secondary">Buat Faktur Gratis, Sekarang!</router-link>
+            <router-link to="/invoice/guest" class="btn-primary">Buat Faktur Sekarang</router-link>
           </div>
         </div>
       </div>
     </section>
 
+   <!-- Other sections would be here -->
    
+   <!-- Logo Background Section -->
+   <div class="logo-background-section container mx-auto bg-white">
+     <img src="/images/faktur-logo.svg" alt="Faktur Logo Background" class="logo-background bg-white">
+   </div>
 
-
-   
+   <!-- Footer section -->
+   <footer class="footer">
+     <div class="footer-content">
+       <div class="footer-logo">Faktur.web.id</div>
+       <div class="footer-links">
+         <a href="/terms-of-service" class="footer-link">Terms of Service</a>
+         <a href="/privacy-policy" class="footer-link">Privacy Policy</a>
+       </div>
+       <div class="footer-copyright">© 2025 Faktur.web.id</div>
+     </div>
+   </footer>
   </div>
 </template>
 
@@ -227,12 +241,12 @@ onMounted(() => {
 }
 
 .btn-primary {
-  background-color: #00B74A;
+  background-color: #c0392b;
   color: white;
 }
 
 .btn-primary:hover {
-  background-color: #009E42;
+  background-color: #c0392a;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 183, 74, 0.2);
 }
@@ -250,8 +264,8 @@ onMounted(() => {
 }
 
 .highlight {
-  color: #00B74A;
-  -webkit-text-fill-color: #00B74A;
+  color: #c0392b;
+  -webkit-text-fill-color: #c0392b;
   position: relative;
   display: inline-block;
   z-index: 21;
@@ -264,7 +278,7 @@ onMounted(() => {
   left: 0;
   width: 100%;
   height: 8px;
-  background-color: rgba(0, 183, 74, 0.2);
+  background-color: rgba(192, 57, 43,0.2);
   z-index: -1;
   border-radius: 4px;
 }
@@ -662,5 +676,82 @@ onMounted(() => {
 
 .cta-preview:hover {
   transform: translateY(-5px);
+}
+
+/* Logo Background Section */
+.logo-background-section {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+}
+
+.logo-background {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  z-index: 1;
+  opacity: 0.4;
+}
+
+/* Footer styles */
+.footer {
+  padding: 1.5rem 0;
+  background-color: #f5f5f5;
+  border-top: 1px solid #eaeaea;
+  position: relative;
+  z-index: 2;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.footer-logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.footer-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.footer-link {
+  color: #333;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer-link:hover {
+  color: #00B74A;
+}
+
+.footer-copyright {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Responsive footer styles */
+@media (max-width: 768px) {
+  .footer-content {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .footer-links {
+    order: 2;
+  }
+  
+  .footer-copyright {
+    order: 3;
+  }
 }
 </style> 
