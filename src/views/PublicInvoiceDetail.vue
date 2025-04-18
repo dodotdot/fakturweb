@@ -331,6 +331,15 @@ async function fetchInvoice() {
     }
     
     invoice.value = data;
+    console.log('Fetched invoice:', data);
+    console.log('Client info (to_details):', data.to_details);
+    
+    // Map database fields to component fields
+    if (data) {
+      // Create from and to fields from from_details and to_details
+      invoice.value.from = data.from_details;
+      invoice.value.to = data.to_details;
+    }
     
     // Record view analytics
     recordAnalytics('view');
