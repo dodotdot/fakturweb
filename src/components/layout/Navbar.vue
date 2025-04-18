@@ -31,7 +31,7 @@
             </RouterLink>
             <RouterLink 
               to="/register" 
-              class="text-sm font-medium text-white bg-primary-500 hover:bg-primary-600 px-4 py-2 rounded-md ml-2 transition-colors"
+              class="text-sm font-medium text-gray-700 bg-primary-500 hover:bg-primary-600 px-4 py-2 rounded-md ml-2 transition-colors"
             >
               Sign Up
             </RouterLink>

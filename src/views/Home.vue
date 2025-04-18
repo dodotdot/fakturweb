@@ -9,11 +9,11 @@
         </div>
         
         <div class="flex flex-col items-center justify-center text-center max-w-4xl mx-auto relative z-20">
-          <h1 class="hero-title mb-6">
-            Faktur Digital<br>Untuk <span class="highlight">Bisnis Modern</span>
+          <h1 class="hero-title mb-6 tracking-tighter">
+            Faktur Digital<br>Untuk <span class="highlight font-serif font-light italic">Bisnis Modern</span>
           </h1>
           <p class="hero-subtitle mb-8">
-            Faktur profesional dalam 30 detik. Hemat waktu, simple, elegan, dan terorganisir dengan baik.
+            Faktur profesional dalam 30 detik 🔥. Hemat waktu, simple, elegan, dan terorganisir dengan baik.
           </p>
           <div class="hero-video-wrapper mb-8">
             <video class="hero-video" autoplay loop muted playsinline>
@@ -22,9 +22,9 @@
             </video>
           </div>
           <div class="hero-cta flex gap-4 justify-center">
-            <!-- <router-link v-if="!isAuthenticated" to="/register" class="btn-primary">Mulai Gratis</router-link> -->
-            <router-link v-if="isAuthenticated" to="/dashboard" class="btn-primary">Dashboard</router-link>
-            <router-link to="/invoice/guest" class="btn-secondary">Buat Faktur Tanpa Daftar</router-link>
+            
+            
+            <router-link to="/invoice/guest" class="btn-secondary">Buat Faktur Gratis, Sekarang!</router-link>
           </div>
         </div>
       </div>

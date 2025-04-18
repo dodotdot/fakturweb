@@ -1,11 +1,62 @@
 <template>
   <div class="min-h-screen py-12">
     <div class="container mx-auto max-w-4xl">
+      <!-- Step Timeline -->
+      <div class="mb-8 flex justify-center">
+        <div class="relative px-4 max-w-md w-full">
+          <!-- Step Line -->
+          <div class="absolute left-8 right-8 top-4 h-0.5 bg-gray-200 z-0"></div>
+          
+          <!-- Step Line Progress (50% complete) -->
+          <div class="absolute left-8 right-1/2 top-4 h-0.5 bg-primary z-0"></div>
+          
+          <!-- Step Items -->
+          <div class="relative z-10 flex justify-between w-full">
+            <!-- Step 1: Create (completed) -->
+            <div class="flex flex-col items-center">
+              <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="text-center mt-1">
+                <div class="text-xs font-medium text-primary">{{ t('ui.fillData') }}</div>
+              </div>
+            </div>
+            
+            <!-- Step 2: Preview (active) -->
+            <div class="flex flex-col items-center">
+              <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center mb-2 ring-4 ring-primary/20 animate-pulse">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              </div>
+              <div class="text-center mt-1">
+                <div class="text-xs font-medium text-primary">{{ t('ui.chooseTheme') }}</div>
+              </div>
+            </div>
+            
+            <!-- Step 3: Download (upcoming) -->
+            <div class="flex flex-col items-center">
+              <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+              </div>
+              <div class="text-center mt-1">
+                <div class="text-xs font-medium text-gray-500">{{ t('ui.downloadPDF') }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center py-8 gap-4">
         <div>
-          <h1 class="text-2xl font-bold text-gray-800">Preview Faktur</h1>
+          <h1 class="text-2xl font-bold text-gray-800">{{ t('ui.preview') }} Faktur</h1>
           <p class="text-gray-500">
-            Faktur anda telah dibuat. Anda dapat mengunduh atau melihat tampilan di bawah.
+            {{ t('ui.createInvoiceMessage') }}
           </p>
         </div>
         <div class="flex space-x-4">
@@ -33,7 +84,35 @@
       
       <!-- Theme Selector -->
       <div class="mb-6">
-        <h3 class="text-lg font-semibold mb-3">Pilih Tema Invoice</h3>
+        <div class="flex items-center justify-between mb-5">
+          <h3 class="text-lg font-semibold mb-0">{{ t('ui.chooseTheme') }}</h3>
+          
+          <!-- Language Toggle -->
+          <div class="inline-flex items-center rounded-md border border-gray-300 overflow-hidden">
+            <button
+              @click="setLanguage('id')"
+              :class="[
+                'px-3 py-1.5 text-sm',
+                locale === 'id' 
+                  ? 'bg-primary text-white font-medium' 
+                  : 'bg-white text-gray-700 hover:bg-gray-50'
+              ]"
+            >
+              ID
+            </button>
+            <button
+              @click="setLanguage('en')"
+              :class="[
+                'px-3 py-1.5 text-sm',
+                locale === 'en' 
+                  ? 'bg-primary text-white font-medium' 
+                  : 'bg-white text-gray-700 hover:bg-gray-50'
+              ]"
+            >
+              EN
+            </button>
+          </div>
+        </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div 
             class="border rounded-lg p-3 cursor-pointer transition-all hover:shadow-md"
@@ -124,7 +203,7 @@
                 'text-gray-400': selectedTheme === 'classic',
                 'text-blue-400': selectedTheme === 'modern',
                 'text-gray-500': selectedTheme === 'elegant'
-              }">No Logo</span>
+              }">{{ t('invoice.uploadLogo') }}</span>
             </div>
           </div>
           
@@ -145,7 +224,7 @@
                   'text-gray-500': selectedTheme === 'classic',
                   'text-blue-500': selectedTheme === 'modern',
                   'text-gray-400': selectedTheme === 'elegant'
-                }" class="w-24">Tanggal:</span>
+                }" class="w-24">{{ t('invoice.date') }}:</span>
                 <span>{{ formatDate(invoice.date) }}</span>
               </div>
               <div class="flex items-center">
@@ -153,7 +232,7 @@
                   'text-gray-500': selectedTheme === 'classic',
                   'text-blue-500': selectedTheme === 'modern',
                   'text-gray-400': selectedTheme === 'elegant'
-                }" class="w-24">Jatuh Tempo:</span>
+                }" class="w-24">{{ t('invoice.dueDate') }}:</span>
                 <span>{{ formatDate(invoice.dueDate) }}</span>
               </div>
             </div>
@@ -167,7 +246,7 @@
               'text-gray-400': selectedTheme === 'classic',
               'text-blue-500': selectedTheme === 'modern',
               'text-yellow-500': selectedTheme === 'elegant'
-            }" class="text-sm uppercase font-medium mb-2">Dari</h3>
+            }" class="text-sm uppercase font-medium mb-2">{{ t('invoice.from') }}</h3>
             <div :class="{
               'text-gray-900': selectedTheme === 'classic',
               'text-blue-900': selectedTheme === 'modern',
@@ -201,7 +280,7 @@
               'text-gray-400': selectedTheme === 'classic',
               'text-blue-500': selectedTheme === 'modern',
               'text-yellow-500': selectedTheme === 'elegant'
-            }" class="text-sm uppercase font-medium mb-2">Tagih Kepada</h3>
+            }" class="text-sm uppercase font-medium mb-2">{{ t('invoice.billTo') }}</h3>
             <div :class="{
               'text-gray-900': selectedTheme === 'classic',
               'text-blue-900': selectedTheme === 'modern',
@@ -237,7 +316,7 @@
             'text-gray-400': selectedTheme === 'classic',
             'text-blue-500': selectedTheme === 'modern',
             'text-yellow-500': selectedTheme === 'elegant'
-          }" class="text-sm uppercase font-medium mb-4">Item</h3>
+          }" class="text-sm uppercase font-medium mb-4">{{ t('invoice.items') }}</h3>
           <div class="overflow-x-auto">
             <table class="w-full">
               <thead :class="{
@@ -246,26 +325,10 @@
                 'border-b border-gray-700': selectedTheme === 'elegant'
               }">
                 <tr>
-                  <th :class="{
-                    'text-gray-500': selectedTheme === 'classic',
-                    'text-blue-700': selectedTheme === 'modern',
-                    'text-gray-300': selectedTheme === 'elegant'
-                  }" class="text-left p-3 font-medium text-base">Deskripsi</th>
-                  <th :class="{
-                    'text-gray-500': selectedTheme === 'classic',
-                    'text-blue-700': selectedTheme === 'modern',
-                    'text-gray-300': selectedTheme === 'elegant'
-                  }" class="text-right p-3 font-medium w-24 text-base">Jumlah</th>
-                  <th :class="{
-                    'text-gray-500': selectedTheme === 'classic',
-                    'text-blue-700': selectedTheme === 'modern',
-                    'text-gray-300': selectedTheme === 'elegant'
-                  }" class="text-right p-3 font-medium w-32 text-base">Harga</th>
-                  <th :class="{
-                    'text-gray-500': selectedTheme === 'classic',
-                    'text-blue-700': selectedTheme === 'modern',
-                    'text-gray-300': selectedTheme === 'elegant'
-                  }" class="text-right p-3 font-medium w-32 text-base">Total</th>
+                  <th class="text-left p-3 text-gray-500 font-medium">{{ t('invoice.description') }}</th>
+                  <th class="text-right p-3 text-gray-500 font-medium">{{ t('invoice.quantity') }}</th>
+                  <th class="text-right p-3 text-gray-500 font-medium">{{ t('invoice.price') }}</th>
+                  <th class="text-right p-3 text-gray-500 font-medium">{{ t('invoice.total') }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -291,7 +354,7 @@
                   'text-gray-600': selectedTheme === 'classic',
                   'text-blue-700': selectedTheme === 'modern',
                   'text-gray-300': selectedTheme === 'elegant'
-                }" class="text-base">Subtotal:</span>
+                }" class="text-base">{{ t('invoice.subtotal') }}:</span>
                 <span class="text-base">{{ formatCurrency(calculateSubtotal()) }}</span>
               </div>
               <div class="flex justify-between py-2">
@@ -299,7 +362,7 @@
                   'text-gray-600': selectedTheme === 'classic',
                   'text-blue-700': selectedTheme === 'modern',
                   'text-gray-300': selectedTheme === 'elegant'
-                }" class="text-base">Pajak ({{ invoice.taxRate }}%):</span>
+                }" class="text-base">{{ t('invoice.taxRate') }}: {{ invoice.taxRate }}%</span>
                 <span class="text-base">{{ formatCurrency(calculateTaxAmount()) }}</span>
               </div>
               <div :class="{
@@ -307,7 +370,7 @@
                 'border-t border-blue-300': selectedTheme === 'modern',
                 'border-t border-gray-700': selectedTheme === 'elegant'
               }" class="flex justify-between py-3 font-bold text-lg">
-                <span>Total:</span>
+                <span>{{ t('invoice.total') }}:</span>
                 <span :class="{
                   'text-gray-900': selectedTheme === 'classic',
                   'text-blue-900': selectedTheme === 'modern',
@@ -324,7 +387,7 @@
             'text-gray-400': selectedTheme === 'classic',
             'text-blue-500': selectedTheme === 'modern',
             'text-yellow-500': selectedTheme === 'elegant'
-          }" class="text-sm uppercase font-medium mb-2">Catatan</h3>
+          }" class="text-sm uppercase font-medium mb-2">{{ t('invoice.notes') }}</h3>
           <div :class="{
             'bg-gray-50': selectedTheme === 'classic',
             'bg-blue-100': selectedTheme === 'modern',
@@ -476,10 +539,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import html2pdf from 'html2pdf.js';
 import { invoiceEvents, trackPageView } from '../utils/analytics';
+import { useI18n } from 'vue-i18n';
 
 const route = useRoute();
 const router = useRouter();
@@ -487,6 +551,36 @@ const invoicePrintRef = ref(null);
 const isGenerating = ref(false);
 const selectedTheme = ref('classic'); // Default theme
 const showRegisterModal = ref(false);
+
+// Setup i18n
+const { t, locale } = useI18n();
+
+// Computed translations to match format used in GuestInvoice
+const translations = computed(() => ({
+  // UI elements
+  fillData: t('ui.fillData'),
+  chooseTheme: t('ui.chooseTheme'),
+  downloadPDF: t('ui.downloadPDF'),
+  createInvoiceMessage: t('ui.createInvoiceMessage'),
+  preview: t('ui.preview'),
+  
+  // Invoice content
+  uploadLogo: t('invoice.uploadLogo'),
+  date: t('invoice.date'),
+  dueDate: t('invoice.dueDate'),
+  from: t('invoice.from'),
+  billTo: t('invoice.billTo'),
+  items: t('invoice.items'),
+  addItem: t('invoice.addItem'),
+  description: t('invoice.description'),
+  quantity: t('invoice.quantity'),
+  price: t('invoice.price'),
+  total: t('invoice.total'),
+  subtotal: t('invoice.subtotal'),
+  taxRate: t('invoice.taxRate'),
+  taxAmount: t('invoice.taxAmount'),
+  notes: t('invoice.notes')
+}));
 
 // Initialize with empty invoice
 const invoice = ref({
@@ -523,6 +617,11 @@ onMounted(() => {
     // Check if there's a saved theme preference
     if (invoice.value._theme) {
       selectedTheme.value = invoice.value._theme;
+    }
+
+    // Check if there's a language preference in the invoice data
+    if (invoice.value._language) {
+      locale.value = invoice.value._language;
     }
   } else {
     // Redirect back if no invoice data
@@ -620,10 +719,7 @@ function processDownload() {
         
         // Remove the currentInvoice data from localStorage after successful download
         localStorage.removeItem('currentInvoice');
-        console.log('Invoice data cleared from localStorage after PDF download');
         
-        // Show success message
-        alert('PDF berhasil diunduh. Data invoice telah dihapus dari penyimpanan sementara.');
       })
       .catch(error => {
         console.error('Error generating PDF:', error);
@@ -647,6 +743,9 @@ function backToEdit() {
       // Save the selected theme preference
       currentData._theme = selectedTheme.value;
       
+      // Save the language preference
+      currentData._language = locale.value;
+      
       // Save it back to localStorage
       localStorage.setItem('currentInvoice', JSON.stringify(currentData));
       
@@ -664,6 +763,18 @@ function backToEdit() {
     // If no invoice data exists, just navigate back
     console.warn('No invoice data found in localStorage, redirecting to empty form');
     router.push('/invoice/guest');
+  }
+}
+
+// Tambahkan fungsi untuk mengganti bahasa
+function setLanguage(lang) {
+  locale.value = lang;
+  localStorage.setItem('preferred_language', lang);
+  
+  // Also save language preference to invoice data
+  if (invoice.value) {
+    invoice.value._language = lang;
+    localStorage.setItem('currentInvoice', JSON.stringify(invoice.value));
   }
 }
 </script>

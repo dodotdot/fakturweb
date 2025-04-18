@@ -168,6 +168,26 @@ const routes = [
     }
   },
   {
+    path: '/terms-of-service',
+    name: 'TermsOfService',
+    component: () => import('../views/TermsOfService.vue'),
+    meta: {
+      title: 'Syarat dan Ketentuan - Faktur.web.id',
+      description: 'Syarat dan ketentuan penggunaan layanan Faktur.web.id',
+      keywords: 'syarat ketentuan, terms of service, faktur online, ketentuan layanan'
+    }
+  },
+  {
+    path: '/privacy-policy',
+    name: 'PrivacyPolicy',
+    component: () => import('../views/PrivacyPolicy.vue'),
+    meta: {
+      title: 'Kebijakan Privasi - Faktur.web.id',
+      description: 'Kebijakan privasi penggunaan layanan Faktur.web.id',
+      keywords: 'kebijakan privasi, privacy policy, keamanan data, perlindungan data'
+    }
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: NotFound,

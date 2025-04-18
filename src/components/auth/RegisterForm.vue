@@ -62,9 +62,9 @@
           />
           <label for="terms" class="text-sm text-gray-500">
             I agree to the
-            <a href="#" class="text-primary hover:underline">Terms of Service</a>
+            <router-link to="/terms-of-service" class="text-primary hover:underline">Terms of Service</router-link>
             and
-            <a href="#" class="text-primary hover:underline">Privacy Policy</a>
+            <router-link to="/privacy-policy" class="text-primary hover:underline">Privacy Policy</router-link>
           </label>
         </div>
         

@@ -3,6 +3,7 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import { initAnalytics, trackPageView } from './utils/analytics'
+import i18n from './i18n'
 
 // Import CSS
 import './assets/main.css'
@@ -32,6 +33,7 @@ router.afterEach((to) => {
 
 app.use(pinia)
 app.use(router)
+app.use(i18n)
 
 // Import and initialize auth store
 import { useAuthStore } from './stores/auth'
