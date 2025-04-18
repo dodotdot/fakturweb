@@ -345,46 +345,51 @@ const isGenerating = ref(false);
 // Setup i18n
 const { t, locale } = useI18n();
 
-// Function to switch language
+// This function explicitly sets the locale and updates localStorage
 function setLanguage(lang) {
   locale.value = lang;
   localStorage.setItem('preferred_language', lang);
 }
 
 // Computed translations that preserve the format we used before
-const translations = computed(() => ({
-  // UI elements are always in Indonesian
-  fillData: t('ui.fillData'),
-  chooseTheme: t('ui.chooseTheme'),
-  downloadPDF: t('ui.downloadPDF'),
-  createInvoiceMessage: t('ui.createInvoiceMessage'),
-  preview: t('ui.preview'),
+const translations = computed(() => {
+  // Force recomputation when locale changes
+  const currentLocale = locale.value;
   
-  // Invoice content is translated based on selected language
-  uploadLogo: t('invoice.uploadLogo'),
-  date: t('invoice.date'),
-  dueDate: t('invoice.dueDate'),
-  from: t('invoice.from'),
-  billTo: t('invoice.billTo'),
-  items: t('invoice.items'),
-  addItem: t('invoice.addItem'),
-  description: t('invoice.description'),
-  quantity: t('invoice.quantity'),
-  price: t('invoice.price'),
-  total: t('invoice.total'),
-  subtotal: t('invoice.subtotal'),
-  taxRate: t('invoice.taxRate'),
-  taxAmount: t('invoice.taxAmount'),
-  notes: t('invoice.notes'),
-  nameCompanyPlaceholder: t('invoice.nameCompanyPlaceholder'),
-  addressPlaceholder: t('invoice.addressPlaceholder'),
-  email: t('invoice.email'),
-  phone: t('invoice.phone'),
-  clientNamePlaceholder: t('invoice.clientNamePlaceholder'),
-  clientAddressPlaceholder: t('invoice.clientAddressPlaceholder'),
-  itemDescriptionPlaceholder: t('invoice.itemDescriptionPlaceholder'),
-  notesPlaceholder: t('invoice.notesPlaceholder')
-}));
+  return {
+    // UI elements translation
+    fillData: t('ui.fillData'),
+    chooseTheme: t('ui.chooseTheme'),
+    downloadPDF: t('ui.downloadPDF'),
+    createInvoiceMessage: t('ui.createInvoiceMessage'),
+    preview: t('ui.preview'),
+    
+    // Invoice content is translated based on selected language
+    uploadLogo: t('invoice.uploadLogo'),
+    date: t('invoice.date'),
+    dueDate: t('invoice.dueDate'),
+    from: t('invoice.from'),
+    billTo: t('invoice.billTo'),
+    items: t('invoice.items'),
+    addItem: t('invoice.addItem'),
+    description: t('invoice.description'),
+    quantity: t('invoice.quantity'),
+    price: t('invoice.price'),
+    total: t('invoice.total'),
+    subtotal: t('invoice.subtotal'),
+    taxRate: t('invoice.taxRate'),
+    taxAmount: t('invoice.taxAmount'),
+    notes: t('invoice.notes'),
+    nameCompanyPlaceholder: t('invoice.nameCompanyPlaceholder'),
+    addressPlaceholder: t('invoice.addressPlaceholder'),
+    email: t('invoice.email'),
+    phone: t('invoice.phone'),
+    clientNamePlaceholder: t('invoice.clientNamePlaceholder'),
+    clientAddressPlaceholder: t('invoice.clientAddressPlaceholder'),
+    itemDescriptionPlaceholder: t('invoice.itemDescriptionPlaceholder'),
+    notesPlaceholder: t('invoice.notesPlaceholder')
+  };
+});
 
 // Default invoice template
 const defaultInvoice = {
@@ -421,11 +426,19 @@ const invoice = ref({...defaultInvoice});
 
 // Load saved language preference
 onMounted(() => {
+  console.log('GuestInvoice mounted - Current locale:', locale.value);
+  
   // Check for saved language preference
   const savedLanguage = localStorage.getItem('preferred_language');
+  console.log('Saved language from localStorage:', savedLanguage);
+  
   if (savedLanguage && ['id', 'en'].includes(savedLanguage)) {
+    console.log('Setting locale to saved language:', savedLanguage);
     locale.value = savedLanguage;
   }
+  
+  // Log after setting the locale
+  console.log('Locale after possible update:', locale.value);
   
   // Track guest invoice page view
   trackPageView('/invoice/guest', 'Buat Faktur Tanpa Daftar - Faktur.web.id');

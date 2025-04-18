@@ -40,9 +40,31 @@ import { useAuthStore } from './stores/auth'
 
 // Initialize the app and mount after auth is checked
 const init = async () => {
-  const authStore = useAuthStore()
-  await authStore.initialize()
-  app.mount('#app')
+  try {
+    // First initialize auth
+    const authStore = useAuthStore()
+    await authStore.initialize()
+    
+    // Initialize i18n with stored preference if available
+    try {
+      const storedLocale = localStorage.getItem('preferred_language')
+      if (storedLocale && ['id', 'en'].includes(storedLocale)) {
+        i18n.global.locale.value = storedLocale
+        console.log('Setting global locale from localStorage:', storedLocale)
+      }
+    } catch (e) {
+      console.warn('Failed to initialize locale from localStorage', e)
+    }
+    
+    // Mount the app
+    app.mount('#app')
+    console.log('App mounted successfully with locale:', i18n.global.locale.value)
+    
+  } catch (error) {
+    console.error('Error initializing app:', error)
+    // Mount anyway to show error state
+    app.mount('#app')
+  }
 }
 
 init()
