@@ -516,6 +516,51 @@
               </svg>
             </div>
             
+            <!-- Guest Information Form -->
+            <div class="w-full mb-4 bg-gray-50 p-4 rounded-md">
+              <h4 class="text-sm font-medium text-gray-700 mb-3">Masukkan Informasi Anda</h4>
+              
+              <div class="mb-3">
+                <label for="guest-name" class="block text-xs text-gray-600 mb-1">Nama <span class="text-red-500">*</span></label>
+                <input 
+                  id="guest-name" 
+                  type="text" 
+                  v-model="guestInfo.name" 
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                  :class="{'border-red-500': formErrors.name}"
+                  placeholder="Nama Lengkap"
+                  required
+                />
+                <div v-if="formErrors.name" class="mt-1 text-xs text-red-500">{{ formErrors.name }}</div>
+              </div>
+              
+              <div class="mb-3">
+                <label for="guest-email" class="block text-xs text-gray-600 mb-1">Email <span class="text-red-500">*</span></label>
+                <input 
+                  id="guest-email" 
+                  type="email" 
+                  v-model="guestInfo.email" 
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                  :class="{'border-red-500': formErrors.email}"
+                  placeholder="email@anda.com"
+                  required
+                />
+                <div v-if="formErrors.email" class="mt-1 text-xs text-red-500">{{ formErrors.email }}</div>
+              </div>
+              
+              <div class="flex items-center mb-1">
+                <input 
+                  id="save-info" 
+                  type="checkbox" 
+                  v-model="guestInfo.saveInfo" 
+                  class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
+                />
+                <label for="save-info" class="ml-2 block text-xs text-gray-600">
+                  Simpan untuk penggunaan selanjutnya
+                </label>
+              </div>
+            </div>
+            
             <button 
               @click="processDownload"
               class="w-full mb-4 py-3 px-6 bg-gray-200 text-gray-800 font-medium rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
@@ -556,6 +601,19 @@ const successMessage = ref('');
 
 // Direct language management
 const currentLocale = ref(getPreferredLanguage());
+
+// Guest information for tracking
+const guestInfo = ref({
+  name: '',
+  email: '',
+  saveInfo: true
+});
+
+// Form validation errors
+const formErrors = ref({
+  name: '',
+  email: ''
+});
 
 // Initialize with empty invoice
 const invoice = ref({
@@ -601,6 +659,20 @@ onMounted(() => {
   } else {
     // Redirect back if no invoice data
     router.push('/invoice/guest');
+  }
+  
+  // Load saved guest info if available
+  if (isLocalStorageAvailable()) {
+    try {
+      const savedGuestInfo = localStorage.getItem('guest_info');
+      if (savedGuestInfo) {
+        const parsedInfo = JSON.parse(savedGuestInfo);
+        if (parsedInfo.name) guestInfo.value.name = parsedInfo.name;
+        if (parsedInfo.email) guestInfo.value.email = parsedInfo.email;
+      }
+    } catch (e) {
+      console.warn('Failed to load saved guest info:', e);
+    }
   }
 });
 
@@ -648,6 +720,27 @@ function downloadPDF() {
 }
 
 function processDownload() {
+  // Validate form inputs
+  let isValid = true;
+  formErrors.value = { name: '', email: '' };
+  
+  if (!guestInfo.value.name.trim()) {
+    formErrors.value.name = 'Nama harus diisi';
+    isValid = false;
+  }
+  
+  if (!guestInfo.value.email.trim()) {
+    formErrors.value.email = 'Email harus diisi';
+    isValid = false;
+  } else if (!validateEmail(guestInfo.value.email)) {
+    formErrors.value.email = 'Format email tidak valid';
+    isValid = false;
+  }
+  
+  if (!isValid) {
+    return;
+  }
+  
   if (!invoicePrintRef.value) return;
   
   isGenerating.value = true;
@@ -657,8 +750,22 @@ function processDownload() {
   trackGuestPdfGeneration({
     invoiceTitle: invoice.value.title,
     invoiceTotal: calculateTotal(),
-    userAgent: navigator.userAgent
+    userAgent: navigator.userAgent,
+    guestName: guestInfo.value.name || 'Anonymous',
+    guestEmail: guestInfo.value.email || null
   });
+
+  // Save guest info if checkbox is checked
+  if (guestInfo.value.saveInfo && isLocalStorageAvailable()) {
+    try {
+      localStorage.setItem('guest_info', JSON.stringify({
+        name: guestInfo.value.name,
+        email: guestInfo.value.email
+      }));
+    } catch (e) {
+      console.warn('Failed to save guest info to localStorage:', e);
+    }
+  }
 
   const options = {
     margin: [10, 10, 15, 10], // top, right, bottom, left - increased bottom margin to accommodate watermark
@@ -778,6 +885,12 @@ function isLocalStorageAvailable() {
     console.warn('localStorage is not available:', e);
     return false;
   }
+}
+
+// Helper function to validate email format
+function validateEmail(email) {
+  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(String(email).toLowerCase());
 }
 
 // Computed translations using our direct method

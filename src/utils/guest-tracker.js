@@ -28,6 +28,8 @@ async function getClientIpAddress() {
  * @param {number} data.invoiceTotal - The total amount of the invoice
  * @param {string} data.ipAddress - The IP address of the user (optional)
  * @param {string} data.userAgent - The user agent of the browser (optional)
+ * @param {string} data.guestName - The name of the guest (optional)
+ * @param {string} data.guestEmail - The email of the guest (optional)
  * @returns {Promise} - A promise that resolves when the tracking is complete
  */
 export async function trackGuestPdfGeneration(data) {
@@ -46,6 +48,8 @@ export async function trackGuestPdfGeneration(data) {
         amount: data.invoiceTotal,
         ip_address: ipAddress,
         user_agent: data.userAgent || navigator.userAgent,
+        guest_name: data.guestName || null,
+        guest_email: data.guestEmail || null,
         generated_at: new Date(),
       });
     

@@ -8,12 +8,15 @@ CREATE TABLE IF NOT EXISTS guest_pdf_generations (
   amount INTEGER NOT NULL,
   ip_address TEXT,
   user_agent TEXT,
+  guest_name TEXT,
+  guest_email TEXT,
   generated_at TIMESTAMP WITH TIME ZONE NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
--- Add an index on the generated_at column for faster queries
+-- Add indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_guest_pdf_generations_generated_at ON guest_pdf_generations(generated_at);
+CREATE INDEX IF NOT EXISTS idx_guest_pdf_generations_guest_email ON guest_pdf_generations(guest_email);
 
 -- Add RLS policies to ensure only authenticated users with admin role can access the data
 ALTER TABLE guest_pdf_generations ENABLE ROW LEVEL SECURITY;
