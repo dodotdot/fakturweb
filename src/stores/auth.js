@@ -170,21 +170,21 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function resetPassword(email) {
+  async function requestPasswordReset(email) {
     try {
       isLoading.value = true
       error.value = null
       
-      const { data, error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password/confirm`
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password/confirm`,
       })
       
       if (resetError) throw resetError
       
-      return data
+      return true
     } catch (err) {
       error.value = err.message
-      console.error('Reset password error:', err)
+      console.error('Password reset request error:', err)
       throw err
     } finally {
       isLoading.value = false
@@ -196,16 +196,16 @@ export const useAuthStore = defineStore('auth', () => {
       isLoading.value = true
       error.value = null
       
-      const { data, error: updateError } = await supabase.auth.updateUser({
+      const { error: updateError } = await supabase.auth.updateUser({
         password: newPassword
       })
       
       if (updateError) throw updateError
       
-      return data
+      return true
     } catch (err) {
       error.value = err.message
-      console.error('Update password error:', err)
+      console.error('Password update error:', err)
       throw err
     } finally {
       isLoading.value = false
@@ -225,7 +225,7 @@ export const useAuthStore = defineStore('auth', () => {
     login,
     signInWithGoogle,
     logout,
-    resetPassword,
+    requestPasswordReset,
     updatePassword
   }
 }) 
