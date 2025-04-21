@@ -153,13 +153,13 @@ serve(async (req) => {
     });
 
     // Verify invoice is completed
-    if (invoiceData.status !== "completed" && invoiceData.status !== "sent") {
+    if (invoiceData.status !== "paid" && invoiceData.status !== "sent") {
       console.error("Invalid invoice status for email sending:", invoiceData.status);
       return new Response(
         JSON.stringify({ 
-          error: "Only completed or sent invoices can be sent via email",
+          error: "Only paid or sent invoices can be sent via email",
           currentStatus: invoiceData.status,
-          allowedStatuses: ["completed", "sent"]
+          allowedStatuses: ["paid", "sent"]
         }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );

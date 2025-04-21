@@ -20,9 +20,9 @@
                 :class="{
                   'bg-gray-100 text-gray-700': invoice?.status === 'draft',
                   'bg-blue-100 text-blue-700': invoice?.status === 'sent',
-                  'bg-green-100 text-green-700': invoice?.status === 'completed',
+                  'bg-green-100 text-green-700': invoice?.status === 'paid',
                   'bg-red-100 text-red-700': invoice?.status === 'overdue',
-                  'bg-purple-100 text-purple-700': invoice?.status === 'paid'
+                  'bg-purple-100 text-purple-700': invoice?.status === 'cancelled'
                 }"
                 class="px-2 py-1 rounded-full text-xs font-medium"
               >
@@ -41,7 +41,7 @@
               Edit
             </router-link>
             <button 
-              v-if="invoice?.status !== 'completed'"
+              v-if="invoice?.status !== 'paid'"
               @click="markAsCompleted"
               class="px-4 py-2 border border-yellow-500 rounded-md text-yellow-700 bg-white hover:bg-yellow-50 flex items-center gap-2"
               :disabled="isUpdatingStatus"
@@ -49,7 +49,7 @@
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
-              {{ isUpdatingStatus ? 'Memproses...' : 'Tandai Selesai' }}
+              {{ isUpdatingStatus ? 'Memproses...' : 'Tandai Dibayar' }}
             </button>
             <button 
               @click="shareInvoice" 
@@ -61,7 +61,7 @@
               </svg>
             </button>
             <button 
-              v-if="invoice?.status === 'completed'"
+              v-if="invoice?.status === 'paid'"
               @click="sendEmailToClient"
               class="px-4 py-2 border border-green-500 rounded-md text-green-700 bg-white hover:bg-green-50 flex items-center gap-2"
               :disabled="isSendingEmail"
@@ -823,8 +823,8 @@ const sendEmailToClient = async () => {
       throw new Error(result.error || 'Failed to send email');
     }
     
-    // Update invoice status to 'sent' if it was previously 'completed'
-    if (invoice.value.status === 'completed') {
+    // Update invoice status to 'sent' if it was previously 'paid'
+    if (invoice.value.status === 'paid') {
       await invoiceStore.updateInvoiceStatus(invoiceId.value, 'sent');
     }
     
@@ -854,22 +854,22 @@ const markAsCompleted = async () => {
   try {
     console.log('Current invoice status:', invoice.value.status);
     
-    // Update invoice status
+    // Update invoice status - using 'paid' instead of 'completed'
     const updatedInvoice = {
       ...invoice.value,
-      status: 'completed'
+      status: 'paid'
     };
     
     console.log('Updating invoice with status:', updatedInvoice.status);
     await invoiceStore.updateInvoice(updatedInvoice);
     
-    console.log('Invoice status updated to completed');
+    console.log('Invoice status updated to paid');
 
     // Show success message
-    alert('Invoice marked as completed');
+    alert('Invoice marked as paid');
   } catch (error) {
-    console.error('Error marking invoice as completed:', error);
-    alert('Failed to mark invoice as completed');
+    console.error('Error marking invoice as paid:', error);
+    alert('Failed to mark invoice as paid');
   } finally {
     isUpdatingStatus.value = false;
   }

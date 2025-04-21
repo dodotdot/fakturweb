@@ -119,8 +119,8 @@ async function sendEmailNotification() {
 
   console.log('Sending email for invoice with status:', props.invoice.status);
   
-  if (props.invoice.status !== 'completed' && props.invoice.status !== 'sent') {
-    alert('Invoice harus berstatus "completed" atau "sent" sebelum dapat dikirim via email. Silakan tandai invoice sebagai selesai terlebih dahulu.');
+  if (props.invoice.status !== 'paid' && props.invoice.status !== 'sent') {
+    alert('Invoice harus berstatus "paid" atau "sent" sebelum dapat dikirim via email. Silakan tandai invoice sebagai dibayar terlebih dahulu.');
     return;
   }
 
