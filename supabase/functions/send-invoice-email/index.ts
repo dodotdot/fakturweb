@@ -125,22 +125,42 @@ serve(async (req) => {
     // Get invoice data from the database for verification
     const { data: invoiceData, error: invoiceError } = await supabaseClient
       .from("invoices")
-      .select("id, status")
+      .select("id, status, title")
       .eq("id", invoiceId)
       .eq("user_id", user.id)
       .single();
 
-    if (invoiceError || !invoiceData) {
+    if (invoiceError) {
+      console.error("Error fetching invoice:", invoiceError);
+      return new Response(
+        JSON.stringify({ error: "Invoice not found or access denied", details: invoiceError }),
+        { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (!invoiceData) {
+      console.error("Invoice not found with ID:", invoiceId);
       return new Response(
         JSON.stringify({ error: "Invoice not found or access denied" }),
         { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
+    console.log("Invoice data retrieved:", { 
+      id: invoiceData.id,
+      title: invoiceData.title,
+      status: invoiceData.status 
+    });
+
     // Verify invoice is completed
     if (invoiceData.status !== "completed" && invoiceData.status !== "sent") {
+      console.error("Invalid invoice status for email sending:", invoiceData.status);
       return new Response(
-        JSON.stringify({ error: "Only completed or sent invoices can be sent via email" }),
+        JSON.stringify({ 
+          error: "Only completed or sent invoices can be sent via email",
+          currentStatus: invoiceData.status,
+          allowedStatuses: ["completed", "sent"]
+        }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }

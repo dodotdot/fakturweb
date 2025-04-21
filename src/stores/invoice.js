@@ -341,6 +341,11 @@ export const useInvoiceStore = defineStore('invoice', () => {
       const { data: userData } = await supabase.auth.getUser();
       if (!userData.user) throw new Error('User not authenticated');
 
+      console.log('Updating invoice in database:', {
+        id: updatedInvoice.id,
+        status: updatedInvoice.status
+      });
+
       // Map our JS camelCase properties to the DB's snake_case columns
       const invoiceData = {
         title: updatedInvoice.title,
@@ -352,6 +357,7 @@ export const useInvoiceStore = defineStore('invoice', () => {
         tax_rate: updatedInvoice.taxRate,
         notes: updatedInvoice.notes,
         logo: updatedInvoice.logo,
+        status: updatedInvoice.status, // Make sure status is included
         updated_at: new Date().toISOString()
       };
 
@@ -361,7 +367,12 @@ export const useInvoiceStore = defineStore('invoice', () => {
         .eq('id', updatedInvoice.id)
         .eq('user_id', userData.user.id);
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        console.error('Supabase update error:', updateError);
+        throw updateError;
+      }
+
+      console.log('Invoice updated successfully in database');
 
       // Update the current invoice in the store
       currentInvoice.value = updatedInvoice;
@@ -387,6 +398,8 @@ export const useInvoiceStore = defineStore('invoice', () => {
       isLoading.value = true;
       error.value = null;
 
+      console.log(`Updating invoice ${invoiceId} status to: ${status}`);
+
       const { data: userData } = await supabase.auth.getUser();
       if (!userData.user) throw new Error('User not authenticated');
 
@@ -400,10 +413,16 @@ export const useInvoiceStore = defineStore('invoice', () => {
         .eq('id', invoiceId)
         .eq('user_id', userData.user.id);
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        console.error('Status update error:', updateError);
+        throw updateError;
+      }
+
+      console.log('Status updated successfully in database');
 
       // Update the current invoice status if it's the active one
       if (currentInvoice.value && currentInvoice.value.id === invoiceId) {
+        console.log(`Updating current invoice status from ${currentInvoice.value.status} to ${status}`);
         currentInvoice.value.status = status;
       }
 

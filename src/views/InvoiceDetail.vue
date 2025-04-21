@@ -852,12 +852,18 @@ const markAsCompleted = async () => {
   isUpdatingStatus.value = true;
   
   try {
+    console.log('Current invoice status:', invoice.value.status);
+    
     // Update invoice status
     const updatedInvoice = {
       ...invoice.value,
       status: 'completed'
     };
+    
+    console.log('Updating invoice with status:', updatedInvoice.status);
     await invoiceStore.updateInvoice(updatedInvoice);
+    
+    console.log('Invoice status updated to completed');
 
     // Show success message
     alert('Invoice marked as completed');
