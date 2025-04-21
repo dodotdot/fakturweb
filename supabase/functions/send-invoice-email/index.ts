@@ -168,9 +168,50 @@ serve(async (req) => {
     // Convert ArrayBuffer to base64 for attachment
     const pdfBlob = pdfFile as Blob;
     const pdfArrayBuffer = await pdfBlob.arrayBuffer();
-    const pdfBase64 = btoa(
-      String.fromCharCode(...new Uint8Array(pdfArrayBuffer))
-    );
+    
+    // Define a function to encode array buffer to base64 without stack overflow
+    const arrayBufferToBase64 = (buffer: ArrayBuffer): string => {
+      // Using a different approach that avoids String.fromCharCode entirely
+      const bytes = new Uint8Array(buffer);
+      
+      // Base64 encoding characters
+      const encodingChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+      let base64 = '';
+      
+      // Process 3 bytes at a time (3 bytes = 24 bits = 4 base64 chars)
+      const len = bytes.length;
+      for (let i = 0; i < len; i += 3) {
+        // Combine 3 bytes into one number
+        const byte1 = bytes[i];
+        const byte2 = i + 1 < len ? bytes[i + 1] : 0;
+        const byte3 = i + 2 < len ? bytes[i + 2] : 0;
+        
+        // Split into 4 six-bit numbers
+        const char1 = byte1 >> 2;
+        const char2 = ((byte1 & 3) << 4) | (byte2 >> 4);
+        const char3 = ((byte2 & 15) << 2) | (byte3 >> 6);
+        const char4 = byte3 & 63;
+        
+        // Map to base64 characters
+        base64 += encodingChars[char1];
+        base64 += encodingChars[char2];
+        base64 += (i + 1 < len) ? encodingChars[char3] : '=';
+        base64 += (i + 2 < len) ? encodingChars[char4] : '=';
+      }
+      
+      return base64;
+    };
+    
+    let pdfBase64;
+    try {
+      pdfBase64 = arrayBufferToBase64(pdfArrayBuffer);
+    } catch (e) {
+      console.error("Error encoding PDF:", e);
+      return new Response(
+        JSON.stringify({ error: "Failed to encode PDF, file may be too large" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     // Build the email HTML
     const emailHtml = `
