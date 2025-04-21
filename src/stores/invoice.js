@@ -382,6 +382,47 @@ export const useInvoiceStore = defineStore('invoice', () => {
     }
   }
 
+  async function updateInvoiceStatus(invoiceId, status) {
+    try {
+      isLoading.value = true;
+      error.value = null;
+
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData.user) throw new Error('User not authenticated');
+
+      // Update only the status field
+      const { error: updateError } = await supabase
+        .from('invoices')
+        .update({ 
+          status,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', invoiceId)
+        .eq('user_id', userData.user.id);
+
+      if (updateError) throw updateError;
+
+      // Update the current invoice status if it's the active one
+      if (currentInvoice.value && currentInvoice.value.id === invoiceId) {
+        currentInvoice.value.status = status;
+      }
+
+      // Update the invoice in the invoices list
+      const index = invoices.value.findIndex(inv => inv.id === invoiceId);
+      if (index !== -1) {
+        invoices.value[index].status = status;
+      }
+
+      return true;
+    } catch (err) {
+      error.value = err.message;
+      console.error('Update invoice status error:', err);
+      throw err;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   return {
     invoices,
     currentInvoice,
@@ -398,6 +439,7 @@ export const useInvoiceStore = defineStore('invoice', () => {
     resetInvoice,
     saveInvoice,
     updateInvoice,
+    updateInvoiceStatus,
     fetchUserInvoices,
     getInvoice,
     deleteInvoice,

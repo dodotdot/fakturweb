@@ -14,6 +14,21 @@
             <h1 class="text-2xl font-bold text-gray-900 py-8 no-print">
               Invoice Details
             </h1>
+            <div class="flex items-center gap-2 mb-2 no-print">
+              <span class="text-gray-500">Status:</span>
+              <span 
+                :class="{
+                  'bg-gray-100 text-gray-700': invoice?.status === 'draft',
+                  'bg-blue-100 text-blue-700': invoice?.status === 'sent',
+                  'bg-green-100 text-green-700': invoice?.status === 'completed',
+                  'bg-red-100 text-red-700': invoice?.status === 'overdue',
+                  'bg-purple-100 text-purple-700': invoice?.status === 'paid'
+                }"
+                class="px-2 py-1 rounded-full text-xs font-medium"
+              >
+                {{ invoice?.status ? invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1) : 'Draft' }}
+              </span>
+            </div>
             <p class="text-gray-500 no-print">
               View and download your invoice
             </p>
@@ -26,6 +41,17 @@
               Edit
             </router-link>
             <button 
+              v-if="invoice?.status !== 'completed'"
+              @click="markAsCompleted"
+              class="px-4 py-2 border border-yellow-500 rounded-md text-yellow-700 bg-white hover:bg-yellow-50 flex items-center gap-2"
+              :disabled="isUpdatingStatus"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              {{ isUpdatingStatus ? 'Memproses...' : 'Tandai Selesai' }}
+            </button>
+            <button 
               @click="shareInvoice" 
               class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50"
               v-tooltip="'Share Invoice'"
@@ -33,6 +59,17 @@
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
               </svg>
+            </button>
+            <button 
+              v-if="invoice?.status === 'completed'"
+              @click="sendEmailToClient"
+              class="px-4 py-2 border border-green-500 rounded-md text-green-700 bg-white hover:bg-green-50 flex items-center gap-2"
+              :disabled="isSendingEmail"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              {{ isSendingEmail ? 'Mengirim...' : 'Kirim Email' }}
             </button>
             <button 
               @click="downloadPDF"
@@ -416,7 +453,28 @@
           </div>
         </div>
       </div>
+      
+      <!-- Invoice Activities Section -->
+      <div class="mt-8 no-print" v-if="invoice?.id">
+        <InvoiceActivities :invoiceId="invoiceId" />
+      </div>
+      
+      <!-- Invoice Notifier Section -->
+      <div class="mt-8 no-print" v-if="invoice?.id">
+        <InvoiceNotifier :invoice="invoice" :invoicePrintRef="invoicePrintRef" />
+      </div>
     </div>
+  </div>
+  
+  <!-- Success Toast Notification -->
+  <div 
+    v-if="showEmailSuccessToast"
+    class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-md shadow-lg flex items-center gap-2 z-50 animate-fade-in-up"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+    </svg>
+    <span>Email berhasil dikirim ke client!</span>
   </div>
 </template>
 
@@ -425,9 +483,11 @@ import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useInvoiceStore } from '../stores/invoice';
 import { useAuthStore } from '../stores/auth';
-import { uploadLogo, deleteLogo } from '../lib/supabase';
+import { uploadLogo, deleteLogo, supabase } from '../lib/supabase';
 import html2pdf from 'html2pdf.js';
 import Breadcrumb from '../components/ui/Breadcrumb.vue';
+import InvoiceActivities from '../components/invoice/InvoiceActivities.vue';
+import InvoiceNotifier from '../components/invoice/InvoiceNotifier.vue';
 
 const router = useRouter();
 const route = useRoute();
@@ -447,6 +507,10 @@ const shareError = ref('');
 const shareLink = ref('');
 const linkCopied = ref(false);
 const shareLinkInput = ref(null);
+const isSendingEmail = ref(false);
+const showEmailSuccessToast = ref(false);
+const emailError = ref('');
+const isUpdatingStatus = ref(false);
 
 onMounted(async () => {
   try {
@@ -679,6 +743,131 @@ const copyShareLink = () => {
     }, 3000);
   }
 };
+
+const sendEmailToClient = async () => {
+  if (!invoice.value || !invoice.value.to?.email) {
+    alert('Client email is missing. Please update the invoice with the client email address.');
+    return;
+  }
+
+  isSendingEmail.value = true;
+  emailError.value = '';
+  
+  try {
+    // Generate PDF first
+    let pdfBlob = null;
+    
+    // Create a temporary wrapper for PDF generation
+    const printWrapper = document.createElement('div');
+    printWrapper.className = 'pdf-content-wrapper';
+    document.body.appendChild(printWrapper);
+    
+    // Clone the invoice content
+    const contentClone = invoicePrintRef.value.cloneNode(true);
+    
+    // Remove any no-print elements from the clone
+    const noPrintElements = contentClone.querySelectorAll('.no-print');
+    noPrintElements.forEach(el => el.remove());
+    
+    // Add the cloned content to the wrapper
+    printWrapper.appendChild(contentClone);
+    
+    // Configure html2pdf options
+    const options = {
+      margin: 10,
+      filename: `invoice-${invoice.value.title.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.pdf`,
+      image: { 
+        type: 'jpeg', 
+        quality: 0.98 
+      },
+      html2canvas: { 
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        logging: true, // Enable logging for debugging
+      },
+      jsPDF: { 
+        unit: 'mm', 
+        format: 'a4', 
+        orientation: 'portrait'
+      },
+      output: 'blob'
+    };
+
+    // Generate PDF blob
+    pdfBlob = await html2pdf().from(printWrapper).set(options).output('blob');
+    
+    // Clean up
+    document.body.removeChild(printWrapper);
+    
+    // Create FormData with the PDF file
+    const formData = new FormData();
+    formData.append('pdf', pdfBlob, `invoice-${invoice.value.title.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.pdf`);
+    formData.append('invoiceId', invoiceId.value);
+    formData.append('clientEmail', invoice.value.to.email);
+    formData.append('clientName', invoice.value.to.name);
+    formData.append('invoiceTitle', invoice.value.title);
+    
+    // Call Supabase Edge Function to send email
+    const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-invoice-email`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session.access_token}`,
+      },
+      body: formData
+    });
+    
+    const result = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(result.error || 'Failed to send email');
+    }
+    
+    // Update invoice status to 'sent' if it was previously 'completed'
+    if (invoice.value.status === 'completed') {
+      await invoiceStore.updateInvoiceStatus(invoiceId.value, 'sent');
+    }
+    
+    // Show success message
+    showEmailSuccessToast.value = true;
+    setTimeout(() => {
+      showEmailSuccessToast.value = false;
+    }, 5000);
+    
+  } catch (error) {
+    console.error('Error sending email:', error);
+    emailError.value = error.message || 'Failed to send email';
+    alert(`Error sending email: ${emailError.value}`);
+  } finally {
+    isSendingEmail.value = false;
+  }
+};
+
+const markAsCompleted = async () => {
+  if (!invoice.value) {
+    alert('Invoice is not loaded');
+    return;
+  }
+
+  isUpdatingStatus.value = true;
+  
+  try {
+    // Update invoice status
+    const updatedInvoice = {
+      ...invoice.value,
+      status: 'completed'
+    };
+    await invoiceStore.updateInvoice(updatedInvoice);
+
+    // Show success message
+    alert('Invoice marked as completed');
+  } catch (error) {
+    console.error('Error marking invoice as completed:', error);
+    alert('Failed to mark invoice as completed');
+  } finally {
+    isUpdatingStatus.value = false;
+  }
+};
 </script>
 
 <style scoped>
@@ -727,5 +916,21 @@ img, svg {
 table {
   table-layout: fixed;
   width: 100%;
+}
+
+/* Toast animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.3s ease-out forwards;
 }
 </style> 
