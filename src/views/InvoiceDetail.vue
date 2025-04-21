@@ -454,14 +454,44 @@
         </div>
       </div>
       
-      <!-- Invoice Activities Section -->
+      <!-- Tabs Section for Invoice Activities and Notifications -->
       <div class="mt-8 no-print" v-if="invoice?.id">
-        <InvoiceActivities :invoiceId="invoiceId" />
-      </div>
-      
-      <!-- Invoice Notifier Section -->
-      <div class="mt-8 no-print" v-if="invoice?.id">
-        <InvoiceNotifier :invoice="invoice" :invoicePrintRef="invoicePrintRef" />
+        <div class="border-b border-gray-200">
+          <nav class="flex -mb-px">
+            <button 
+              @click="activeTab = 'activities'" 
+              :class="[
+                'py-4 px-6 font-medium text-sm', 
+                activeTab === 'activities' 
+                  ? 'border-b-2 border-primary text-primary' 
+                  : 'text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              ]"
+            >
+              Aktivitas Invoice
+            </button>
+            <button 
+              @click="activeTab = 'notifications'" 
+              :class="[
+                'py-4 px-6 font-medium text-sm', 
+                activeTab === 'notifications' 
+                  ? 'border-b-2 border-primary text-primary' 
+                  : 'text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              ]"
+            >
+              Kirim Notifikasi Invoice
+            </button>
+          </nav>
+        </div>
+        
+        <!-- Tab Content -->
+        <div class="py-6">
+          <div v-show="activeTab === 'activities'">
+            <InvoiceActivities :invoiceId="invoiceId" />
+          </div>
+          <div v-show="activeTab === 'notifications'">
+            <InvoiceNotifier :invoice="invoice" :invoicePrintRef="invoicePrintRef" />
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -499,6 +529,7 @@ const isLoading = ref(true);
 const error = ref('');
 const isPrinting = ref(false);
 const selectedTheme = ref('classic'); // Default theme
+const activeTab = ref('activities'); // Default active tab
 const invoiceId = computed(() => route.params.id);
 const invoice = computed(() => invoiceStore.currentInvoice);
 const showShareModal = ref(false);
