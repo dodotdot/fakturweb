@@ -247,6 +247,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 import Breadcrumb from '../components/ui/Breadcrumb.vue';
+import { supabase } from '../lib/supabase';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -298,15 +299,36 @@ const showDeleteModal = ref(false);
 // Load user profile data
 onMounted(async () => {
   try {
-    // In a real app, you would fetch the user profile data from your backend
-    // For now, we'll just use the data from the auth store
-    form.value.displayName = userName.value;
-    form.value.email = userEmail.value;
+    isLoading.value = true;
     
-    // Simulate loading profile data
-    await new Promise(resolve => setTimeout(resolve, 500));
+    const userId = authStore.user?.id;
+    if (!userId) {
+      throw new Error('User not authenticated');
+    }
+    
+    // Fetch user data from profiles table
+    const { data: profileData, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
+    
+    if (error && error.code !== 'PGRST116') { // PGRST116 is "no rows returned" error
+      throw error;
+    }
+    
+    // Set form data with values from profile or defaults
+    form.value = {
+      displayName: authStore.user?.user_metadata?.full_name || userName.value,
+      email: userEmail.value,
+      company: profileData?.company_name || '',
+      phone: profileData?.business_phone || '',
+      address: profileData?.business_address || ''
+    };
   } catch (error) {
     console.error('Error loading profile:', error);
+  } finally {
+    isLoading.value = false;
   }
 });
 
@@ -315,9 +337,43 @@ async function updateProfile() {
   try {
     isLoading.value = true;
     
-    // In a real app, you would update the user profile in your backend
-    // For now, we'll just simulate a successful update
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    const userId = authStore.user?.id;
+    if (!userId) {
+      throw new Error('User not authenticated');
+    }
+    
+    // Update auth user metadata for display name
+    const { error: authError } = await supabase.auth.updateUser({
+      data: { full_name: form.value.displayName }
+    });
+    
+    if (authError) {
+      throw authError;
+    }
+    
+    // Update basic profile data in profiles table
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .upsert({
+        id: userId,
+        user_id: userId,
+        company_name: form.value.company,
+        business_phone: form.value.phone,
+        business_address: form.value.address,
+        updated_at: new Date()
+      });
+    
+    if (profileError) {
+      throw profileError;
+    }
+    
+    // Update local auth store
+    if (authStore.user) {
+      authStore.user.user_metadata = {
+        ...authStore.user.user_metadata,
+        full_name: form.value.displayName
+      };
+    }
     
     // Show success message
     alert('Profile updated successfully!');

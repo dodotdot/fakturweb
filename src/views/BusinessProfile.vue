@@ -3,165 +3,26 @@
     <!-- Breadcrumb -->
     <Breadcrumb :breadcrumbItems="[
       { text: 'Dashboard', to: '/dashboard' },
-      { text: 'Settings' }
+      { text: 'Profile', to: '/profile' },
+      { text: 'Business Profile' }
     ]" class="mb-4" />
-  
-    <h1 class="text-2xl font-bold mb-6 text-gray-800 dark:text-white">Settings</h1>
-      
-    <!-- Tabs -->
-    <div class="mb-6 border-b border-gray-200">
-      <nav class="flex -mb-px">
-        <router-link 
-          to="/settings/general" 
-          :class="[
-            'py-4 px-6 font-medium text-sm', 
-            activeTab === 'general'
-              ? 'border-b-2 border-primary text-primary' 
-              : 'text-gray-500 hover:text-gray-700 hover:border-gray-300'
-          ]"
-        >
-          General Settings
-        </router-link>
-        <router-link 
-          to="/settings/business" 
-          :class="[
-            'py-4 px-6 font-medium text-sm', 
-            activeTab === 'business'
-              ? 'border-b-2 border-primary text-primary' 
-              : 'text-gray-500 hover:text-gray-700 hover:border-gray-300'
-          ]"
-        >
-          Business Profile
-        </router-link>
-      </nav>
+    
+    <h1 class="text-2xl font-bold mb-6 text-gray-800 dark:text-white">Business Profile</h1>
+    
+    <div v-if="isLoading" class="flex justify-center py-8">
+      <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary"></div>
     </div>
     
-    <!-- General Settings Tab -->
-    <div v-if="activeTab === 'general'" class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
-      <!-- Notification Settings -->
-      <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-        <h3 class="text-lg font-medium text-gray-800 dark:text-white mb-4">Notification Settings</h3>
-        
-        <div class="space-y-4">
-          <div class="flex items-center justify-between">
-            <div>
-              <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300">Email Notifications</h4>
-              <p class="text-sm text-gray-500 dark:text-gray-400">Receive email notifications about your invoices</p>
-            </div>
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" v-model="settings.emailNotifications" class="sr-only peer">
-              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 dark:peer-focus:ring-primary/80 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
-            </label>
-          </div>
-          
-          <div class="flex items-center justify-between">
-            <div>
-              <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300">Invoice Reminders</h4>
-              <p class="text-sm text-gray-500 dark:text-gray-400">Get reminders for unpaid invoices</p>
-            </div>
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" v-model="settings.invoiceReminders" class="sr-only peer">
-              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 dark:peer-focus:ring-primary/80 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
-            </label>
-          </div>
-          
-          <div class="flex items-center justify-between">
-            <div>
-              <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300">Marketing Emails</h4>
-              <p class="text-sm text-gray-500 dark:text-gray-400">Receive updates about new features and promotions</p>
-            </div>
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" v-model="settings.marketingEmails" class="sr-only peer">
-              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 dark:peer-focus:ring-primary/80 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
-            </label>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Invoice Settings -->
-      <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-        <h3 class="text-lg font-medium text-gray-800 dark:text-white mb-4">Invoice Settings</h3>
-        
-        <div class="space-y-4">
-          <div>
-            <label for="defaultCurrency" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Default Currency</label>
-            <select
-              id="defaultCurrency"
-              v-model="settings.defaultCurrency"
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-            >
-              <option value="IDR">Indonesian Rupiah (IDR)</option>
-              <option value="USD">US Dollar (USD)</option>
-              <option value="EUR">Euro (EUR)</option>
-              <option value="GBP">British Pound (GBP)</option>
-              <option value="SGD">Singapore Dollar (SGD)</option>
-              <option value="MYR">Malaysian Ringgit (MYR)</option>
-            </select>
-          </div>
-          
-          <div>
-            <label for="defaultLanguage" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Default Language</label>
-            <select
-              id="defaultLanguage"
-              v-model="settings.defaultLanguage"
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-            >
-              <option value="id">Indonesian (Bahasa Indonesia)</option>
-              <option value="en">English</option>
-            </select>
-          </div>
-          
-          <div>
-            <label for="invoicePrefix" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Invoice Number Prefix</label>
-            <input
-              type="text"
-              id="invoicePrefix"
-              v-model="settings.invoicePrefix"
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-              placeholder="INV-"
-            />
-          </div>
-          
-          <div>
-            <label for="invoiceFooter" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Invoice Footer Text</label>
-            <textarea
-              id="invoiceFooter"
-              v-model="settings.invoiceFooter"
-              rows="3"
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-              placeholder="Thank you for your business!"
-            ></textarea>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Save Button for General Settings -->
-      <div class="p-6">
-        <button
-          @click="saveSettings"
-          :disabled="isLoading"
-          class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50"
-        >
-          <svg v-if="isLoading" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-          {{ isLoading ? 'Saving...' : 'Save Settings' }}
-        </button>
-      </div>
-    </div>
-    
-    <!-- Business Profile Tab -->
-    <div v-else-if="activeTab === 'business'" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-6">
       <!-- Business Logo Section -->
       <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
         <div class="p-6">
           <h3 class="text-lg font-medium text-gray-800 dark:text-white mb-4">Business Logo</h3>
           
           <div class="flex flex-col items-center">
-            <div v-if="businessForm.businessLogo" class="mb-4 relative">
+            <div v-if="form.businessLogo" class="mb-4 relative">
               <img 
-                :src="businessForm.businessLogo" 
+                :src="form.businessLogo" 
                 alt="Business Logo" 
                 class="w-48 h-48 object-contain border rounded-lg"
               />
@@ -213,7 +74,7 @@
                 <input
                   type="text"
                   id="companyName"
-                  v-model="businessForm.companyName"
+                  v-model="form.companyName"
                   required
                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   placeholder="Your Company Name"
@@ -225,7 +86,7 @@
                 <input
                   type="text"
                   id="businessTaxId"
-                  v-model="businessForm.businessTaxId"
+                  v-model="form.businessTaxId"
                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   placeholder="XX.XXX.XXX.X-XXX.XXX"
                 />
@@ -237,7 +98,7 @@
               <input
                 type="email"
                 id="businessEmail"
-                v-model="businessForm.businessEmail"
+                v-model="form.businessEmail"
                 required
                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 placeholder="business@example.com"
@@ -250,7 +111,7 @@
               <input
                 type="tel"
                 id="businessPhone"
-                v-model="businessForm.businessPhone"
+                v-model="form.businessPhone"
                 required
                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 placeholder="+62 8xx-xxxx-xxxx"
@@ -262,7 +123,7 @@
               <input
                 type="url"
                 id="businessWebsite"
-                v-model="businessForm.businessWebsite"
+                v-model="form.businessWebsite"
                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 placeholder="https://example.com"
               />
@@ -272,7 +133,7 @@
               <label for="businessAddress" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Business Address*</label>
               <textarea
                 id="businessAddress"
-                v-model="businessForm.businessAddress"
+                v-model="form.businessAddress"
                 required
                 rows="3"
                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary dark:bg-gray-700 dark:border-gray-600 dark:text-white"
@@ -284,7 +145,7 @@
               <label for="businessDescription" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Business Description</label>
               <textarea
                 id="businessDescription"
-                v-model="businessForm.businessDescription"
+                v-model="form.businessDescription"
                 rows="3"
                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 placeholder="Brief description of your business"
@@ -317,15 +178,14 @@
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
       </svg>
-      <span>{{ toastMessage }}</span>
+      <span>Business profile updated successfully!</span>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useAuthStore } from '../stores/auth';
-import { useRouter, useRoute } from 'vue-router';
 import Breadcrumb from '../components/ui/Breadcrumb.vue';
 import { 
   getBusinessProfile, 
@@ -335,28 +195,13 @@ import {
 } from '../lib/business-profile';
 
 const authStore = useAuthStore();
-const router = useRouter();
-const route = useRoute();
-const isLoading = ref(false);
+const logoInput = ref(null);
+const isLoading = ref(true);
 const isSubmitting = ref(false);
 const showSuccessToast = ref(false);
-const toastMessage = ref('');
-const activeTab = ref('general');
-const logoInput = ref(null);
 
-// General settings data
-const settings = ref({
-  emailNotifications: true,
-  invoiceReminders: true,
-  marketingEmails: false,
-  defaultCurrency: 'IDR',
-  defaultLanguage: 'id',
-  invoicePrefix: 'INV-',
-  invoiceFooter: 'Thank you for your business!'
-});
-
-// Business profile form data
-const businessForm = ref({
+// Form data
+const form = ref({
   companyName: '',
   businessEmail: '',
   businessPhone: '',
@@ -368,51 +213,8 @@ const businessForm = ref({
   fullName: ''
 });
 
-// Set the active tab based on route
-onMounted(async () => {
-  try {
-    // Load general settings
-    // In a real app, you would fetch the user settings from your backend
-    // For now, we'll just use default values
-    await new Promise(resolve => setTimeout(resolve, 300));
-    
-    // Load business profile if on that tab
-    if (activeTab.value === 'business') {
-      await loadBusinessProfile();
-    }
-  } catch (error) {
-    console.error('Error loading settings:', error);
-  }
-});
-
-// Watch for route changes to update the active tab
-watch(
-  () => route.params.tab,
-  (newTab) => {
-    if (newTab && ['general', 'business'].includes(newTab)) {
-      activeTab.value = newTab;
-      
-      // Load business profile data if switching to business tab
-      if (newTab === 'business') {
-        loadBusinessProfile();
-      }
-    } else if (!newTab) {
-      // If no tab parameter, redirect to general tab
-      router.replace('/settings/general');
-    }
-  },
-  { immediate: true }
-);
-
-// Watch active tab changes to update the URL when changed programmatically
-watch(activeTab, (newTab) => {
-  if (route.params.tab !== newTab) {
-    router.push(`/settings/${newTab}`);
-  }
-});
-
 // Load business profile data
-async function loadBusinessProfile() {
+onMounted(async () => {
   try {
     const userId = authStore.user?.id;
     if (!userId) {
@@ -422,7 +224,7 @@ async function loadBusinessProfile() {
     const profileData = await getBusinessProfile(userId);
     
     // Map DB snake_case to JS camelCase
-    businessForm.value = {
+    form.value = {
       companyName: profileData.company_name || '',
       businessEmail: profileData.business_email || authStore.user?.email || '',
       businessPhone: profileData.business_phone || '',
@@ -435,33 +237,10 @@ async function loadBusinessProfile() {
     };
   } catch (error) {
     console.error('Error loading business profile:', error);
-  }
-}
-
-// Handle tab changes
-function handleTabChange(tab) {
-  activeTab.value = tab;
-}
-
-// Save general settings
-async function saveSettings() {
-  try {
-    isLoading.value = true;
-    
-    // In a real app, you would save the settings to your backend
-    // For now, we'll just simulate a successful save
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Show success toast
-    toastMessage.value = 'Settings saved successfully!';
-    showToast();
-  } catch (error) {
-    console.error('Error saving settings:', error);
-    alert('Failed to save settings. Please try again.');
   } finally {
     isLoading.value = false;
   }
-}
+});
 
 // Handle logo upload
 async function handleLogoUpload(event) {
@@ -476,7 +255,7 @@ async function handleLogoUpload(event) {
     
     isSubmitting.value = true;
     const logoUrl = await uploadBusinessLogo(file, userId);
-    businessForm.value.businessLogo = logoUrl;
+    form.value.businessLogo = logoUrl;
     
     // Reset file input
     if (logoInput.value) {
@@ -484,7 +263,6 @@ async function handleLogoUpload(event) {
     }
     
     // Show success toast
-    toastMessage.value = 'Logo uploaded successfully!';
     showToast();
   } catch (error) {
     console.error('Error uploading business logo:', error);
@@ -502,14 +280,13 @@ async function removeBusinessLogo() {
       throw new Error('User not authenticated');
     }
     
-    if (!businessForm.value.businessLogo) return;
+    if (!form.value.businessLogo) return;
     
     isSubmitting.value = true;
-    await deleteBusinessLogo(businessForm.value.businessLogo, userId);
-    businessForm.value.businessLogo = '';
+    await deleteBusinessLogo(form.value.businessLogo, userId);
+    form.value.businessLogo = '';
     
     // Show success toast
-    toastMessage.value = 'Logo removed successfully!';
     showToast();
   } catch (error) {
     console.error('Error removing business logo:', error);
@@ -530,10 +307,9 @@ async function saveBusinessProfile() {
     isSubmitting.value = true;
     
     // Update business profile
-    await updateBusinessProfile(userId, businessForm.value);
+    await updateBusinessProfile(userId, form.value);
     
     // Show success toast
-    toastMessage.value = 'Business profile updated successfully!';
     showToast();
   } catch (error) {
     console.error('Error saving business profile:', error);

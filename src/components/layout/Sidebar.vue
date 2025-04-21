@@ -94,10 +94,10 @@
           </li>
           <li>
             <router-link 
-              to="/settings" 
+              to="/settings/general" 
               class="flex items-center py-2 rounded-md hover:bg-gray-100 transition-colors"
               :class="[
-                $route.path === '/settings' ? 'bg-gray-100 text-primary-600 font-medium' : 'text-gray-700',
+                $route.path.includes('/settings') ? 'bg-gray-100 text-primary-600 font-medium' : 'text-gray-700',
                 isExpanded ? 'px-4 justify-start' : 'px-2 justify-center'
               ]"
               @click="$emit('close')"

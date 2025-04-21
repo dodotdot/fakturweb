@@ -404,7 +404,7 @@
               'text-gray-300': selectedTheme === 'elegant'
             }"
           >
-            Powered by https://faktur.web.id
+            Powered by 🔥 https://faktur.web.id
           </p>
         </div>
       </div>

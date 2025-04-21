@@ -24,6 +24,7 @@ const AdminSettings = () => import('../views/admin/AdminSettings.vue')
 const PublicInvoiceDetail = () => import('../views/PublicInvoiceDetail.vue')
 const ClientList = () => import('../views/ClientList.vue')
 const ClientEditor = () => import('../views/ClientEditor.vue')
+const BusinessProfile = () => import('../views/BusinessProfile.vue')
 
 const routes = [
   {
@@ -181,6 +182,19 @@ const routes = [
     path: '/settings',
     name: 'Settings',
     component: Settings,
+    redirect: '/settings/general',
+    meta: {
+      title: 'Pengaturan Akun - Faktur.web.id',
+      description: 'Sesuaikan pengaturan faktur, notifikasi, dan preferensi akun Anda untuk pengalaman yang lebih baik.',
+      keywords: 'pengaturan akun, faktur, notifikasi, preferensi',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/settings/:tab',
+    name: 'SettingsTab',
+    component: Settings,
+    props: true,
     meta: {
       title: 'Pengaturan Akun - Faktur.web.id',
       description: 'Sesuaikan pengaturan faktur, notifikasi, dan preferensi akun Anda untuk pengalaman yang lebih baik.',
@@ -313,6 +327,15 @@ const routes = [
       keywords: 'admin settings, system settings, global configuration, admin console',
       requiresAuth: true,
       requiresAdmin: true
+    }
+  },
+  {
+    path: '/business-profile',
+    name: 'business-profile',
+    component: BusinessProfile,
+    meta: {
+      requiresAuth: true,
+      title: 'Business Profile - Faktur'
     }
   },
   {

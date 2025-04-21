@@ -285,7 +285,7 @@
             'text-blue-400': selectedTheme === 'modern',
             'text-gray-500': selectedTheme === 'elegant'
           }">
-            Powered by <a href="/" class="underline">Faktur.web.id</a>
+            Powered by 🔥 <a href="/" class="underline">Faktur.web.id</a>
           </div>
         </div>
       </div>
