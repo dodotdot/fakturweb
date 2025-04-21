@@ -103,17 +103,23 @@ serve(async (req) => {
     }
 
     // Get sender details from the database
-    const { data: userData, error: userDataError } = await supabaseClient
-      .from("profiles")
-      .select("email, full_name, company_name")
-      .eq("id", user.id)
-      .single();
-
-    if (userDataError) {
-      return new Response(
-        JSON.stringify({ error: "Failed to get user data" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    let senderName = "Faktur";
+    let senderEmail = "team@faktur.web.id";
+    
+    try {
+      const { data: userData } = await supabaseClient
+        .from("profiles")
+        .select("email, full_name, company_name")
+        .eq("id", user.id)
+        .single();
+      
+      if (userData) {
+        senderName = userData.company_name || userData.full_name || "Faktur";
+        senderEmail = userData.email || "team@faktur.web.id";
+      }
+    } catch (profileError) {
+      console.log("Profile data not found, using defaults:", profileError);
+      // Continue with default sender info
     }
 
     // Get invoice data from the database for verification
@@ -132,9 +138,9 @@ serve(async (req) => {
     }
 
     // Verify invoice is completed
-    if (invoiceData.status !== "completed") {
+    if (invoiceData.status !== "completed" && invoiceData.status !== "sent") {
       return new Response(
-        JSON.stringify({ error: "Only completed invoices can be sent via email" }),
+        JSON.stringify({ error: "Only completed or sent invoices can be sent via email" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -147,7 +153,6 @@ serve(async (req) => {
     );
 
     // Build the email HTML
-    const senderName = userData.company_name || userData.full_name || "Your Merchant";
     const emailHtml = `
       <!DOCTYPE html>
       <html>
@@ -219,7 +224,7 @@ serve(async (req) => {
     // Send the email
     const filename = `invoice-${invoiceTitle.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.pdf`;
     await sendEmail({
-      from: `${senderName} <invoices@faktur.web.id>`,
+      from: `${senderName} <${senderEmail}>`,
       to: clientEmail.toString(),
       subject: `Invoice: ${invoiceTitle}`,
       html: emailHtml,
@@ -244,7 +249,7 @@ serve(async (req) => {
         await supabaseClient.from("invoice_activities").insert({
           invoice_id: invoiceId,
           user_id: user.id,
-          activity_type: "email_sent",
+          activity_type: "notification_sent",
           channel: "email",
           details: {
             recipient: clientEmail,
@@ -269,4 +274,4 @@ serve(async (req) => {
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
-}); 
+});
