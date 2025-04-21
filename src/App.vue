@@ -137,7 +137,7 @@ document.head.appendChild(printStyles);
       <Navbar v-if="canShowNavbar" class="sticky top-0 z-10 print:hidden" />
       
       <!-- Content -->
-      <main class="flex-1 pt-16">
+      <main class="flex-1">
         <router-view></router-view>
       </main>
     </div>

@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto py-8 px-4">
+  <div class="container mx-auto py-8 px-4 invoice-list-container">
     <!-- Breadcrumb -->
     <Breadcrumb :breadcrumbItems="[
       { text: 'Dashboard', to: '/dashboard' },
@@ -125,7 +125,7 @@
               <div class="text-sm text-gray-900">{{ formatDate(invoice.date) }}</div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-              <DropdownMenu>
+              <DropdownMenu class="dropdown-menu">
                 <template #trigger>
                   <div class="flex items-center">
                     <span class="sr-only">Actions</span>
@@ -138,6 +138,7 @@
                 <DropdownMenuItem 
                   as="router-link" 
                   :to="`/invoice/${invoice.id}/edit`"
+                  class="dropdown-menu-item"
                 >
                   <span class="flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -150,6 +151,7 @@
                 <DropdownMenuItem 
                   destructive
                   @click="confirmDelete(invoice)"
+                  class="dropdown-menu-item"
                 >
                   <span class="flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -521,6 +523,11 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.invoice-list-container {
+  position: relative;
+  isolation: isolate;
+}
+
 @media (max-width: 768px) {
   .flex-col-reverse {
     flex-direction: column-reverse;
@@ -542,5 +549,20 @@ tr.hover\:bg-gray-50:hover td {
 
 tr.hover\:bg-gray-50:hover td:last-child {
   color: initial;
+}
+
+/* Fix for the table layout */
+table {
+  position: relative;
+}
+
+table td:last-child {
+  position: static;
+}
+
+/* Make sure pagination is above table but below dropdown */
+.mt-4 {
+  position: relative;
+  z-index: 20;
 }
 </style> 

@@ -80,6 +80,27 @@ export const useAuthStore = defineStore('auth', () => {
         throw new Error('No user data returned from Supabase')
       }
       
+      // Ensure user entry exists in users table
+      try {
+        const { error: userTableError } = await supabase
+          .from('users')
+          .upsert({
+            id: data.user.id,
+            email: email,
+            full_name: data.user.user_metadata?.full_name || '',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          }, { onConflict: 'id' })
+          
+        if (userTableError) {
+          console.error('Error ensuring user record:', userTableError)
+          // Don't throw, continue with sign up process
+        }
+      } catch (userTableErr) {
+        console.error('Failed to ensure user record in database:', userTableErr)
+        // Don't throw, continue with sign up process
+      }
+      
       user.value = data.user
       
       // Track registration event

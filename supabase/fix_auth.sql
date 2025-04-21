@@ -8,16 +8,30 @@ DROP FUNCTION IF EXISTS handle_new_user();
 -- Create a simplified function to handle new users
 CREATE OR REPLACE FUNCTION handle_new_user() 
 RETURNS TRIGGER AS $$
+DECLARE
+    existing_user_count INTEGER;
 BEGIN
-  -- Simplified version with better error handling
-  INSERT INTO public.users (id, email, full_name)
-  VALUES (new.id, new.email, COALESCE(new.raw_user_meta_data->>'full_name', ''));
-  RETURN new;
-EXCEPTION
-  WHEN OTHERS THEN
-    -- Log the error (appears in Supabase logs)
-    RAISE LOG 'Error in handle_new_user: %', SQLERRM;
-    RETURN new; -- Continue even if insert fails
+    -- Check if user already exists in public.users to avoid duplicate errors
+    SELECT COUNT(*) INTO existing_user_count 
+    FROM public.users 
+    WHERE id = NEW.id;
+    
+    -- Only insert if user doesn't already exist
+    IF existing_user_count = 0 THEN
+        BEGIN
+            -- Simplified version with better error handling
+            INSERT INTO public.users (id, email, full_name)
+            VALUES (NEW.id, NEW.email, COALESCE(NEW.raw_user_meta_data->>'full_name', ''));
+        EXCEPTION
+            WHEN OTHERS THEN
+                -- Log the detailed error (appears in Supabase logs)
+                RAISE LOG 'Error in handle_new_user for user_id=%, email=%: %', 
+                    NEW.id, NEW.email, SQLERRM;
+        END;
+    END IF;
+    
+    -- Always continue regardless of success or failure
+    RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 

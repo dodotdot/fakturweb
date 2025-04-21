@@ -2,7 +2,7 @@
   <component 
     :is="asComponent" 
     :to="to" 
-    class="text-gray-700 hover:bg-gray-100 hover:text-gray-900 block px-4 py-2 text-sm w-full text-left"
+    class="text-gray-700 hover:bg-gray-100 hover:text-gray-900 block px-4 py-2 text-sm w-full text-left cursor-pointer dropdown-menu-item"
     :class="[className, { 'text-red-600 hover:bg-red-50 hover:text-red-700': destructive }]"
     role="menuitem" 
     tabindex="-1"
@@ -46,4 +46,12 @@ const asComponent = computed(() => {
 const onClick = (event) => {
   emit('click', event);
 };
-</script> 
+</script>
+
+<style scoped>
+.dropdown-menu-item {
+  position: relative;
+  z-index: 9999;
+  user-select: none;
+}
+</style> 

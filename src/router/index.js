@@ -25,6 +25,7 @@ const PublicInvoiceDetail = () => import('../views/PublicInvoiceDetail.vue')
 const ClientList = () => import('../views/ClientList.vue')
 const ClientEditor = () => import('../views/ClientEditor.vue')
 const BusinessProfile = () => import('../views/BusinessProfile.vue')
+const BetaTesterRegister = () => import('../views/BetaTesterRegister.vue')
 
 const routes = [
   {
@@ -85,6 +86,19 @@ const routes = [
       keywords: 'daftar faktur online, buat akun faktur, register faktur gratis, akun faktur bisnis',
       requiresAuth: false,
       noSidebar: true
+    }
+  },
+  {
+    path: '/beta',
+    name: 'BetaTesterRegister',
+    component: BetaTesterRegister,
+    meta: {
+      title: 'Program Beta Tester - Dapatkan Akses Premium Gratis',
+      description: 'Bergabunglah dengan program beta tester kami dan dapatkan akses premium gratis serta diskon 50% seumur hidup.',
+      keywords: 'beta tester faktur, program beta, diskon premium, akses gratis, faktur online',
+      requiresAuth: false,
+      noSidebar: true,
+      hideForAuth: true
     }
   },
   {

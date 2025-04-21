@@ -496,10 +496,10 @@
             
             <div class="mt-8">
               <router-link 
-                to="/register" 
+                to="/beta" 
                 class="w-full inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
               >
-                DAFTAR SEKARANG
+                DAFTAR VERSI BETA SEKARANG
               </router-link>
               <p class="text-center mt-2 text-sm italic text-gray-300">Gratis kok, ga pake tipu-tipu! 😉</p>
             </div>
