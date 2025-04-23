@@ -1,6 +1,124 @@
 <template>
   <div class="min-h-screen py-12 bg-gray-50">
     <div class="container mx-auto max-w-7xl">
+      <!-- Mobile Hamburger Menu -->
+      <div class="lg:hidden fixed top-4 right-4 z-50">
+        <button 
+          @click="isMobileMenuOpen = !isMobileMenuOpen" 
+          class="hamburger-button flex items-center justify-center w-12 h-12 rounded-full bg-white shadow-md border border-gray-200"
+          aria-controls="mobile-menu"
+          aria-expanded="false"
+        >
+          <span class="sr-only">Open main menu</span>
+          <!-- Menu icon when closed -->
+          <svg
+            v-if="!isMobileMenuOpen"
+            class="h-6 w-6 text-gray-700"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+          <!-- X icon when open -->
+          <svg 
+            v-else
+            class="h-6 w-6 text-gray-700" 
+            xmlns="http://www.w3.org/2000/svg" 
+            fill="none" 
+            viewBox="0 0 24 24" 
+            stroke="currentColor"
+          >
+            <path 
+              stroke-linecap="round" 
+              stroke-linejoin="round" 
+              stroke-width="2" 
+              d="M6 18L18 6M6 6l12 12" 
+            />
+          </svg>
+        </button>
+        
+        <!-- Mobile Menu Dropdown -->
+        <div 
+          v-if="isMobileMenuOpen" 
+          class="mobile-menu-container absolute right-0 mt-2 w-60 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
+          :class="{ 'mobile-menu-visible': isMobileMenuOpen }"
+        >
+          <div class="py-1">
+            <router-link
+              to="/"
+              class="mobile-menu-item"
+              @click="isMobileMenuOpen = false"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7m-7-7v18" />
+              </svg>
+              Beranda
+            </router-link>
+            
+            <button 
+              @click="activeTab = 'form'; isMobileMenuOpen = false" 
+              class="mobile-menu-item w-full text-left"
+              :class="{ 'bg-primary/10 text-primary': activeTab === 'form' }"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              {{ translations.fillData }}
+            </button>
+            
+            <button 
+              @click="activeTab = 'preview'; isMobileMenuOpen = false" 
+              class="mobile-menu-item w-full text-left"
+              :class="{ 'bg-primary/10 text-primary': activeTab === 'preview' }"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              {{ translations.preview }}
+            </button>
+            
+            <div class="border-t border-gray-200 pt-4 mt-4">
+              <div class="px-4 py-2 text-sm text-gray-500">
+                Language
+              </div>
+              <div class="flex space-x-2 px-4 py-2">
+                <button
+                  @click="setLanguage('id')"
+                  :class="[
+                    'flex-1 py-2 px-3 text-sm rounded-md',
+                    currentLocale === 'id' 
+                      ? 'bg-primary text-white font-medium' 
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ]"
+                >
+                  ID
+                </button>
+                <button
+                  @click="setLanguage('en')"
+                  :class="[
+                    'flex-1 py-2 px-3 text-sm rounded-md',
+                    currentLocale === 'en' 
+                      ? 'bg-primary text-white font-medium' 
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ]"
+                >
+                  EN
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       <!-- Step Timeline -->
       <div class="mb-8 flex justify-center">
         <div class="relative px-4 max-w-md w-full">
@@ -82,11 +200,44 @@
           </button>
         </div>
       </div>
+
+      <!-- Mobile Tabs -->
+      <div class="lg:hidden mb-4">
+        <div class="flex rounded-lg bg-gray-100 p-1">
+          <button 
+            @click="activeTab = 'form'; isMobileMenuOpen = false" 
+            :class="[
+              'flex-1 py-2 px-4 text-sm font-medium rounded-md transition-all duration-200',
+              activeTab === 'form' 
+                ? 'bg-white shadow text-primary'
+                : 'text-gray-600 hover:text-gray-900'
+            ]"
+          >
+            {{ translations.fillData }}
+          </button>
+          <button 
+            @click="activeTab = 'preview'; isMobileMenuOpen = false" 
+            :class="[
+              'flex-1 py-2 px-4 text-sm font-medium rounded-md transition-all duration-200',
+              activeTab === 'preview' 
+                ? 'bg-white shadow text-primary'
+                : 'text-gray-600 hover:text-gray-900'
+            ]"
+          >
+            {{ translations.preview }}
+          </button>
+        </div>
+      </div>
       
       <!-- Two Column Layout -->
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <!-- Left Column: Invoice Form (1/4 width) -->
-        <div class="lg:col-span-1 bg-white shadow-lg p-6 rounded-lg border border-gray-200">
+        <div 
+          :class="[
+            'lg:col-span-1 bg-white shadow-lg p-6 rounded-lg border border-gray-200',
+            {'hidden': activeTab === 'preview' && windowWidth < 1024}
+          ]"
+        >
           <h2 class="text-lg font-semibold mb-4">{{ translations.fillData }}</h2>
           
           <!-- Invoice Header -->
@@ -114,8 +265,8 @@
                 v-model="invoice.dueDate" 
                 class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
               />
-      </div>
-    </div>  
+            </div>
+          </div>  
           
           <!-- Logo Upload -->
           <div class="mb-6">
@@ -317,7 +468,13 @@
         </div>
         
         <!-- Right Column: Invoice Preview (3/4 width) -->
-        <div class="lg:col-span-3 bg-white shadow-lg p-8 rounded-lg border border-gray-200 transform transition-all duration-300 hover:shadow-xl h-fit sticky top-4" ref="invoicePrintRef">
+        <div 
+          :class="[
+            'lg:col-span-3 bg-white shadow-lg p-8 rounded-lg border border-gray-200 transform transition-all duration-300 hover:shadow-xl h-fit sticky top-4',
+            {'hidden': activeTab === 'form' && windowWidth < 1024}
+          ]" 
+          ref="invoicePrintRef"
+        >
           <!-- Invoice Header -->
           <div class="flex flex-col md:flex-row justify-between items-start mb-10">
             <!-- Logo -->
@@ -447,17 +604,34 @@
           <button 
             @click="previewInvoice"
             class="px-6 py-3 bg-primary text-white rounded-md hover:bg-primary/80 font-medium"
-          :disabled="isFormIncomplete"
           >
-            {{ translations.preview }}
+            Next
           </button>
+        
+          <!-- Mobile Nav Buttons -->
+          <div class="lg:hidden flex space-x-4">
+            <button 
+              v-if="activeTab === 'form'"
+              @click="activeTab = 'preview'" 
+              class="px-6 py-3 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200 font-medium"
+            >
+              {{ translations.seePreview }}
+            </button>
+            <button 
+              v-if="activeTab === 'preview'"
+              @click="activeTab = 'form'" 
+              class="px-6 py-3 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200 font-medium"
+            >
+              {{ translations.editForm }}
+            </button>
+          </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, onBeforeUnmount } from 'vue';
 import html2pdf from 'html2pdf.js';
 import { useRouter } from 'vue-router';
 import { invoiceEvents, trackPageView } from '../utils/analytics';
@@ -468,6 +642,28 @@ const router = useRouter();
 const invoicePrintRef = ref(null);
 const fileInput = ref(null);
 const isGenerating = ref(false);
+
+// Mobile menu state
+const isMobileMenuOpen = ref(false);
+
+// Mobile responsive tabs
+const activeTab = ref('form');
+// Initialize window width with a safe default value for SSR
+const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1024);
+
+// Handle window resize for responsive design
+function handleResize() {
+  windowWidth.value = window.innerWidth;
+  // If we're on desktop (>= 1024px), we don't need tabs
+  if (windowWidth.value >= 1024) {
+    activeTab.value = 'both';
+    // Close mobile menu on desktop
+    isMobileMenuOpen.value = false;
+  } else if (activeTab.value === 'both') {
+    // If switching to mobile, default to form view
+    activeTab.value = 'form';
+  }
+}
 
 // Use direct language management instead of Vue i18n
 const currentLocale = ref(getPreferredLanguage());
@@ -516,6 +712,9 @@ const translations = computed(() => {
     downloadPDF: getTranslation(lang, 'ui', 'downloadPDF'),
     createInvoiceMessage: getTranslation(lang, 'ui', 'createInvoiceMessage'),
     preview: getTranslation(lang, 'ui', 'preview'),
+    // Tab navigation
+    seePreview: getTranslation(lang, 'ui', 'seePreview') || 'See Preview',
+    editForm: getTranslation(lang, 'ui', 'editForm') || 'Edit Form',
     
     // Invoice content
     uploadLogo: getTranslation(lang, 'invoice', 'uploadLogo'),
@@ -581,6 +780,18 @@ const invoice = ref({...defaultInvoice});
 onMounted(() => {
   console.log('GuestInvoice mounted - Current locale:', currentLocale.value);
   
+  // Set up resize listener for responsive design - safely check for window
+  if (typeof window !== 'undefined') {
+    // Make sure windowWidth is properly initialized
+    windowWidth.value = window.innerWidth;
+    window.addEventListener('resize', handleResize);
+    // Initialize the correct view based on initial window size
+    handleResize();
+  }
+  
+  // Add click outside handler to close mobile menu
+  document.addEventListener('click', handleClickOutside);
+  
   // Track guest invoice page view
   trackPageView('/invoice/guest', 'Buat Faktur Tanpa Daftar - Faktur.web.id');
   
@@ -614,6 +825,14 @@ onMounted(() => {
       console.warn('Error accessing localStorage for invoice data:', storageError);
       // Continue with default invoice
     }
+  }
+});
+
+// Remove event listeners when component is unmounted
+onBeforeUnmount(() => {
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('resize', handleResize);
+    document.removeEventListener('click', handleClickOutside);
   }
 });
 
@@ -773,6 +992,19 @@ const isFormIncomplete = computed(() => {
     invoice.value.items.some(item => !item.description || !item.quantity || !item.unitPrice)
   );
 });
+
+// Handle clicks outside to close the mobile menu
+function handleClickOutside(event) {
+  const hamburgerBtn = document.querySelector('.lg\\:hidden.fixed.top-4.right-4.z-50 button');
+  const mobileMenu = document.querySelector('.lg\\:hidden.fixed.top-4.right-4.z-50 .absolute');
+  
+  if (hamburgerBtn && mobileMenu && 
+      !hamburgerBtn.contains(event.target) && 
+      !mobileMenu.contains(event.target) && 
+      isMobileMenuOpen.value) {
+    isMobileMenuOpen.value = false;
+  }
+}
 </script>
 
 <style scoped>
@@ -801,6 +1033,114 @@ const isFormIncomplete = computed(() => {
     opacity: 0 !important;
     position: absolute !important;
     pointer-events: none !important;
+  }
+}
+
+/* Mobile hamburger menu */
+.hamburger-button {
+  width: 48px;
+  height: 48px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.hamburger-button:active {
+  background-color: rgba(0, 0, 0, 0.1);
+  transform: scale(0.95);
+}
+
+/* Mobile menu styling */
+.mobile-menu-container {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  max-height: 0;
+  overflow: hidden;
+}
+
+.mobile-menu-visible {
+  opacity: 1;
+  transform: translateY(0);
+  max-height: 100vh;
+}
+
+.mobile-menu-item {
+  @apply block px-4 py-3 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 flex items-center;
+  min-height: 50px; /* Larger touch target */
+  margin-top: 1px;
+  margin-bottom: 1px;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.05);
+}
+
+.mobile-menu-item:active {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Mobile responsive tab styles */
+@media (max-width: 1023px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  /* Animate tab transitions */
+  .grid > div {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  
+  .grid > div.hidden {
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+    position: absolute;
+    left: -9999px;
+  }
+  
+  /* Ensure proper tab button styles */
+  .flex button {
+    transition: all 0.2s ease;
+  }
+  
+  /* Fix table overflow on small screens */
+  table {
+    min-width: 100%;
+    display: block;
+    overflow-x: auto;
+  }
+  
+  /* Bigger touch targets for buttons */
+  button {
+    min-height: 44px;
+  }
+  
+  /* Add shadow to active tab to make it stand out */
+  .bg-white.shadow {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+  
+  /* Ensure form fields are easy to tap */
+  input, textarea, select {
+    min-height: 44px;
+  }
+  
+  /* Fix sticky positioning for mobile */
+  .sticky {
+    position: relative;
+    top: 0;
+  }
+  
+  /* Ensure bottom buttons are centered and have enough padding */
+  .mt-8.flex {
+    margin-top: 2rem;
+    padding-bottom: 2rem;
   }
 }
 </style> 

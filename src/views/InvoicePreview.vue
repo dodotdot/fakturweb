@@ -151,13 +151,13 @@
             :class="{ 'ring-2 ring-primary': selectedTheme === 'elegant' }"
             @click="selectedTheme = 'elegant'"
           >
-            <div class="bg-gray-900 p-3 rounded">
-              <div class="h-10 border-b border-gray-700 mb-2"></div>
+            <div class="bg-yellow-50 p-3 rounded">
+              <div class="h-10 border-b border-yellow-200 mb-2"></div>
               <div class="flex space-x-2 mb-2">
-                <div class="w-10 h-10 bg-yellow-500 rounded-lg"></div>
-                <div class="flex-1 h-10 bg-gray-800 rounded"></div>
+                <div class="w-10 h-10 bg-navy-500 rounded-lg"></div>
+                <div class="flex-1 h-10 bg-yellow-100 rounded"></div>
               </div>
-              <div class="h-4 bg-gray-800 w-1/2 rounded mb-2"></div>
+              <div class="h-4 bg-yellow-100 w-1/2 rounded mb-2"></div>
             </div>
             <p class="mt-2 text-center font-medium">Elegan</p>
           </div>
@@ -172,7 +172,7 @@
           {
             'bg-white border-gray-200': selectedTheme === 'classic',
             'bg-blue-50 border-blue-200': selectedTheme === 'modern',
-            'bg-gray-900 text-white border-gray-700': selectedTheme === 'elegant'
+            'bg-yellow-50 border-yellow-200': selectedTheme === 'elegant'
           }
         ]" 
         ref="invoicePrintRef"
@@ -195,14 +195,14 @@
                 {
                   'border-gray-300': selectedTheme === 'classic',
                   'border-blue-300': selectedTheme === 'modern',
-                  'border-gray-700': selectedTheme === 'elegant'
+                  'border-yellow-300': selectedTheme === 'elegant'
                 }
               ]"
             >
               <span :class="{
                 'text-gray-400': selectedTheme === 'classic',
                 'text-blue-400': selectedTheme === 'modern',
-                'text-gray-500': selectedTheme === 'elegant'
+                'text-navy-500': selectedTheme === 'elegant'
               }">{{ translations.uploadLogo }}</span>
             </div>
           </div>
@@ -214,7 +214,7 @@
                 {
                   'text-gray-800': selectedTheme === 'classic',
                   'text-blue-800': selectedTheme === 'modern',
-                  'text-yellow-500': selectedTheme === 'elegant'
+                  'text-navy-900': selectedTheme === 'elegant'
                 }
               ]"
             >{{ invoice.title }}</div>
@@ -223,7 +223,7 @@
                 <span :class="{
                   'text-gray-500': selectedTheme === 'classic',
                   'text-blue-500': selectedTheme === 'modern',
-                  'text-gray-400': selectedTheme === 'elegant'
+                  'text-navy-600': selectedTheme === 'elegant'
                 }" class="w-24">{{ translations.date }}:</span>
                 <span>{{ formatDate(invoice.date) }}</span>
               </div>
@@ -231,7 +231,7 @@
                 <span :class="{
                   'text-gray-500': selectedTheme === 'classic',
                   'text-blue-500': selectedTheme === 'modern',
-                  'text-gray-400': selectedTheme === 'elegant'
+                  'text-navy-600': selectedTheme === 'elegant'
                 }" class="w-24">{{ translations.dueDate }}:</span>
                 <span>{{ formatDate(invoice.dueDate) }}</span>
               </div>
@@ -245,23 +245,23 @@
             <h3 :class="{
               'text-gray-400': selectedTheme === 'classic',
               'text-blue-500': selectedTheme === 'modern',
-              'text-yellow-500': selectedTheme === 'elegant'
+              'text-navy-800': selectedTheme === 'elegant'
             }" class="text-sm uppercase font-medium mb-2">{{ translations.from }}</h3>
             <div :class="{
               'text-gray-900': selectedTheme === 'classic',
               'text-blue-900': selectedTheme === 'modern',
-              'text-white': selectedTheme === 'elegant'
+              'text-navy-900': selectedTheme === 'elegant'
             }" class="font-semibold text-lg mb-2">{{ invoice.from.name }}</div>
             <div :class="{
               'text-gray-600': selectedTheme === 'classic',
               'text-blue-700': selectedTheme === 'modern',
-              'text-gray-300': selectedTheme === 'elegant'
+              'text-navy-700': selectedTheme === 'elegant'
             }" class="mb-2 text-base">{{ invoice.from.address }}</div>
             <div class="flex items-center mb-1">
               <span :class="{
                 'text-gray-400': selectedTheme === 'classic',
                 'text-blue-500': selectedTheme === 'modern',
-                'text-gray-400': selectedTheme === 'elegant'
+                'text-navy-700': selectedTheme === 'elegant'
               }" class="w-16 text-sm">Email:</span>
               <span class="text-base">{{ invoice.from.email }}</span>
             </div>
@@ -269,7 +269,7 @@
               <span :class="{
                 'text-gray-400': selectedTheme === 'classic',
                 'text-blue-500': selectedTheme === 'modern',
-                'text-gray-400': selectedTheme === 'elegant'
+                'text-navy-700': selectedTheme === 'elegant'
               }" class="w-16 text-sm">Telepon:</span>
               <span class="text-base">{{ invoice.from.phone }}</span>
             </div>
@@ -279,23 +279,23 @@
             <h3 :class="{
               'text-gray-400': selectedTheme === 'classic',
               'text-blue-500': selectedTheme === 'modern',
-              'text-yellow-500': selectedTheme === 'elegant'
+              'text-navy-800': selectedTheme === 'elegant'
             }" class="text-sm uppercase font-medium mb-2">{{ translations.billTo }}</h3>
             <div :class="{
               'text-gray-900': selectedTheme === 'classic',
               'text-blue-900': selectedTheme === 'modern',
-              'text-white': selectedTheme === 'elegant'
+              'text-navy-900': selectedTheme === 'elegant'
             }" class="font-semibold text-lg mb-2">{{ invoice.to.name }}</div>
             <div :class="{
               'text-gray-600': selectedTheme === 'classic',
               'text-blue-700': selectedTheme === 'modern',
-              'text-gray-300': selectedTheme === 'elegant'
+              'text-navy-700': selectedTheme === 'elegant'
             }" class="mb-2 text-base">{{ invoice.to.address }}</div>
             <div class="flex items-center mb-1">
               <span :class="{
                 'text-gray-400': selectedTheme === 'classic',
                 'text-blue-500': selectedTheme === 'modern',
-                'text-gray-400': selectedTheme === 'elegant'
+                'text-navy-700': selectedTheme === 'elegant'
               }" class="w-16 text-sm">Email:</span>
               <span class="text-base">{{ invoice.to.email }}</span>
             </div>
@@ -303,7 +303,7 @@
               <span :class="{
                 'text-gray-400': selectedTheme === 'classic',
                 'text-blue-500': selectedTheme === 'modern',
-                'text-gray-400': selectedTheme === 'elegant'
+                'text-navy-700': selectedTheme === 'elegant'
               }" class="w-16 text-sm">Telepon:</span>
               <span class="text-base">{{ invoice.to.phone }}</span>
             </div>
@@ -315,14 +315,14 @@
           <h3 :class="{
             'text-gray-400': selectedTheme === 'classic',
             'text-blue-500': selectedTheme === 'modern',
-            'text-yellow-500': selectedTheme === 'elegant'
+            'text-navy-800': selectedTheme === 'elegant'
           }" class="text-sm uppercase font-medium mb-4">{{ translations.items }}</h3>
           <div class="overflow-x-auto">
             <table class="w-full">
               <thead :class="{
                 'border-b border-gray-200': selectedTheme === 'classic',
                 'border-b border-blue-300': selectedTheme === 'modern',
-                'border-b border-gray-700': selectedTheme === 'elegant'
+                'border-b border-yellow-300': selectedTheme === 'elegant'
               }">
                 <tr>
                   <th class="text-left p-3 text-gray-500 font-medium">{{ translations.description }}</th>
@@ -335,7 +335,7 @@
                 <tr v-for="(item, index) in invoice.items" :key="index" :class="{
                   'border-b border-gray-200': selectedTheme === 'classic',
                   'border-b border-blue-300': selectedTheme === 'modern',
-                  'border-b border-gray-700': selectedTheme === 'elegant'
+                  'border-b border-yellow-300': selectedTheme === 'elegant'
                 }">
                   <td class="p-3 text-base">{{ item.description }}</td>
                   <td class="p-3 text-right text-base">{{ item.quantity }}</td>
@@ -353,7 +353,7 @@
                 <span :class="{
                   'text-gray-600': selectedTheme === 'classic',
                   'text-blue-700': selectedTheme === 'modern',
-                  'text-gray-300': selectedTheme === 'elegant'
+                  'text-navy-700': selectedTheme === 'elegant'
                 }" class="text-base">{{ translations.subtotal }}:</span>
                 <span class="text-base">{{ formatCurrency(calculateSubtotal()) }}</span>
               </div>
@@ -361,20 +361,20 @@
                 <span :class="{
                   'text-gray-600': selectedTheme === 'classic',
                   'text-blue-700': selectedTheme === 'modern',
-                  'text-gray-300': selectedTheme === 'elegant'
+                  'text-navy-700': selectedTheme === 'elegant'
                 }" class="text-base">{{ translations.taxRate }}: {{ invoice.taxRate }}%</span>
                 <span class="text-base">{{ formatCurrency(calculateTaxAmount()) }}</span>
               </div>
               <div :class="{
                 'border-t border-gray-200': selectedTheme === 'classic',
                 'border-t border-blue-300': selectedTheme === 'modern',
-                'border-t border-gray-700': selectedTheme === 'elegant'
+                'border-t border-yellow-300': selectedTheme === 'elegant'
               }" class="flex justify-between py-3 font-bold text-lg">
                 <span>{{ translations.total }}:</span>
                 <span :class="{
                   'text-gray-900': selectedTheme === 'classic',
                   'text-blue-900': selectedTheme === 'modern',
-                  'text-yellow-500': selectedTheme === 'elegant'
+                  'text-navy-900': selectedTheme === 'elegant'
                 }">{{ formatCurrency(calculateTotal()) }}</span>
               </div>
             </div>
@@ -386,12 +386,12 @@
           <h3 :class="{
             'text-gray-400': selectedTheme === 'classic',
             'text-blue-500': selectedTheme === 'modern',
-            'text-yellow-500': selectedTheme === 'elegant'
+            'text-navy-800': selectedTheme === 'elegant'
           }" class="text-sm uppercase font-medium mb-2">{{ translations.notes }}</h3>
           <div :class="{
             'bg-gray-50': selectedTheme === 'classic',
             'bg-blue-100': selectedTheme === 'modern',
-            'bg-gray-800': selectedTheme === 'elegant'
+            'bg-yellow-100': selectedTheme === 'elegant'
           }" class="p-3 rounded-md text-base">{{ invoice.notes }}</div>
         </div>
 
@@ -401,10 +401,10 @@
             :class="{
               'text-gray-700': selectedTheme === 'classic',
               'text-blue-700': selectedTheme === 'modern',
-              'text-gray-300': selectedTheme === 'elegant'
+              'text-navy-500': selectedTheme === 'elegant'
             }"
           >
-            Powered by 🔥 https://faktur.web.id
+            Powered by 🔥 <img src="/images/faktur-logo.svg" alt="Faktur Logo" class="inline-block h-10 w-10">
           </p>
         </div>
       </div>
@@ -935,9 +935,43 @@ const translations = computed(() => {
 </script>
 
 <style scoped>
+/* Define custom colors for themes */
+:root {
+  --navy-500: #1e3a8a;
+  --navy-600: #1e40af;
+  --navy-700: #1e429f;
+  --navy-800: #1e3a8a;
+  --navy-900: #172554;
+}
+
 /* Theme transition effects */
 .container, .bg-white, .border, .text-gray-500, .text-gray-400, .text-gray-600, .border-gray-200, .bg-gray-50 {
   transition: all 0.3s ease-in-out;
+}
+
+/* Custom theme colors */
+.bg-navy-500 {
+  background-color: var(--navy-500);
+}
+
+.text-navy-500 {
+  color: var(--navy-500);
+}
+
+.text-navy-600 {
+  color: var(--navy-600);
+}
+
+.text-navy-700 {
+  color: var(--navy-700);
+}
+
+.text-navy-800 {
+  color: var(--navy-800);
+}
+
+.text-navy-900 {
+  color: var(--navy-900);
 }
 
 /* Watermark footer styling */

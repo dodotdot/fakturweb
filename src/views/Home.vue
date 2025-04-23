@@ -10,10 +10,14 @@
         
         <div class="flex flex-col items-center justify-center text-center max-w-4xl mx-auto relative z-20">
           <h1 class="hero-title mb-6 tracking-tighter">
-            Faktur Digital<br>Untuk <span class="highlight font-serif font-light italic">Bisnis Modern</span>
+            <span class="strike-text relative inline-block">Invoice</span> Faktur Digital<br>Untuk <span class="highlight font-serif font-light italic drop-text text-rotation-wrapper">
+                <span class="rotating-text" :class="{ active: currentTextIndex === 0 }">Bisnis Modern</span>
+                <span class="rotating-text" :class="{ active: currentTextIndex === 1 }">Freelancer</span>
+                <span class="rotating-text" :class="{ active: currentTextIndex === 2 }">UMKM</span>
+            </span>
           </h1>
           <p class="hero-subtitle mb-8">
-            Faktur profesional dalam 30 detik 🔥. Hemat waktu, simple, elegan, dan terorganisir dengan baik.
+            Faktur profesional dalam Hitungan Menit 🔥. Hemat waktu, simple, elegan, dan terorganisir dengan baik.
           </p>
           <div class="hero-video-wrapper mb-8">
             <video class="hero-video" autoplay loop muted playsinline>
@@ -22,9 +26,7 @@
             </video>
           </div>
           <div class="hero-cta flex gap-4 justify-center">
-            
-            
-            <router-link to="/invoice/guest" class="btn-primary">Buat Faktur Sekarang</router-link>
+            <router-link to="/invoice/guest" class="btn-primary px-8 py-4 text-lg rounded-lg block w-full sm:w-auto text-center">Buat Faktur Sekarang</router-link>
           </div>
         </div>
       </div>
@@ -113,12 +115,23 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted } from 'vue';
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
 import { useAuthStore } from '../stores/auth';
 import { trackPageView } from '../utils/analytics';
 
 const authStore = useAuthStore();
 const isAuthenticated = computed(() => authStore.isAuthenticated);
+
+// Text rotation
+const currentTextIndex = ref(0);
+const rotationTexts = ["Bisnis Modern", "Freelancer", "UMKM"];
+let textRotationInterval = null;
+
+function startTextRotation() {
+  textRotationInterval = setInterval(() => {
+    currentTextIndex.value = (currentTextIndex.value + 1) % rotationTexts.length;
+  }, 5000); // Change every 5 seconds
+}
 
 // FAQ functionality
 const faqItems = ref([
@@ -152,6 +165,9 @@ function toggleFaq(index) {
 onMounted(() => {
   // Track home page view
   trackPageView('/', 'Faktur.web.id - Solusi Faktur Online Terbaik untuk UMKM Indonesia');
+  
+  // Start the text rotation animation
+  startTextRotation();
   
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
@@ -218,6 +234,13 @@ onMounted(() => {
     });
   }
 });
+
+// Clean up interval when component unmounts
+onBeforeUnmount(() => {
+  if (textRotationInterval) {
+    clearInterval(textRotationInterval);
+  }
+});
 </script>
 
 <style scoped>
@@ -252,6 +275,64 @@ onMounted(() => {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+.strike-text {
+  position: relative;
+  display: inline-block;
+  transform: rotate(-5deg) translateY(-2px);
+  padding: 0 4px;
+  transition: all 0.3s ease;
+  color: #666;
+  -webkit-text-fill-color: #666;
+  background: none;
+  margin-right: 5px;
+}
+
+.strike-text::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  height: 3px;
+  background-color: #c0392b;
+  transform: translateY(-50%);
+  transition: all 0.2s ease;
+}
+
+.strike-text:hover {
+  transform: rotate(-7deg) translateY(-4px);
+}
+
+.strike-text:hover::after {
+  height: 4px;
+  background-color: #e74c3c;
+}
+
+/* Text rotation styles */
+.text-rotation-wrapper {
+  position: relative;
+  display: inline-block;
+  min-width: 250px;
+  min-height: 1.2em;
+  vertical-align: middle;
+}
+
+.rotating-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  white-space: nowrap;
+}
+
+.rotating-text.active {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .hero-subtitle {
@@ -299,6 +380,12 @@ onMounted(() => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+  touch-action: manipulation;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  z-index: 10;
 }
 
 .btn-primary {
@@ -323,7 +410,6 @@ onMounted(() => {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
-
 .highlight {
   color: #c0392b;
   -webkit-text-fill-color: #c0392b;
@@ -402,6 +488,23 @@ onMounted(() => {
     font-size: 1.1rem;
   }
   
+  .strike-text {
+    transform: rotate(-4deg) translateY(-1px);
+    margin-right: 2px;
+  }
+  
+  .strike-text::after {
+    height: 2px;
+  }
+  
+  .strike-text:hover {
+    transform: rotate(-5deg) translateY(-2px);
+  }
+  
+  .text-rotation-wrapper {
+    min-width: 140px;
+  }
+  
   .hero-cta {
     flex-direction: column;
     width: 100%;
@@ -410,21 +513,65 @@ onMounted(() => {
   }
   
   .btn-primary, .btn-secondary {
+    padding: 1rem 2rem;
+    font-size: 1.125rem;
+    min-height: 56px; /* Larger touch target */
     width: 100%;
+    max-width: 320px;
+    margin: 0.5rem auto;
   }
   
-  .hero-illustration {
-    max-width: 200px;
+  .hero-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 0 1rem;
   }
   
-  .rocket-illustration {
-    top: 5%;
-    right: 0;
+  /* Create a larger invisible touch area */
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    right: -8px;
+    bottom: -8px;
+    z-index: -1;
   }
   
-  .party-illustration {
-    bottom: 10%;
-    left: 0;
+  /* Ensure button is on top of other elements */
+  .hero-cta {
+    position: relative;
+    z-index: 30;
+  }
+  
+  /* Fix for Safari scrolling */
+  .hero {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Hide illustrations on mobile */
+  .hero-illustrations {
+    display: none;
+  }
+  
+  /* Add active state for mobile touch */
+  .btn-primary:active {
+    background-color: #a02c20; /* Darker shade when pressed */
+    transform: translateY(1px); /* Slight down movement when pressed */
+    transition: background-color 0.1s, transform 0.1s;
+  }
+  
+  /* Fix Safari touch handling */
+  .hero-cta a {
+    -webkit-touch-callout: none; /* Prevents callout menu on long press */
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0); /* Removes default blue highlight */
+  }
+  
+  /* Make video wrapper not interfere with clicks */
+  .hero-video-wrapper {
+    pointer-events: none;
   }
 }
 
