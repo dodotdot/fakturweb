@@ -424,7 +424,7 @@
       <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-5xl sm:w-full">
         <div class="flex flex-col md:flex-row">
           <!-- Left side (benefits) -->
-          <div class="bg-gray-800 text-white p-6 md:p-8 md:w-1/2">
+          <div class="hidden md:block bg-gray-800 text-white p-6 md:p-8 md:w-1/2">
             <button @click="showRegisterModal = false" class="absolute top-4 right-4 text-white hover:text-gray-300">
               <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />

@@ -1,20 +1,3 @@
-<template>
-  <button
-    type="button"
-    role="switch"
-    :aria-checked="checked"
-    :data-state="checked ? 'checked' : 'unchecked'"
-    :disabled="disabled"
-    :class="switchClasses"
-    @click="checked = !checked"
-  >
-    <span
-      :data-state="checked ? 'checked' : 'unchecked'"
-      class="pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"
-    />
-  </button>
-</template>
-
 <script setup>
 import { computed } from 'vue'
 
@@ -48,6 +31,23 @@ const switchClasses = computed(() => {
   ]
 })
 </script>
+
+<template>
+  <button
+    type="button"
+    role="switch"
+    :aria-checked="checked"
+    :data-state="checked ? 'checked' : 'unchecked'"
+    :disabled="disabled"
+    :class="switchClasses"
+    @click="checked = !checked"
+  >
+    <span
+      :data-state="checked ? 'checked' : 'unchecked'"
+      class="pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"
+    />
+  </button>
+</template>
 
 <style scoped>
 /* Base styles for the switch */
