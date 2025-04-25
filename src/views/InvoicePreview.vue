@@ -199,7 +199,7 @@
                 }
               ]"
             >
-              <span :class="{
+              <span class="p-8" :class="{
                 'text-gray-400': selectedTheme === 'classic',
                 'text-blue-400': selectedTheme === 'modern',
                 'text-navy-500': selectedTheme === 'elegant'
@@ -404,7 +404,7 @@
               'text-navy-500': selectedTheme === 'elegant'
             }"
           >
-            Powered by 🔥 <img src="/images/faktur-logo.svg" alt="Faktur Logo" class="inline-block h-10 w-10">
+            Powered by 🔥 <img src="/images/faktur-logo.svg" alt="Faktur Logo" class="inline-block h-10 w-10 pdf-logo">
           </p>
         </div>
       </div>
@@ -421,8 +421,8 @@
       
       <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-5xl sm:w-full">
         <div class="flex flex-col md:flex-row">
-          <!-- Left side (benefits) -->
-          <div class="bg-gray-800 text-white p-6 md:p-8 md:w-1/2">
+          <!-- Left side (benefits) - hidden on mobile -->
+          <div class="hidden md:block bg-gray-800 text-white p-6 md:p-8 md:w-1/2">
             <button @click="showRegisterModal = false" class="absolute top-4 right-4 text-white hover:text-gray-300">
               <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -507,6 +507,13 @@
           
           <!-- Right side (PDF download) -->
           <div class="p-6 md:p-8 md:w-1/2 flex flex-col items-center justify-center">
+            <!-- Close button for mobile view -->
+            <button @click="showRegisterModal = false" class="md:hidden absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+              <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            
             <div class="text-center mb-8">
               <h3 class="text-2xl font-light text-gray-400">Download</h3>
               <h2 class="text-4xl font-light text-gray-400 mb-4">invoice di sini</h2>
@@ -563,7 +570,7 @@
             
             <button 
               @click="processDownload"
-              class="w-full mb-4 py-3 px-6 bg-gray-200 text-gray-800 font-medium rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+              class="w-full mb-4 py-3 px-6 bg-primary text-white font-medium rounded-md hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
               :disabled="isGenerating"
             >
               <span v-if="isGenerating">
@@ -767,8 +774,66 @@ function processDownload() {
     }
   }
 
+  // Create a simplified version of the invoice for PDF generation
+  const invoiceElement = invoicePrintRef.value;
+  
+  // Create a new div for PDF generation
+  const pdfContainer = document.createElement('div');
+  pdfContainer.style.width = '210mm'; // A4 width
+  pdfContainer.style.padding = '10mm'; // Reduced padding
+  pdfContainer.style.backgroundColor = 'white';
+  pdfContainer.style.color = 'black';
+  pdfContainer.style.fontFamily = 'Arial, sans-serif';
+  pdfContainer.style.boxSizing = 'border-box';
+  pdfContainer.style.overflow = 'hidden'; // Prevent overflow
+  
+  // Clone the invoice content
+  const content = invoiceElement.cloneNode(true);
+  
+  // Add a class to the content for PDF-specific styling
+  content.classList.add('pdf-content');
+  
+  // Handle SVG images differently - convert to data URL if possible
+  const svgImages = content.querySelectorAll('img[src$=".svg"]');
+  svgImages.forEach(img => {
+    // For the logo in the footer, use a special approach
+    if (img.classList.contains('pdf-logo')) {
+      // Create a text-based fallback for the logo
+      const logoText = document.createElement('span');
+      logoText.textContent = 'FAKTUR';
+      logoText.style.fontWeight = 'bold';
+      logoText.style.fontSize = '12px';
+      logoText.style.color = '#FF0000'; // Red color
+      logoText.style.display = 'inline-block';
+      logoText.style.verticalAlign = 'middle';
+      logoText.style.marginLeft = '5px';
+      
+      // Replace the SVG with the text
+      img.parentNode.replaceChild(logoText, img);
+    } else {
+      // For other SVGs, use the placeholder approach
+      const placeholder = document.createElement('div');
+      placeholder.style.width = '40px';
+      placeholder.style.height = '40px';
+      placeholder.style.backgroundColor = '#f0f0f0';
+      placeholder.style.display = 'inline-block';
+      placeholder.style.verticalAlign = 'middle';
+      placeholder.style.textAlign = 'center';
+      placeholder.style.lineHeight = '40px';
+      placeholder.textContent = 'LOGO';
+      img.parentNode.replaceChild(placeholder, img);
+    }
+  });
+  
+  // Add the content to the PDF container
+  pdfContainer.appendChild(content);
+  
+  // Add the container to the document temporarily
+  document.body.appendChild(pdfContainer);
+  
+  // Configure PDF options
   const options = {
-    margin: [10, 10, 15, 10], // top, right, bottom, left - increased bottom margin to accommodate watermark
+    margin: [5, 5, 5, 5], // Reduced margins
     filename: `faktur-${invoice.value.title.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.pdf`,
     image: { 
       type: 'jpeg', 
@@ -780,7 +845,9 @@ function processDownload() {
       allowTaint: true,
       logging: true,
       letterRendering: true,
-      scrollY: 0
+      scrollY: 0,
+      windowWidth: 210 * 3.78, // A4 width in pixels (210mm * 3.78 pixels/mm)
+      windowHeight: 297 * 3.78 // A4 height in pixels (297mm * 3.78 pixels/mm)
     },
     jsPDF: { 
       unit: 'mm', 
@@ -789,28 +856,28 @@ function processDownload() {
       compress: true
     }
   };
-
-  // Small delay to ensure all elements are properly rendered
+  
+  // Generate the PDF
   setTimeout(() => {
-    // Add a temporary class to the body for better print handling
-    document.body.classList.add('generating-pdf');
-    
     html2pdf()
-      .from(invoicePrintRef.value)
+      .from(pdfContainer)
       .set(options)
       .save()
       .then(() => {
+        // Clean up
+        document.body.removeChild(pdfContainer);
         isGenerating.value = false;
-        document.body.classList.remove('generating-pdf');
         
         // Remove the currentInvoice data from localStorage after successful download
         localStorage.removeItem('currentInvoice');
-        
       })
       .catch(error => {
         console.error('Error generating PDF:', error);
+        // Clean up even if there's an error
+        if (document.body.contains(pdfContainer)) {
+          document.body.removeChild(pdfContainer);
+        }
         isGenerating.value = false;
-        document.body.classList.remove('generating-pdf');
         alert('Error generating PDF. Please try again.');
       });
   }, 500);
@@ -976,8 +1043,8 @@ const translations = computed(() => {
 
 /* Watermark footer styling */
 .watermark-footer {
-  margin-top: 50px;
-  padding-top: 15px;
+  margin-top: 30px;
+  padding-top: 10px;
   text-align: center;
   position: relative;
   clear: both;
@@ -988,6 +1055,108 @@ const translations = computed(() => {
   opacity: 0.5;
   letter-spacing: 0.5px;
   font-family: 'Arial', sans-serif;
+}
+
+/* Fix for SVG logo in PDF */
+.pdf-logo {
+  display: inline-block;
+  width: 40px !important;
+  height: 40px !important;
+  vertical-align: middle;
+  object-fit: contain;
+}
+
+/* Critical styles for PDF generation */
+.generating-pdf * {
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+  color-adjust: exact !important;
+}
+
+.generating-pdf .shadow-lg {
+  box-shadow: none !important;
+}
+
+.generating-pdf .rounded-lg {
+  border-radius: 0 !important;
+}
+
+.generating-pdf .bg-white,
+.generating-pdf .bg-blue-50,
+.generating-pdf .bg-yellow-50 {
+  background-color: white !important;
+}
+
+.generating-pdf .border {
+  border: 1px solid #e5e7eb !important;
+}
+
+.generating-pdf .p-8 {
+  padding: 15px !important;
+}
+
+.generating-pdf .mb-10 {
+  margin-bottom: 15px !important;
+}
+
+.generating-pdf .text-3xl {
+  font-size: 16pt !important;
+  line-height: 1.2 !important;
+}
+
+.generating-pdf .text-base {
+  font-size: 9pt !important;
+  line-height: 1.3 !important;
+}
+
+.generating-pdf .text-sm {
+  font-size: 8pt !important;
+  line-height: 1.2 !important;
+}
+
+.generating-pdf .text-xs {
+  font-size: 7pt !important;
+  line-height: 1.1 !important;
+}
+
+/* Make table text smaller for PDF */
+.generating-pdf table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  font-size: 6pt !important;
+}
+
+.generating-pdf th,
+.generating-pdf td {
+  padding: 2px !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  font-size: 6pt !important;
+  line-height: 1 !important;
+}
+
+/* Make table rows more compact */
+.generating-pdf tr {
+  line-height: 1 !important;
+}
+
+/* PDF content specific styles */
+.pdf-content {
+  max-height: 277mm !important; /* A4 height minus margins */
+  overflow: hidden !important;
+}
+
+.pdf-content .watermark-footer {
+  margin-top: 15px !important;
+  padding-top: 5px !important;
+  border-top: 1px solid #e5e7eb !important;
+  position: relative !important;
+  bottom: 0 !important;
+}
+
+.generating-pdf .watermark-footer {
+  margin-top: 15px !important;
+  padding-top: 5px !important;
+  border-top: 1px solid #e5e7eb !important;
 }
 
 @media print {
@@ -1004,18 +1173,31 @@ const translations = computed(() => {
   
   /* Make sure base fonts are not too small in the invoice */
   p, span, div {
-    font-size: 11pt !important;
+    font-size: 10pt !important;
   }
   
   /* Header size for better readability */
   h3 {
-    font-size: 12pt !important;
+    font-size: 11pt !important;
   }
   
-  /* Ensure table content is readable */
+  /* Ensure table content is readable but compact */
+  table {
+    font-size: 6pt !important;
+  }
+  
   table td, table th {
-    font-size: 10pt !important;
-    padding: 4mm !important;
+    font-size: 6pt !important;
+    padding: 1.5mm !important;
+    line-height: 1 !important;
+  }
+  
+  /* Ensure SVG logo displays correctly in PDF */
+  .pdf-logo {
+    width: 40px !important;
+    height: 40px !important;
+    display: inline-block !important;
+    vertical-align: middle !important;
   }
 }
 
@@ -1033,6 +1215,13 @@ const translations = computed(() => {
 :global(.generating-pdf) .watermark-footer p {
   font-size: 8px !important;
   opacity: 0.5 !important;
+}
+
+:global(.generating-pdf) .pdf-logo {
+  width: 40px !important;
+  height: 40px !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
 }
 
 /* Adjust general text sizing to prevent small text */

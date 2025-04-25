@@ -92,31 +92,27 @@ function processEventQueue() {
  * @param {string} category - The event category (e.g., 'invoice')
  * @param {string} label - The event label (e.g., 'Invoice PDF Download')
  * @param {string|number} value - The event value (optional)
+ * @param {Object} additionalParams - Additional parameters to include in the event (optional)
  */
-export function trackEvent(action, category, label, value) {
+export function trackEvent(action, category, label, value, additionalParams = {}) {
   const params = {
     event_category: category,
-    event_label: label
+    event_label: label,
+    ...additionalParams
   };
   
-  if (value !== undefined) {
+  if (value !== undefined && value !== null) {
     params.value = value;
   }
   
-  // Check if gtag is available globally
-  if (window.gtag && isInitialized) {
+  if (isInitialized && window.gtag) {
     window.gtag('event', action, params);
   } else {
-    console.debug('[Analytics] Queueing event for later processing', { action, category, label, value });
-    eventQueue.push({ 
-      type: 'event', 
+    // Queue the event if GA is not yet initialized
+    eventQueue.push({
+      type: 'event',
       args: [action, params]
     });
-    
-    // Try to initialize if it hasn't been done yet
-    if (!isInitialized) {
-      initAnalytics(GA_MEASUREMENT_ID);
-    }
   }
 }
 
@@ -197,5 +193,14 @@ export const invoiceEvents = {
    */
   update(invoiceTitle) {
     trackEvent('update_invoice', 'invoice', `Invoice Updated: ${invoiceTitle}`);
+  },
+  
+  /**
+   * Track invoice view events
+   * @param {string} viewType - The type of view (e.g., 'registration_modal')
+   * @param {Object} params - Additional parameters for the view event
+   */
+  view(viewType, params = {}) {
+    trackEvent('view_invoice', 'invoice', `Invoice View: ${viewType}`, null, params);
   }
 }; 
