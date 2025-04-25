@@ -180,7 +180,7 @@
         <!-- Invoice Header -->
         <div class="flex flex-col md:flex-row justify-between items-start mb-10">
           <!-- Logo -->
-          <div class="w-40 h-40 flex items-center justify-center mb-4 md:mb-0">
+          <div class="w-1/2 md:w-1/2 flex items-center justify-center mb-4 md:mb-0">
             <div v-if="invoice.logo" class="relative w-full h-full">
               <img 
                 :src="invoice.logo" 
@@ -207,7 +207,7 @@
             </div>
           </div>
           
-          <div class="flex-1 md:ml-8">
+          <div class="w-1/2 md:w-1/2 md:ml-8">
             <div 
               :class="[
                 'text-3xl font-bold mb-2 text-right',
@@ -1045,5 +1045,58 @@ const translations = computed(() => {
 .from-details div, .to-details div,
 .from-details span, .to-details span {
   font-size: 0.875rem !important;
+}
+
+/* Mobile header layout */
+@media (max-width: 1023px) {
+  .flex.flex-col.md\:flex-row {
+    flex-direction: row !important;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .w-1\/2 {
+    width: 50% !important;
+    min-width: 0;
+  }
+
+  .text-3xl {
+    font-size: 1.25rem;
+    line-height: 1.5rem;
+    margin-bottom: 0.5rem;
+    text-align: left;
+  }
+
+  .flex.flex-col.space-y-1.items-end {
+    align-items: flex-start;
+  }
+
+  .flex.items-center {
+    font-size: 0.875rem;
+  }
+
+  .text-gray-500.w-24 {
+    width: 4rem;
+  }
+}
+
+/* Small devices (phones) */
+@media (max-width: 640px) {
+  .flex.flex-col.md\:flex-row {
+    gap: 0.75rem;
+  }
+
+  .w-1\/2 {
+    width: 50% !important;
+  }
+
+  .text-3xl {
+    font-size: 1.125rem;
+  }
+
+  .flex.items-center {
+    font-size: 0.8125rem;
+  }
 }
 </style> 
