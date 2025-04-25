@@ -406,7 +406,7 @@
               'text-navy-500': selectedTheme === 'elegant'
             }"
           >
-            Powered by 🔥 <img src="/images/faktur-logo.svg" alt="Faktur Logo" class="inline-block h-10 w-10">
+            Powered by 🔥 <span class="text-red-600 font-medium">Faktur.web.id</span>
           </p>
         </div>
       </div>

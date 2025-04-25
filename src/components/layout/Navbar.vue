@@ -13,6 +13,7 @@
                 src="/images/faktur-logo.svg"
                 alt="FakturWeb"
               />
+              <span class="ml-2 px-2 py-0.5 text-xs font-semibold bg-yellow-100 text-yellow-600 rounded-full">BETA</span>
             </router-link>
           </div>
         </div>
