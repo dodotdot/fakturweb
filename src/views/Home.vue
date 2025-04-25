@@ -34,11 +34,7 @@
 
    <!-- Other sections would be here -->
    
-   <!-- Logo Background Section -->
-   <div class="logo-background-section container mx-auto bg-white">
-     <img src="/images/faktur-logo.svg" alt="Faktur Logo Background" class="logo-background bg-white">
-   </div>
-
+   
    <!-- Join Now Section -->
    <section class="py-12 bg-gradient-to-br from-primary/5 to-primary/10">
      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

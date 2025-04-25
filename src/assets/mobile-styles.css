@@ -1,0 +1,396 @@
+/* Mobile responsive styling for the invoice content */
+@media (max-width: 1023px) {
+  /* Improve toggle button for mobile */
+  .shadcn-switch {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.5rem;
+  }
+  
+  /* Fix switch component for mobile */
+  button[role="switch"] {
+    width: 44px;
+    height: 24px;
+    border-radius: 12px;
+  }
+  
+  button[role="switch"] span {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+  }
+  
+  button[role="switch"][data-state="checked"] span {
+    transform: translateX(20px);
+  }
+  
+  button[role="switch"][data-state="unchecked"] span {
+    transform: translateX(2px);
+  }
+  
+  /* Perfect pixel alignment for mobile */
+  .container {
+    padding-left: 16px;
+    padding-right: 16px;
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  /* Improve form spacing and alignment */
+  .mb-6 {
+    margin-bottom: 24px;
+  }
+  
+  .mb-4 {
+    margin-bottom: 16px;
+  }
+  
+  .mb-2 {
+    margin-bottom: 8px;
+  }
+  
+  /* Ensure perfect touch targets */
+  input, textarea, select, button {
+    font-size: 16px; /* Prevents zooming on iOS */
+    border-radius: 8px;
+    padding: 12px 16px;
+  }
+  
+  /* Improve table display on mobile */
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  
+  table th, table td {
+    padding: 12px 8px;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  
+  /* Fix logo container for mobile */
+  .w-40.h-40 {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 16px;
+  }
+  
+  /* Improve mobile preview mode */
+  .mobile-preview-mode {
+    padding: 16px;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+    min-height: calc(100vh - 160px);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  /* Improve mobile tabs */
+  .lg\:hidden.mb-4 {
+    margin-bottom: 16px;
+  }
+  
+  .flex.rounded-lg.bg-gray-100.p-1 {
+    padding: 4px;
+    border-radius: 8px;
+  }
+  
+  .flex-1.py-2.px-4 {
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  /* Improve mobile step timeline */
+  .mb-8.flex.justify-center {
+    margin-bottom: 24px;
+  }
+  
+  .w-8.h-8 {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .text-xs {
+    font-size: 12px;
+  }
+  
+  /* Improve mobile language toggle */
+  .inline-flex.items-center.rounded-md {
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .px-3\.py-1\.5 {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+  
+  /* Improve mobile form grid */
+  .grid.grid-cols-2.gap-4 {
+    gap: 16px;
+  }
+  
+  /* Improve mobile invoice summary */
+  .flex.flex-col.items-end.mt-6 {
+    margin-top: 24px;
+  }
+  
+  .w-full.max-w-xs {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .flex.justify-between.py-2 {
+    padding: 8px 0;
+  }
+  
+  .flex.justify-between.py-3 {
+    padding: 12px 0;
+  }
+  
+  /* Improve mobile notes section */
+  .p-3.bg-gray-50 {
+    padding: 16px;
+    border-radius: 8px;
+  }
+  
+  /* Improve mobile bottom actions */
+  .mt-8.flex.justify-center.space-x-4 {
+    margin-top: 32px;
+    padding-bottom: 80px; /* Space for bottom navigation */
+  }
+  
+  .px-6.py-3 {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 320px;
+  }
+}
+
+/* Small devices (phones) */
+@media (max-width: 640px) {
+  .container {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  
+  /* Adjust switch for smaller screens */
+  button[role="switch"] {
+    width: 40px;
+    height: 22px;
+  }
+  
+  button[role="switch"] span {
+    width: 18px;
+    height: 18px;
+  }
+  
+  button[role="switch"][data-state="checked"] span {
+    transform: translateX(18px);
+  }
+  
+  /* Adjust form spacing for smaller screens */
+  .space-y-3 > * {
+    margin-top: 12px;
+    margin-bottom: 12px;
+  }
+  
+  /* Make form labels and inputs more compact */
+  label.block.text-sm {
+    margin-bottom: 4px;
+    font-size: 14px;
+  }
+  
+  /* Reduce vertical spacing */
+  .mb-6 {
+    margin-bottom: 20px;
+  }
+  
+  /* Ensure fixed elements don't overlap important content */
+  .py-12 {
+    padding-top: 64px;
+  }
+  
+  /* Improve mobile step timeline for smaller screens */
+  .relative.px-4.max-w-md {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  
+  .absolute.left-8.right-8 {
+    left: 16px;
+    right: 16px;
+  }
+  
+  /* Improve mobile tabs for smaller screens */
+  .flex-1.py-2.px-4 {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  
+  /* Improve mobile invoice items for smaller screens */
+  .border.border-gray-200.rounded-md.p-4 {
+    padding: 12px;
+    border-radius: 8px;
+  }
+  
+  /* Improve mobile invoice summary for smaller screens */
+  .flex.justify-between.py-2 {
+    padding: 6px 0;
+    font-size: 13px;
+  }
+  
+  .flex.justify-between.py-3 {
+    padding: 10px 0;
+    font-size: 15px;
+  }
+  
+  /* Improve mobile notes section for smaller screens */
+  .p-3.bg-gray-50 {
+    padding: 12px;
+    font-size: 13px;
+  }
+  
+  /* Improve mobile bottom actions for smaller screens */
+  .mt-8.flex.justify-center.space-x-4 {
+    margin-top: 24px;
+    padding-bottom: 72px;
+  }
+  
+  .px-6.py-3 {
+    padding: 10px 20px;
+    font-size: 15px;
+    max-width: 280px;
+  }
+}
+
+/* Extra small devices (small phones) */
+@media (max-width: 375px) {
+  .container {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  
+  /* Further adjust switch for very small screens */
+  button[role="switch"] {
+    width: 36px;
+    height: 20px;
+  }
+  
+  button[role="switch"] span {
+    width: 16px;
+    height: 16px;
+  }
+  
+  button[role="switch"][data-state="checked"] span {
+    transform: translateX(16px);
+  }
+  
+  /* Further reduce spacing for very small screens */
+  .mb-6 {
+    margin-bottom: 16px;
+  }
+  
+  .mb-4 {
+    margin-bottom: 12px;
+  }
+  
+  .mb-2 {
+    margin-bottom: 6px;
+  }
+  
+  /* Adjust font sizes for very small screens */
+  .text-3xl {
+    font-size: 1.25rem;
+    line-height: 1.5;
+  }
+  
+  .text-lg {
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+  
+  .text-sm {
+    font-size: 0.8rem;
+    line-height: 1.4;
+  }
+  
+  /* Improve mobile step timeline for very small screens */
+  .w-8.h-8 {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .text-xs {
+    font-size: 10px;
+  }
+  
+  /* Improve mobile tabs for very small screens */
+  .flex-1.py-2.px-4 {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+  
+  /* Improve mobile invoice items for very small screens */
+  .border.border-gray-200.rounded-md.p-4 {
+    padding: 10px;
+  }
+  
+  /* Improve mobile invoice summary for very small screens */
+  .flex.justify-between.py-2 {
+    padding: 5px 0;
+    font-size: 12px;
+  }
+  
+  .flex.justify-between.py-3 {
+    padding: 8px 0;
+    font-size: 14px;
+  }
+  
+  /* Improve mobile notes section for very small screens */
+  .p-3.bg-gray-50 {
+    padding: 10px;
+    font-size: 12px;
+  }
+  
+  /* Improve mobile bottom actions for very small screens */
+  .mt-8.flex.justify-center.space-x-4 {
+    margin-top: 20px;
+    padding-bottom: 64px;
+  }
+  
+  .px-6.py-3 {
+    padding: 8px 16px;
+    font-size: 14px;
+    max-width: 240px;
+  }
+}
+
+/* Safe area insets for notched devices */
+@supports (padding: max(0px)) {
+  .container {
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+  }
+  
+  .mt-8.flex.justify-center.space-x-4 {
+    padding-bottom: max(80px, calc(80px + env(safe-area-inset-bottom)));
+  }
+}
+
+/* Fix for iOS Safari 100vh issue */
+@supports (-webkit-touch-callout: none) {
+  .min-h-screen {
+    min-height: -webkit-fill-available;
+  }
+  
+  .mobile-preview-mode {
+    min-height: calc(-webkit-fill-available - 160px);
+  }
+} 

@@ -156,30 +156,30 @@
           <div class="mb-6">
             <label class="block text-sm font-medium text-gray-700 mb-2">{{ translations.uploadLogo }}</label>
             <div class="w-40 h-40 mb-2">
-              <div v-if="invoice.logo" class="relative w-full h-full">
-                <img 
-                  :src="invoice.logo" 
-                  alt="Invoice Logo" 
-                  class="w-full h-full object-contain border rounded-md"
-                  @load="handleImageLoad"
-                />
-                <button 
-                  @click="removeLogo"
+            <div v-if="invoice.logo" class="relative w-full h-full">
+              <img 
+                :src="invoice.logo" 
+                alt="Invoice Logo" 
+                  class="max-w-full max-h-full object-contain border rounded-md"
+                @load="handleImageLoad"
+              />
+              <button 
+                @click="removeLogo"
                   class="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full hover:bg-red-600"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                  </svg>
-                </button>
-              </div>
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+              </button>
+            </div>
               <div v-else class="w-full h-full flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-4">
                 <label class="cursor-pointer w-full h-full flex flex-col items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  <span class="text-sm text-gray-500">{{ translations.uploadLogo }}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span class="text-sm text-gray-500">{{ translations.uploadLogo }}</span>
                   <input type="file" class="hidden" accept="image/png,image/jpeg" @change="handleLogoUpload" ref="fileInput" />
-                </label>
+              </label>
               </div>
             </div>
           </div>
@@ -330,14 +330,24 @@
           
           <!-- Tax Rate -->
           <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-1">{{ translations.taxRate }} (%)</label>
-            <input 
-              type="number" 
-              v-model="invoice.taxRate"
-              min="0"
-              max="100"
-              class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-            />
+            <div class="flex items-center justify-between mb-2">
+              <label class="block text-sm font-medium text-gray-700">{{ translations.taxRate }}</label>
+              <div class="flex items-center">
+                <Switch 
+                  v-model="invoice.showTax"
+                  class="data-[state=checked]:bg-red-700"
+                />
+              </div>
+            </div>
+            <div v-if="invoice.showTax">
+              <input 
+                type="number" 
+                v-model="invoice.taxRate"
+                min="0"
+                max="100"
+                class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
           </div>
           
           <!-- Notes -->
@@ -363,7 +373,7 @@
           <!-- Invoice Header -->
           <div class="flex flex-col md:flex-row justify-between items-start mb-10">
             <!-- Logo -->
-            <div class="w-1/2 md:w-1/2 flex items-center justify-center mb-4 md:mb-0">
+            <div class="w-40 h-40 flex items-center justify-center mb-4 md:mb-0">
               <div v-if="invoice.logo" class="relative w-full h-full">
                 <img 
                   :src="invoice.logo" 
@@ -372,7 +382,7 @@
                 />
               </div>
               <div v-else class="w-full h-full flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg">
-                <div class="text-center md:p-8">
+                <div class="text-center">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
@@ -381,7 +391,7 @@
               </div>
             </div>
             
-            <div class="w-1/2 md:w-1/2 md:ml-8">
+            <div class="flex-1 md:ml-8">
               <div class="text-3xl font-bold mb-2 text-right">{{ invoice.title }}</div>
               <div class="flex flex-col space-y-1 items-end">
                 <div class="flex items-center">
@@ -429,18 +439,17 @@
 
           <!-- Invoice Items -->
           <div class="mb-10">
-            <h3 class="text-gray-400 text-sm uppercase font-medium mb-4">{{ translations.items }}</h3>
+            <h3 class="text-gray-400 text-xs uppercase font-medium mb-4">{{ translations.items }}</h3>
             <div class="overflow-x-auto">
               <table class="w-full">
-                <thead class="border-b">
-                  <tr>
-                    <th class="text-left p-3 text-gray-500 font-medium">{{ translations.description }}</th>
-                    <th class="text-right p-3 text-gray-500 font-medium w-24">{{ translations.quantity }}</th>
-                    <th class="text-right p-3 text-gray-500 font-medium w-32">{{ translations.price }}</th>
-                    <th class="text-right p-3 text-gray-500 font-medium w-32">{{ translations.total }}</th>
+                <thead class="border-b font-semibold text-sm">
+                  <tr>                    <th class="text-left p-3 text-gray-500">{{ translations.description }}</th>
+                    <th class="text-right p-3 text-gray-500 w-24">{{ translations.quantity }}</th>
+                    <th class="text-right p-3 text-gray-500 w-32">{{ translations.price }}</th>
+                    <th class="text-right p-3 text-gray-500 w-32">{{ translations.total }}</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody class="text-sm">
                   <tr v-for="(item, index) in invoice.items" :key="index" class="border-b">
                     <td class="p-3">{{ item.description || translations.itemDescriptionPlaceholder }}</td>
                     <td class="p-3 text-right">{{ item.quantity }}</td>
@@ -458,14 +467,16 @@
                 <span class="text-gray-600">{{ translations.subtotal }}:</span>
                 <span>{{ formatCurrency(calculateSubtotal()) }}</span>
               </div>
+              <template v-if="invoice.showTax">
                 <div class="flex justify-between py-2">
-                <span class="text-gray-600">{{ translations.taxRate }}:</span>
+                  <span class="text-gray-600">{{ translations.taxRate }}:</span>
                   <span>{{ invoice.taxRate }}%</span>
-              </div>
-              <div class="flex justify-between py-2">
-                <span class="text-gray-600">{{ translations.taxAmount }}:</span>
-                <span>{{ formatCurrency(calculateTaxAmount()) }}</span>
-              </div>
+                </div>
+                <div class="flex justify-between py-2">
+                  <span class="text-gray-600">{{ translations.taxAmount }}:</span>
+                  <span>{{ formatCurrency(calculateTaxAmount()) }}</span>
+                </div>
+              </template>
               <div class="flex justify-between py-3 border-t border-gray-200 font-bold text-lg">
                 <span>{{ translations.total }}:</span>
                 <span>{{ formatCurrency(calculateTotal()) }}</span>
@@ -504,6 +515,7 @@ import { useRouter } from 'vue-router';
 import { invoiceEvents, trackPageView } from '../utils/analytics';
 import { trackGuestPdfGeneration } from '../utils/guest-tracker';
 import { getTranslation, getPreferredLanguage } from '../i18n/direct-translations';
+import Switch from '../components/ui/Switch.vue';
 
 const router = useRouter();
 const invoicePrintRef = ref(null);
@@ -628,7 +640,9 @@ const translations = computed(() => {
     clientNamePlaceholder: getTranslation(lang, 'invoice', 'clientNamePlaceholder'),
     clientAddressPlaceholder: getTranslation(lang, 'invoice', 'clientAddressPlaceholder'),
     itemDescriptionPlaceholder: getTranslation(lang, 'invoice', 'itemDescriptionPlaceholder'),
-    notesPlaceholder: getTranslation(lang, 'invoice', 'notesPlaceholder')
+    notesPlaceholder: getTranslation(lang, 'invoice', 'notesPlaceholder'),
+    showTax: getTranslation(lang, 'invoice', 'showTax') || 'Tampilkan Pajak',
+    hideTax: getTranslation(lang, 'invoice', 'hideTax') || 'Sembunyikan Pajak'
   };
 });
 
@@ -658,6 +672,7 @@ const defaultInvoice = {
     }
   ],
   taxRate: 10,
+  showTax: true,
   notes: '',
   logo: null
 };
@@ -739,7 +754,7 @@ function calculateTaxAmount() {
 }
 
 function calculateTotal() {
-  return calculateSubtotal() + calculateTaxAmount();
+  return calculateSubtotal() + (invoice.value.showTax ? calculateTaxAmount() : 0);
 }
 
 function formatCurrency(value) {
@@ -896,423 +911,69 @@ function handleClickOutside(event) {
 }
 </script>
 
-<style scoped>
-.no-print {
-  @media print {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    position: absolute !important;
-    pointer-events: none !important;
-  }
-}
+<style>
+@import '../assets/mobile-styles.css';
 
-.print-only {
-  display: none;
-}
-
-@media print {
-  .print-only {
-    display: inline !important;
-  }
-  
-  button.no-print {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    position: absolute !important;
-    pointer-events: none !important;
-  }
-}
-
-/* Mobile preview mode */
-.mobile-preview-mode {
-  margin: 0;
-  border-radius: 0;
-  box-shadow: none !important;
-  min-height: calc(100vh - 160px);
-  padding: 1.25rem;
-  font-size: 0.95rem;
-  border-left: none;
-  border-right: none;
-  transition: all 0.3s ease;
+/* Shadcn-style switch component */
+.shadcn-switch {
   position: relative;
-  overflow-x: hidden;
-  background-color: #fff;
-}
-
-/* Mobile header layout */
-@media (max-width: 1023px) {
-  .mobile-preview-mode .flex.flex-col.md\:flex-row {
-    flex-direction: row !important;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .mobile-preview-mode .w-1\/2 {
-    width: 50% !important;
-    min-width: 0;
-  }
-
-  .mobile-preview-mode .text-3xl {
-    font-size: 1.25rem;
-    line-height: 1.5rem;
-    margin-bottom: 0.5rem;
-    text-align: left;
-  }
-
-  .mobile-preview-mode .flex.flex-col.space-y-1.items-end {
-    align-items: flex-start;
-  }
-
-  .mobile-preview-mode .flex.items-center {
-    font-size: 0.875rem;
-  }
-
-  .mobile-preview-mode .text-gray-500.w-24 {
-    width: 4rem;
-  }
-}
-
-/* Small devices (phones) */
-@media (max-width: 640px) {
-  .mobile-preview-mode .flex.flex-col.md\:flex-row {
-    gap: 0.75rem;
-  }
-
-  .mobile-preview-mode .w-1\/2 {
-    width: 50% !important;
-  }
-
-  .mobile-preview-mode .text-3xl {
-    font-size: 1.125rem;
-  }
-
-  .mobile-preview-mode .flex.items-center {
-    font-size: 0.8125rem;
-  }
-}
-
-/* Mobile preview controls */
-.mobile-preview-controls {
-  display: none;
-  position: sticky;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(5px);
-  border-top: 1px solid #eee;
-  z-index: 10;
-  flex-direction: row;
-  justify-content: space-between;
-  gap: 1rem;
-  margin: 1rem -1.25rem -1.25rem -1.25rem;
-}
-
-.mobile-preview-mode .mobile-preview-controls {
-  display: flex;
-}
-
-.mobile-preview-controls button {
-  flex: 1;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  background-color: #e5e7eb;
+  transition: background-color 0.2s;
+  cursor: pointer;
 }
 
-.edit-button {
-  background-color: #f3f4f6;
-  color: #4b5563;
-  border: 1px solid #e5e7eb;
+.shadcn-switch:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
 }
 
-.zoom-button {
-  background-color: #eef2ff;
-  color: #4f46e5;
-  border: 1px solid #e0e7ff;
-}
-
-/* Zoom functionality */
-body.invoice-zoomed {
-  overflow: hidden;
-  position: fixed;
-  width: 100%;
-  height: 100%;
-}
-
-body.invoice-zoomed .mobile-preview-mode {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 9999;
-  overflow-y: auto;
-  background-color: white;
-  padding: 1.5rem;
-  font-size: 1.1rem;
-  transition: all 0.3s ease;
-  border: none;
-  margin: 0;
-  height: 100vh;
-  width: 100vw;
-  display: block;
-  border-radius: 0;
-  transform: none;
-}
-
-body.invoice-zoomed .mobile-preview-mode .mobile-preview-controls {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: 0;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(5px);
-  border-top: 1px solid #eee;
-  z-index: 10;
-}
-
-/* Mobile responsive styling for the invoice content */
-@media (max-width: 1023px) {
-  .mobile-preview-mode {
-    width: 100%;
-    margin-left: 0;
-    margin-right: 0;
-    padding: 1rem;
-  }
-  
-  .mobile-preview-mode h3 {
-    font-size: 0.75rem;
-  }
-  
-  .mobile-preview-mode .text-3xl {
-    font-size: 1.5rem;
-    line-height: 2rem;
-  }
-  
-  .mobile-preview-mode .overflow-x-auto {
-    margin: 0 -1rem;
-    padding: 0 1rem;
-    width: calc(100% + 2rem);
-  }
-  
-  .mobile-preview-mode table th,
-  .mobile-preview-mode table td {
-    padding: 0.5rem 0.25rem;
-    font-size: 0.875rem;
-  }
-  
-  .mobile-preview-mode .w-40.h-40 {
-    width: 6rem;
-    height: 6rem;
-  }
-  
-  .mobile-preview-mode .text-lg {
-    font-size: 1rem;
-    line-height: 1.5rem;
-  }
-  
-  .mobile-preview-mode .mb-10 {
-    margin-bottom: 1.5rem;
-  }
-  
-  /* Make scrolling smoother in the preview mode */
-  .mobile-preview-mode {
-    -webkit-overflow-scrolling: touch;
-  }
-}
-
-/* Mobile hamburger menu */
-.hamburger-button {
-  width: 56px;
-  height: 56px;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-  user-select: none;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  border: 1px solid transparent;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.hamburger-button:active {
-  background-color: rgba(0, 0, 0, 0.1);
-  transform: scale(0.95);
-}
-
-/* Mobile menu styling */
-.mobile-menu-container {
-  opacity: 0;
-  transform: translateY(-10px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  max-height: 0;
-  overflow: hidden;
-}
-
-.mobile-menu-visible {
-  opacity: 1;
-  transform: translateY(0);
-  max-height: calc(100vh - 100px);
-  overflow-y: auto;
-}
-
-.mobile-menu-item {
-  @apply block px-4 py-3 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 flex items-center;
-  min-height: 56px; /* Larger touch target */
-  margin-top: 1px;
-  margin-bottom: 1px;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.05);
-}
-
-.mobile-menu-item:active {
-  background-color: rgba(0, 0, 0, 0.05);
-}
-
-/* Bottom Navigation */
-.mobile-action-button {
-  width: 56px;
-  height: 56px;
+.shadcn-switch[data-state="checked"] {
   background-color: #c0392b;
-  color: white;
+}
+
+.shadcn-switch[data-state="unchecked"] {
+  background-color: #e5e7eb;
+}
+
+.shadcn-switch span {
+  position: absolute;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  box-shadow: 0 4px 10px rgba(192, 57, 43, 0.3);
-  transform: translateY(-15px);
-  -webkit-tap-highlight-color: transparent;
-  transition: all 0.2s ease;
+  background-color: white;
+  transition: transform 0.2s;
+  transform: translateX(2px);
 }
 
-.mobile-action-button:active {
-  transform: translateY(-12px) scale(0.95);
-  background-color: #a82315;
+.shadcn-switch[data-state="checked"] span {
+  transform: translateX(22px);
 }
 
-/* Safe area padding for notched devices */
-.pb-safe {
-  padding-bottom: env(safe-area-inset-bottom, 1rem);
-}
-
-/* Mobile responsive tab styles */
-@media (max-width: 1023px) {
-  .min-h-screen {
-    /* Add padding at the bottom to account for the fixed navigation */
-    padding-bottom: 80px;
-  }
-  
-  .container {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-  
-  /* Animate tab transitions */
-  .grid > div {
-    transition: opacity 0.3s ease, transform 0.3s ease;
-  }
-  
-  .grid > div.hidden {
-    opacity: 0;
-    transform: translateY(10px);
-    pointer-events: none;
-    position: absolute;
-    left: -9999px;
-  }
-  
-  /* Ensure proper tab button styles */
-  .flex button {
-    transition: all 0.2s ease;
-  }
-  
-  /* Fix table overflow on small screens */
-  table {
-    min-width: 100%;
-    display: block;
-    overflow-x: auto;
-  }
-  
-  /* Bigger touch targets for buttons */
-  button {
-    min-height: 44px;
-  }
-  
-  /* Add shadow to active tab to make it stand out */
-  .bg-white.shadow-md {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  }
-  
-  /* Ensure form fields are easy to tap */
-  input, textarea, select {
-    min-height: 48px;
-    font-size: 16px; /* Prevents zooming on iOS */
-  }
-  
-  /* Fix sticky positioning for mobile */
-  .sticky {
-    position: relative;
-    top: 0;
-  }
-  
-  /* Ensure bottom buttons are centered and have enough padding */
-  .mt-8.flex {
-    margin-top: 2rem;
-    padding-bottom: 5rem; /* Extra padding for the bottom fixed navbar */
-  }
-  
-  /* Optimize for notched devices */
-  @supports (padding-bottom: env(safe-area-inset-bottom)) {
-    .fixed.bottom-0 {
-      padding-bottom: env(safe-area-inset-bottom);
-    }
-  }
-  
-  /* Hide scrollbar in menu but keep functionality */
-  .mobile-menu-visible::-webkit-scrollbar {
-    display: none;
-  }
-  
-  .mobile-menu-visible {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-}
-
-/* Small devices (phones) */
+/* Mobile responsive adjustments */
 @media (max-width: 640px) {
-  .container {
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
+  .shadcn-switch {
+    width: 40px;
+    height: 22px;
   }
   
-  /* Adjust form spacing */
-  .space-y-3 > * {
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
+  .shadcn-switch span {
+    width: 18px;
+    height: 18px;
   }
   
-  /* Make form labels and inputs more compact */
-  label.block.text-sm {
-    margin-bottom: 0.25rem;
+  .shadcn-switch[data-state="checked"] span {
+    transform: translateX(20px);
   }
-  
-  /* Reduce vertical spacing */
-  .mb-6 {
-    margin-bottom: 1rem;
-  }
-  
-  /* Ensure fixed elements don't overlap important content */
-  .py-12 {
-    padding-top: 5rem;
-  }
+}
+
+/* Override for tax switch to use darker red */
+.data-\[state\=checked\]\.bg-red-700[data-state="checked"] {
+  background-color: #c0392b !important;
 }
 </style> 
