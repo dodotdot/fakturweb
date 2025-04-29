@@ -7,4 +7,4 @@ ENVIRONMENT = "production"
 
 [env.production]
 name = "faktur-api"
-route = "api.fakturweb.com/*"
+route = "api.faktur.web.id/*"
