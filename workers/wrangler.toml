@@ -1,0 +1,10 @@
+name = "faktur-api"
+main = "index.js"
+compatibility_date = "2024-01-01"
+
+[vars]
+ENVIRONMENT = "production"
+
+[env.production]
+name = "faktur-api"
+route = "api.fakturweb.com/*"
