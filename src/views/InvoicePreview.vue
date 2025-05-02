@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen py-12">
-    <div class="container mx-auto max-w-4xl">
+    <div class="container mx-auto max-w-4xl" :class="{ 'pdf-container': isGenerating }">
       <!-- Step Timeline -->
       <div class="mb-8 flex justify-center">
         <div class="relative px-4 max-w-md w-full">
@@ -556,7 +556,7 @@
             
             <button 
               @click="processDownload"
-              class="w-full mb-4 py-3 px-6 bg-gray-200 text-gray-800 font-medium rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+              class="w-full mb-4 py-3 px-6 bg-gray-700 text-white font-medium rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-600"
               :disabled="isGenerating"
             >
               <span v-if="isGenerating">
@@ -713,114 +713,60 @@ function downloadPDF() {
 }
 
 function processDownload() {
-  // Validate form inputs
-  let isValid = true;
-  formErrors.value = { name: '', email: '' };
-  
-  if (!guestInfo.value.name.trim()) {
-    formErrors.value.name = 'Nama harus diisi';
-    isValid = false;
-  }
-  
-  if (!guestInfo.value.email.trim()) {
-    formErrors.value.email = 'Email harus diisi';
-    isValid = false;
-  } else if (!validateEmail(guestInfo.value.email)) {
-    formErrors.value.email = 'Format email tidak valid';
-    isValid = false;
-  }
-  
-  if (!isValid) {
-    return;
-  }
-  
   if (!invoicePrintRef.value) return;
   
   isGenerating.value = true;
-  showRegisterModal.value = false; // Close the modal
+  showRegisterModal.value = false;
 
-  // Track the download event using the utility with comprehensive data
-  trackGuestPdfGeneration({
-    invoiceTitle: invoice.value.title,
-    invoiceTotal: calculateTotal(),
-    userAgent: navigator.userAgent,
-    guestName: guestInfo.value.name || 'Anonymous',
-    guestEmail: guestInfo.value.email || null
-  });
+  // Add PDF class to the element
+  invoicePrintRef.value.classList.add('pdf-mode');
 
-  // Save guest info if checkbox is checked
-  if (guestInfo.value.saveInfo && isLocalStorageAvailable()) {
-    try {
-      localStorage.setItem('guest_info', JSON.stringify({
-        name: guestInfo.value.name,
-        email: guestInfo.value.email
-      }));
-    } catch (e) {
-      console.warn('Failed to save guest info to localStorage:', e);
-    }
-  }
+  // A4 dimensions in pixels (96 DPI)
+  const a4Width = 794;  // 210mm
+  const a4Height = 1123; // 297mm
 
   const options = {
-    margin: [10, 10, 15, 10], // top, right, bottom, left - increased bottom margin to accommodate watermark
+    margin: [8, 8, 8, 0], // Top, right, bottom, left margins
     filename: `faktur-${invoice.value.title.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.pdf`,
     image: { 
       type: 'jpeg', 
       quality: 0.98 
     },
     html2canvas: { 
-      scale: 2,
+      scale: 1,
       useCORS: true,
       allowTaint: true,
-      logging: true,
-      letterRendering: true,
+      letterSpacing: true,
       scrollY: 0,
-      width: 794, // A4 width in pixels (210mm * 3.78 pixels/mm)
-      windowWidth: 794,
-      height: 1123, // A4 height in pixels (297mm * 3.78 pixels/mm)
-      windowHeight: 1123
+      width: a4Width,
+      height: a4Height,
+      windowWidth: a4Width,
+      windowHeight: a4Height
     },
     jsPDF: { 
       unit: 'mm', 
       format: 'a4', 
       orientation: 'portrait',
       compress: true,
-      hotfixes: ['px_scaling'] // Fix pixel scaling issues
+      hotfixes: ['px_scaling']
     }
   };
 
-  // Small delay to ensure all elements are properly rendered
-  setTimeout(() => {
-    // Add a temporary class to the body for better print handling
-    document.body.classList.add('generating-pdf');
-    
-    // Force A4 dimensions during PDF generation
-    const originalWidth = document.documentElement.style.width;
-    const originalHeight = document.documentElement.style.height;
-    document.documentElement.style.width = '794px';
-    document.documentElement.style.height = '1123px';
-    
-    html2pdf()
-      .from(invoicePrintRef.value)
-      .set(options)
-      .save()
-      .then(() => {
-        isGenerating.value = false;
-        document.body.classList.remove('generating-pdf');
-        document.documentElement.style.width = originalWidth;
-        document.documentElement.style.height = originalHeight;
-        
-        // Remove the currentInvoice data from localStorage after successful download
-        localStorage.removeItem('currentInvoice');
-      })
-      .catch(error => {
-        console.error('Error generating PDF:', error);
-        isGenerating.value = false;
-        document.body.classList.remove('generating-pdf');
-        document.documentElement.style.width = originalWidth;
-        document.documentElement.style.height = originalHeight;
-        alert('Error generating PDF. Please try again.');
-      });
-  }, 500);
+  // Generate PDF
+  html2pdf()
+    .from(invoicePrintRef.value)
+    .set(options)
+    .save()
+    .then(() => {
+      isGenerating.value = false;
+      invoicePrintRef.value.classList.remove('pdf-mode');
+    })
+    .catch(error => {
+      console.error('Error generating PDF:', error);
+      isGenerating.value = false;
+      invoicePrintRef.value.classList.remove('pdf-mode');
+      alert('Error generating PDF. Please try again.');
+    });
 }
 
 function backToEdit() {
@@ -944,208 +890,180 @@ const translations = computed(() => {
 </script>
 
 <style scoped>
-/* Define custom colors for themes */
-:root {
-  --navy-500: #1e3a8a;
-  --navy-600: #1e40af;
-  --navy-700: #1e429f;
-  --navy-800: #1e3a8a;
-  --navy-900: #172554;
+/* Normal desktop styles */
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
 }
 
-/* Theme transition effects */
-.container, .bg-white, .border, .text-gray-500, .text-gray-400, .text-gray-600, .border-gray-200, .bg-gray-50 {
-  transition: all 0.3s ease-in-out;
-}
-
-/* Custom theme colors */
-.bg-navy-500 {
-  background-color: var(--navy-500);
-}
-
-.text-navy-500 {
-  color: var(--navy-500);
-}
-
-.text-navy-600 {
-  color: var(--navy-600);
-}
-
-.text-navy-700 {
-  color: var(--navy-700);
-}
-
-.text-navy-800 {
-  color: var(--navy-800);
-}
-
-.text-navy-900 {
-  color: var(--navy-900);
-}
-
-/* Watermark footer styling */
-.watermark-footer {
-  margin-top: 50px;
-  padding-top: 15px;
-  text-align: center;
-  position: relative;
-  clear: both;
-}
-
-.watermark-footer p {
-  font-size: 8px;
-  opacity: 0.5;
-  letter-spacing: 0.5px;
-  font-family: 'Arial', sans-serif;
-}
-
-@media print {
-  .watermark-footer {
-    position: fixed;
-    bottom: 5mm;
-    left: 0;
-    right: 0;
-    text-align: center;
-    z-index: 999;
-    margin-top: 0;
-    padding-top: 0;
-  }
-  
-  /* Make sure base fonts are not too small in the invoice */
-  p, span, div {
-    font-size: 10pt !important;
-  }
-  
-  /* Header size for better readability */
-  h3 {
-    font-size: 11pt !important;
-  }
-  
-  /* Ensure table content is readable but compact */
-  table td, table th {
-    font-size: 9pt !important;
-    padding: 2mm !important;
-    line-height: 1.2 !important;
-  }
-
-  /* Make table rows more compact */
-  tr {
-    page-break-inside: avoid;
-  }
-
-  /* Adjust spacing for invoice sections */
-  .mb-10 {
-    margin-bottom: 5mm !important;
-  }
-
-  /* Make description column wider */
-  table th:first-child,
-  table td:first-child {
-    width: 50% !important;
-  }
-
-  /* Make other columns more compact */
-  table th:not(:first-child),
-  table td:not(:first-child) {
-    width: 12% !important;
-  }
-
-  /* Ensure proper page breaks */
-  .invoice-items {
-    page-break-inside: avoid;
+@media (min-width: 768px) {
+  .container {
+    padding: 0 2rem;
   }
 }
 
-/* PDF generation specific styles */
-:global(.generating-pdf) {
-  height: auto !important;
-  overflow: visible !important;
+/* PDF mode styles */
+:deep(.pdf-mode) {
+  width: 778px !important; /* A4 width - margins */
+  max-height: 1107px !important; /* A4 height - margins */
+  margin: 8px auto !important;
+  padding: 0 !important;
+  background: white !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  transform-origin: top center !important;
 }
 
-:global(.generating-pdf *) {
-  -webkit-print-color-adjust: exact !important;
-  print-color-adjust: exact !important;
+:deep(.pdf-mode .container),
+:deep(.pdf-mode .max-w-4xl) {
+  width: 778px !important;
+  max-width: 778px !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
 }
 
-:global(.generating-pdf) .watermark-footer p {
-  font-size: 8px !important;
-  opacity: 0.5 !important;
+:deep(.pdf-mode .shadow-lg) {
+  width: 778px !important;
+  max-width: 778px !important;
+  margin: 0 auto !important;
+  padding: 6px !important;
+  box-shadow: none !important;
+  box-sizing: border-box !important;
 }
 
-/* Force A4 dimensions during PDF generation */
-:global(.generating-pdf) .container {
-  max-width: 794px !important;
-  width: 794px !important;
-  min-height: 1123px !important;
-  height: auto !important;
-}
-
-/* Ensure proper column layout in PDF */
-:global(.generating-pdf) .grid-cols-1 {
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-}
-
-:global(.generating-pdf) .from-details,
-:global(.generating-pdf) .to-details {
+:deep(.pdf-mode .grid) {
   width: 100% !important;
-  max-width: none !important;
-  padding-right: 1rem !important;
+  max-width: 766px !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  gap: 6px !important;
 }
 
-:global(.generating-pdf) .to-details {
-  padding-left: 1rem !important;
-  padding-right: 0 !important;
+:deep(.pdf-mode .grid-cols-1) {
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 6px !important;
 }
 
-/* Ensure proper text alignment in PDF */
-:global(.generating-pdf) .text-base {
-  font-size: 0.875rem !important;
-  line-height: 1.25rem !important;
-}
-
-:global(.generating-pdf) .text-lg {
-  font-size: 1.125rem !important;
-  line-height: 1.75rem !important;
-}
-
-:global(.generating-pdf) .mb-2 {
-  margin-bottom: 0.5rem !important;
-}
-
-:global(.generating-pdf) .gap-8 {
-  gap: 2rem !important;
-}
-
-/* Ensure proper scaling for A4 */
-:global(.generating-pdf) .p-4 {
-  padding: 1rem !important;
-}
-
-:global(.generating-pdf) .mb-10 {
-  margin-bottom: 2.5rem !important;
-}
-
-/* Adjust table scaling for A4 */
-:global(.generating-pdf) table {
+:deep(.pdf-mode table) {
   width: 100% !important;
   table-layout: fixed !important;
+  margin: 6px 0 !important;
+  font-size: 8pt !important;
 }
 
-:global(.generating-pdf) table td,
-:global(.generating-pdf) table th {
-  padding: 0.5rem !important;
-  font-size: 0.875rem !important;
+:deep(.pdf-mode td),
+:deep(.pdf-mode th) {
+  padding: 2px !important;
+  font-size: 8pt !important;
+  line-height: 1.1 !important;
 }
 
-/* Adjust general text sizing to prevent small text */
-.text-sm {
-  font-size: 0.875rem !important;
-  line-height: 1.25rem !important;
+:deep(.pdf-mode .text-base) { 
+  font-size: 8pt !important;
+  line-height: 1.1 !important;
 }
 
-/* Ensure From/To section text is readable */
-.from-details div, .to-details div,
-.from-details span, .to-details span {
-  font-size: 0.875rem !important;
+:deep(.pdf-mode .text-lg) { 
+  font-size: 9pt !important;
+  line-height: 1.1 !important;
+}
+
+:deep(.pdf-mode .text-xl) { 
+  font-size: 10pt !important;
+  line-height: 1.2 !important;
+}
+
+:deep(.pdf-mode .text-2xl) { 
+  font-size: 11pt !important;
+  line-height: 1.2 !important;
+}
+
+:deep(.pdf-mode .mb-10) { 
+  margin-bottom: 6px !important; 
+}
+
+:deep(.pdf-mode .py-12) { 
+  padding: 4px 0 !important; 
+}
+
+:deep(.pdf-mode .p-4),
+:deep(.pdf-mode .p-8) { 
+  padding: 4px !important; 
+}
+
+:deep(.pdf-mode .watermark-footer) {
+  width: 100% !important;
+  margin: 4px 0 0 0 !important;
+  padding: 3px 0 !important;
+  position: relative !important;
+  text-align: center !important;
+}
+
+/* Compact spacing for PDF mode */
+:deep(.pdf-mode .space-y-1) { gap: 2px !important; }
+:deep(.pdf-mode .space-x-2) { gap: 2px !important; }
+:deep(.pdf-mode .space-x-4) { gap: 3px !important; }
+:deep(.pdf-mode .gap-8) { gap: 4px !important; }
+
+/* Ensure content fits */
+:deep(.pdf-mode .from-details),
+:deep(.pdf-mode .to-details) {
+  padding: 3px !important;
+  margin-bottom: 3px !important;
+}
+
+:deep(.pdf-mode .py-3) { padding: 2px 0 !important; }
+:deep(.pdf-mode .px-6) { padding: 0 3px !important; }
+:deep(.pdf-mode .mb-4) { margin-bottom: 2px !important; }
+:deep(.pdf-mode .mb-8) { margin-bottom: 4px !important; }
+
+/* Logo size adjustment */
+:deep(.pdf-mode .w-32),
+:deep(.pdf-mode .h-32) {
+  width: 60px !important;
+  height: 60px !important;
+}
+
+:deep(.pdf-mode .md\\:w-40),
+:deep(.pdf-mode .md\\:h-40) {
+  width: 80px !important;
+  height: 80px !important;
+}
+
+/* Center text alignment */
+:deep(.pdf-mode .text-center) {
+  text-align: center !important;
+}
+
+:deep(.pdf-mode .items-center) {
+  align-items: center !important;
+}
+
+:deep(.pdf-mode .justify-center) {
+  justify-content: center !important;
+}
+
+/* Adjust font sizes for specific elements */
+:deep(.pdf-mode h3.text-sm) {
+  font-size: 8pt !important;
+  margin-bottom: 2px !important;
+}
+
+:deep(.pdf-mode .font-semibold.text-lg) {
+  font-size: 9pt !important;
+  margin-bottom: 2px !important;
+}
+
+:deep(.pdf-mode .text-sm) {
+  font-size: 7pt !important;
+}
+
+:deep(.pdf-mode .watermark-footer p) {
+  font-size: 7pt !important;
+  text-align: center !important;
 }
 </style> 
