@@ -84,8 +84,8 @@
       
       <!-- Theme Selector -->
       <div class="mb-6">
-        <div class="flex items-center justify-between mb-5">
-          <h3 class="text-lg font-semibold mb-0">{{ translations.chooseTheme }}</h3>
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-lg font-semibold">{{ translations.chooseTheme }}</h3>
           
           <!-- Language Toggle -->
           <div class="inline-flex items-center rounded-md border border-gray-300 overflow-hidden">
@@ -113,54 +113,45 @@
             </button>
           </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div 
-            class="border rounded-lg p-3 cursor-pointer transition-all hover:shadow-md"
-            :class="{ 'ring-2 ring-primary': selectedTheme === 'classic' }"
+        <div class="flex space-x-3">
+          <button 
+            class="flex items-center space-x-2 px-3 py-2 rounded-md border transition-all hover:shadow-sm"
+            :class="{ 'border-primary bg-primary/5': selectedTheme === 'classic', 'border-gray-200': selectedTheme !== 'classic' }"
             @click="selectedTheme = 'classic'"
           >
-            <div class="bg-white p-3 rounded">
-              <div class="h-10 border-b border-gray-200 mb-2"></div>
-              <div class="flex space-x-2 mb-2">
-                <div class="w-10 h-10 bg-gray-100 rounded"></div>
-                <div class="flex-1 h-10 bg-gray-100 rounded"></div>
-              </div>
-              <div class="h-4 bg-gray-100 w-1/2 rounded mb-2"></div>
+            <div class="flex space-x-1">
+              <div class="w-3 h-3 bg-gray-200 rounded"></div>
+              <div class="w-3 h-3 bg-gray-300 rounded"></div>
+              <div class="w-3 h-3 bg-gray-400 rounded"></div>
             </div>
-            <p class="mt-2 text-center font-medium">Klasik</p>
-          </div>
+            <span class="text-sm font-medium">Klasik</span>
+          </button>
           
-          <div 
-            class="border rounded-lg p-3 cursor-pointer transition-all hover:shadow-md"
-            :class="{ 'ring-2 ring-primary': selectedTheme === 'modern' }"
+          <button 
+            class="flex items-center space-x-2 px-3 py-2 rounded-md border transition-all hover:shadow-sm"
+            :class="{ 'border-primary bg-primary/5': selectedTheme === 'modern', 'border-gray-200': selectedTheme !== 'modern' }"
             @click="selectedTheme = 'modern'"
           >
-            <div class="bg-blue-50 p-3 rounded">
-              <div class="h-10 border-b border-blue-200 mb-2"></div>
-              <div class="flex space-x-2 mb-2">
-                <div class="w-10 h-10 bg-blue-100 rounded-full"></div>
-                <div class="flex-1 h-10 bg-blue-100 rounded"></div>
-              </div>
-              <div class="h-4 bg-blue-100 w-1/2 rounded mb-2"></div>
+            <div class="flex space-x-1">
+              <div class="w-3 h-3 bg-blue-200 rounded"></div>
+              <div class="w-3 h-3 bg-blue-300 rounded"></div>
+              <div class="w-3 h-3 bg-blue-400 rounded"></div>
             </div>
-            <p class="mt-2 text-center font-medium">Modern</p>
-          </div>
+            <span class="text-sm font-medium">Modern</span>
+          </button>
           
-          <div 
-            class="border rounded-lg p-3 cursor-pointer transition-all hover:shadow-md"
-            :class="{ 'ring-2 ring-primary': selectedTheme === 'elegant' }"
+          <button 
+            class="flex items-center space-x-2 px-3 py-2 rounded-md border transition-all hover:shadow-sm"
+            :class="{ 'border-primary bg-primary/5': selectedTheme === 'elegant', 'border-gray-200': selectedTheme !== 'elegant' }"
             @click="selectedTheme = 'elegant'"
           >
-            <div class="bg-yellow-50 p-3 rounded">
-              <div class="h-10 border-b border-yellow-200 mb-2"></div>
-              <div class="flex space-x-2 mb-2">
-                <div class="w-10 h-10 bg-navy-500 rounded-lg"></div>
-                <div class="flex-1 h-10 bg-yellow-100 rounded"></div>
-              </div>
-              <div class="h-4 bg-yellow-100 w-1/2 rounded mb-2"></div>
+            <div class="flex space-x-1">
+              <div class="w-3 h-3 bg-yellow-200 rounded"></div>
+              <div class="w-3 h-3 bg-yellow-300 rounded"></div>
+              <div class="w-3 h-3 bg-yellow-400 rounded"></div>
             </div>
-            <p class="mt-2 text-center font-medium">Elegan</p>
-          </div>
+            <span class="text-sm font-medium">Elegan</span>
+          </button>
         </div>
       </div>
     </div>  
@@ -168,7 +159,7 @@
     <div class="container mx-auto max-w-4xl">
       <div 
         :class="[
-          'shadow-lg p-8 rounded-lg border',
+          'shadow-lg p-4 md:p-8 rounded-lg border',
           {
             'bg-white border-gray-200': selectedTheme === 'classic',
             'bg-blue-50 border-blue-200': selectedTheme === 'modern',
@@ -178,9 +169,9 @@
         ref="invoicePrintRef"
       >
         <!-- Invoice Header -->
-        <div class="flex flex-col md:flex-row justify-between items-start mb-10">
+        <div class="flex flex-col items-center md:flex-row md:justify-between md:items-start mb-10">
           <!-- Logo -->
-          <div class="w-40 h-40 flex items-center justify-center mb-4 md:mb-0">
+          <div class="w-32 h-32 md:w-40 md:h-40 flex items-center justify-center mb-4 md:mb-0">
             <div v-if="invoice.logo" class="relative w-full h-full">
               <img 
                 :src="invoice.logo" 
@@ -203,14 +194,14 @@
                 'text-gray-400': selectedTheme === 'classic',
                 'text-blue-400': selectedTheme === 'modern',
                 'text-navy-500': selectedTheme === 'elegant'
-              }">{{ translations.uploadLogo }}</span>
+              }" class="text-xs md:text-sm">{{ translations.uploadLogo }}</span>
             </div>
           </div>
           
-          <div class="flex-1 md:ml-8">
+          <div class="flex-1 md:ml-8 text-center md:text-right">
             <div 
               :class="[
-                'text-3xl font-bold mb-2 text-right',
+                'text-2xl md:text-3xl font-bold mb-2',
                 {
                   'text-gray-800': selectedTheme === 'classic',
                   'text-blue-800': selectedTheme === 'modern',
@@ -218,22 +209,22 @@
                 }
               ]"
             >{{ invoice.title }}</div>
-            <div class="flex flex-col space-y-1 items-end">
+            <div class="flex flex-col space-y-1 items-center md:items-end">
               <div class="flex items-center">
                 <span :class="{
                   'text-gray-500': selectedTheme === 'classic',
                   'text-blue-500': selectedTheme === 'modern',
                   'text-navy-600': selectedTheme === 'elegant'
-                }" class="w-24">{{ translations.date }}:</span>
-                <span>{{ formatDate(invoice.date) }}</span>
+                }" class="w-24 text-sm">{{ translations.date }}:</span>
+                <span class="text-sm">{{ formatDate(invoice.date) }}</span>
               </div>
               <div class="flex items-center">
                 <span :class="{
                   'text-gray-500': selectedTheme === 'classic',
                   'text-blue-500': selectedTheme === 'modern',
                   'text-navy-600': selectedTheme === 'elegant'
-                }" class="w-24">{{ translations.dueDate }}:</span>
-                <span>{{ formatDate(invoice.dueDate) }}</span>
+                }" class="w-24 text-sm">{{ translations.dueDate }}:</span>
+                <span class="text-sm">{{ formatDate(invoice.dueDate) }}</span>
               </div>
             </div>
           </div>
@@ -256,7 +247,7 @@
               'text-gray-600': selectedTheme === 'classic',
               'text-blue-700': selectedTheme === 'modern',
               'text-navy-700': selectedTheme === 'elegant'
-            }" class="mb-2 text-base">{{ invoice.from.address }}</div>
+            }" class="mb-2 text-base whitespace-pre-line">{{ invoice.from.address }}</div>
             <div class="flex items-center mb-1">
               <span :class="{
                 'text-gray-400': selectedTheme === 'classic',
@@ -290,7 +281,7 @@
               'text-gray-600': selectedTheme === 'classic',
               'text-blue-700': selectedTheme === 'modern',
               'text-navy-700': selectedTheme === 'elegant'
-            }" class="mb-2 text-base">{{ invoice.to.address }}</div>
+            }" class="mb-2 text-base whitespace-pre-line">{{ invoice.to.address }}</div>
             <div class="flex items-center mb-1">
               <span :class="{
                 'text-gray-400': selectedTheme === 'classic',
@@ -782,13 +773,18 @@ function processDownload() {
       allowTaint: true,
       logging: true,
       letterRendering: true,
-      scrollY: 0
+      scrollY: 0,
+      width: 794, // A4 width in pixels (210mm * 3.78 pixels/mm)
+      windowWidth: 794,
+      height: 1123, // A4 height in pixels (297mm * 3.78 pixels/mm)
+      windowHeight: 1123
     },
     jsPDF: { 
       unit: 'mm', 
       format: 'a4', 
       orientation: 'portrait',
-      compress: true
+      compress: true,
+      hotfixes: ['px_scaling'] // Fix pixel scaling issues
     }
   };
 
@@ -797,6 +793,12 @@ function processDownload() {
     // Add a temporary class to the body for better print handling
     document.body.classList.add('generating-pdf');
     
+    // Force A4 dimensions during PDF generation
+    const originalWidth = document.documentElement.style.width;
+    const originalHeight = document.documentElement.style.height;
+    document.documentElement.style.width = '794px';
+    document.documentElement.style.height = '1123px';
+    
     html2pdf()
       .from(invoicePrintRef.value)
       .set(options)
@@ -804,15 +806,18 @@ function processDownload() {
       .then(() => {
         isGenerating.value = false;
         document.body.classList.remove('generating-pdf');
+        document.documentElement.style.width = originalWidth;
+        document.documentElement.style.height = originalHeight;
         
         // Remove the currentInvoice data from localStorage after successful download
         localStorage.removeItem('currentInvoice');
-        
       })
       .catch(error => {
         console.error('Error generating PDF:', error);
         isGenerating.value = false;
         document.body.classList.remove('generating-pdf');
+        document.documentElement.style.width = originalWidth;
+        document.documentElement.style.height = originalHeight;
         alert('Error generating PDF. Please try again.');
       });
   }, 500);
@@ -1065,6 +1070,71 @@ const translations = computed(() => {
 :global(.generating-pdf) .watermark-footer p {
   font-size: 8px !important;
   opacity: 0.5 !important;
+}
+
+/* Force A4 dimensions during PDF generation */
+:global(.generating-pdf) .container {
+  max-width: 794px !important;
+  width: 794px !important;
+  min-height: 1123px !important;
+  height: auto !important;
+}
+
+/* Ensure proper column layout in PDF */
+:global(.generating-pdf) .grid-cols-1 {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+
+:global(.generating-pdf) .from-details,
+:global(.generating-pdf) .to-details {
+  width: 100% !important;
+  max-width: none !important;
+  padding-right: 1rem !important;
+}
+
+:global(.generating-pdf) .to-details {
+  padding-left: 1rem !important;
+  padding-right: 0 !important;
+}
+
+/* Ensure proper text alignment in PDF */
+:global(.generating-pdf) .text-base {
+  font-size: 0.875rem !important;
+  line-height: 1.25rem !important;
+}
+
+:global(.generating-pdf) .text-lg {
+  font-size: 1.125rem !important;
+  line-height: 1.75rem !important;
+}
+
+:global(.generating-pdf) .mb-2 {
+  margin-bottom: 0.5rem !important;
+}
+
+:global(.generating-pdf) .gap-8 {
+  gap: 2rem !important;
+}
+
+/* Ensure proper scaling for A4 */
+:global(.generating-pdf) .p-4 {
+  padding: 1rem !important;
+}
+
+:global(.generating-pdf) .mb-10 {
+  margin-bottom: 2.5rem !important;
+}
+
+/* Adjust table scaling for A4 */
+:global(.generating-pdf) table {
+  width: 100% !important;
+  table-layout: fixed !important;
+}
+
+:global(.generating-pdf) table td,
+:global(.generating-pdf) table th {
+  padding: 0.5rem !important;
+  font-size: 0.875rem !important;
 }
 
 /* Adjust general text sizing to prevent small text */
