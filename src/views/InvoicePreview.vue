@@ -67,7 +67,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
               <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
             </svg>
-            Kembali Edit
+            Edit
           </button>
           <button 
             @click="downloadPDF"
@@ -77,7 +77,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
             </svg>
-            {{ isGenerating ? 'Membuat PDF...' : 'Unduh PDF' }}
+            {{ isGenerating ? 'Membuat PDF...' : ' PDF' }}
           </button>
         </div>
       </div>
@@ -159,7 +159,7 @@
     <div class="container mx-auto max-w-4xl">
       <div 
         :class="[
-          'shadow-lg p-4 md:p-8 rounded-lg border',
+          'p-4 md:p-8 rounded-lg border pdf-container',
           {
             'bg-white border-gray-200': selectedTheme === 'classic',
             'bg-blue-50 border-blue-200': selectedTheme === 'modern',
@@ -382,22 +382,23 @@
             'text-navy-800': selectedTheme === 'elegant'
           }" class="text-sm uppercase font-medium mb-2">{{ translations.notes }}</h3>
           <div :class="{
-            'bg-gray-50': selectedTheme === 'classic',
-            'bg-blue-100': selectedTheme === 'modern',
-            'bg-yellow-100': selectedTheme === 'elegant'
+            'border border-gray-200': selectedTheme === 'classic',
+            'border border-blue-200': selectedTheme === 'modern',
+            'border border-yellow-200': selectedTheme === 'elegant'
           }" class="p-3 rounded-md text-base">{{ invoice.notes }}</div>
         </div>
 
-        <!-- Add watermark footer at the bottom of the invoice -->
-        <div class="watermark-footer">
+        <!-- Update the watermark footer structure -->
+        <div class="watermark-footer mt-6 flex justify-center items-center w-full">
           <p 
             :class="{
               'text-gray-700': selectedTheme === 'classic',
               'text-blue-700': selectedTheme === 'modern',
               'text-navy-500': selectedTheme === 'elegant'
             }"
+            class="text-center"
           >
-            Powered by 🔥 <span class="text-red-600 font-medium">Faktur.web.id</span>
+            Powered by 🔥 <a href="https://faktur.web.id" class="text-red-600 font-medium">Faktur.web.id</a>
           </p>
         </div>
       </div>
@@ -718,53 +719,69 @@ function processDownload() {
   isGenerating.value = true;
   showRegisterModal.value = false;
 
-  // Add PDF class to the element
-  invoicePrintRef.value.classList.add('pdf-mode');
+  // Add PDF class and remove shadows
+  const element = invoicePrintRef.value;
+  element.classList.add('pdf-mode');
+  
+  // Remove all shadow-related classes
+  element.querySelectorAll('[class*="shadow"]').forEach(el => {
+    const classes = Array.from(el.classList);
+    classes.forEach(cls => {
+      if (cls.includes('shadow')) {
+        el.classList.remove(cls);
+      }
+    });
+  });
 
   // A4 dimensions in pixels (96 DPI)
   const a4Width = 794;  // 210mm
   const a4Height = 1123; // 297mm
 
   const options = {
-    margin: [8, 8, 8, 0], // Top, right, bottom, left margins
+    margin: 8,
     filename: `faktur-${invoice.value.title.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.pdf`,
     image: { 
       type: 'jpeg', 
       quality: 0.98 
     },
     html2canvas: { 
-      scale: 1,
+      scale: 2,
       useCORS: true,
       allowTaint: true,
       letterSpacing: true,
       scrollY: 0,
-      width: a4Width,
-      height: a4Height,
-      windowWidth: a4Width,
-      windowHeight: a4Height
+      width: a4Width - 16,
+      height: a4Height - 10,
+      windowWidth: a4Width - 16,
+      windowHeight: a4Height - 10,
+      removeContainer: true,
+      backgroundColor: '#ffffff'
     },
     jsPDF: { 
       unit: 'mm', 
       format: 'a4', 
       orientation: 'portrait',
       compress: true,
-      hotfixes: ['px_scaling']
-    }
+      hotfixes: ['px_scaling'],
+      putOnlyUsedFonts: true,
+      precision: 16
+    },
+    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
   };
 
   // Generate PDF
   html2pdf()
-    .from(invoicePrintRef.value)
+    .from(element)
     .set(options)
     .save()
     .then(() => {
       isGenerating.value = false;
-      invoicePrintRef.value.classList.remove('pdf-mode');
+      element.classList.remove('pdf-mode');
     })
     .catch(error => {
       console.error('Error generating PDF:', error);
       isGenerating.value = false;
-      invoicePrintRef.value.classList.remove('pdf-mode');
+      element.classList.remove('pdf-mode');
       alert('Error generating PDF. Please try again.');
     });
 }
@@ -890,180 +907,126 @@ const translations = computed(() => {
 </script>
 
 <style scoped>
-/* Normal desktop styles */
-.container {
-  width: 100%;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 1rem;
-}
-
-@media (min-width: 768px) {
-  .container {
-    padding: 0 2rem;
-  }
-}
-
 /* PDF mode styles */
 :deep(.pdf-mode) {
-  width: 778px !important; /* A4 width - margins */
-  max-height: 1107px !important; /* A4 height - margins */
-  margin: 8px auto !important;
-  padding: 0 !important;
+  width: 778px !important;
+  height: 1113px !important;
+  margin: 0 !important;
+  padding: 8mm 8mm 2mm 8mm !important;
   background: white !important;
   box-sizing: border-box !important;
   overflow: hidden !important;
   transform-origin: top center !important;
+  display: flex !important;
+  flex-direction: column !important;
+  border: 1px solid #000 !important;
+  border-radius: 0 !important;
+  page-break-after: avoid !important;
+  page-break-inside: avoid !important;
+  break-after: avoid !important;
+  break-inside: avoid !important;
 }
 
-:deep(.pdf-mode .container),
-:deep(.pdf-mode .max-w-4xl) {
-  width: 778px !important;
-  max-width: 778px !important;
-  margin: 0 auto !important;
-  padding: 0 !important;
-  box-sizing: border-box !important;
+/* Super compact spacing */
+:deep(.pdf-mode *) {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
 }
 
-:deep(.pdf-mode .shadow-lg) {
-  width: 778px !important;
-  max-width: 778px !important;
-  margin: 0 auto !important;
-  padding: 6px !important;
-  box-shadow: none !important;
-  box-sizing: border-box !important;
+:deep(.pdf-mode .mb-8),
+:deep(.pdf-mode .mb-10),
+:deep(.pdf-mode .mb-6),
+:deep(.pdf-mode .mb-4),
+:deep(.pdf-mode .mt-6) {
+  margin: 2mm 0 !important;
 }
 
-:deep(.pdf-mode .grid) {
-  width: 100% !important;
-  max-width: 766px !important;
-  margin: 0 auto !important;
-  padding: 0 !important;
-  box-sizing: border-box !important;
-  gap: 6px !important;
+/* Compact text sizes */
+:deep(.pdf-mode .text-base),
+:deep(.pdf-mode .text-lg),
+:deep(.pdf-mode .text-xl),
+:deep(.pdf-mode .text-2xl),
+:deep(.pdf-mode .text-sm) {
+  font-size: 7pt !important;
+  line-height: 1.1 !important;
+  margin: 1mm 0 !important;
 }
 
-:deep(.pdf-mode .grid-cols-1) {
-  grid-template-columns: repeat(2, 1fr) !important;
-  gap: 6px !important;
+:deep(.pdf-mode .text-2xl) {
+  font-size: 9pt !important;
 }
 
+/* Compact table */
 :deep(.pdf-mode table) {
   width: 100% !important;
-  table-layout: fixed !important;
-  margin: 6px 0 !important;
-  font-size: 8pt !important;
+  margin: 2mm 0 !important;
+  font-size: 7pt !important;
+  border-collapse: collapse !important;
+  page-break-inside: avoid !important;
+  break-inside: avoid !important;
 }
 
 :deep(.pdf-mode td),
 :deep(.pdf-mode th) {
-  padding: 2px !important;
-  font-size: 8pt !important;
+  padding: 1mm !important;
+  font-size: 7pt !important;
   line-height: 1.1 !important;
 }
 
-:deep(.pdf-mode .text-base) { 
-  font-size: 8pt !important;
-  line-height: 1.1 !important;
+/* Grid layout */
+:deep(.pdf-mode .grid) {
+  gap: 2mm !important;
+  margin: 2mm 0 !important;
+  page-break-inside: avoid !important;
+  break-inside: avoid !important;
 }
 
-:deep(.pdf-mode .text-lg) { 
-  font-size: 9pt !important;
-  line-height: 1.1 !important;
+/* Logo size */
+:deep(.pdf-mode .w-32),
+:deep(.pdf-mode .h-32),
+:deep(.pdf-mode .w-40),
+:deep(.pdf-mode .h-40) {
+  width: 20mm !important;
+  height: 20mm !important;
+  min-width: 20mm !important;
+  min-height: 20mm !important;
+  max-width: 20mm !important;
+  max-height: 20mm !important;
 }
 
-:deep(.pdf-mode .text-xl) { 
-  font-size: 10pt !important;
-  line-height: 1.2 !important;
+/* Notes section */
+:deep(.pdf-mode .notes) {
+  margin: 2mm 0 !important;
+  page-break-inside: avoid !important;
+  break-inside: avoid !important;
 }
 
-:deep(.pdf-mode .text-2xl) { 
-  font-size: 11pt !important;
-  line-height: 1.2 !important;
+:deep(.pdf-mode .notes div) {
+  padding: 1mm !important;
+  margin: 1mm 0 !important;
+  page-break-inside: avoid !important;
+  break-inside: avoid !important;
 }
 
-:deep(.pdf-mode .mb-10) { 
-  margin-bottom: 6px !important; 
-}
-
-:deep(.pdf-mode .py-12) { 
-  padding: 4px 0 !important; 
-}
-
-:deep(.pdf-mode .p-4),
-:deep(.pdf-mode .p-8) { 
-  padding: 4px !important; 
-}
-
+/* Footer */
 :deep(.pdf-mode .watermark-footer) {
   width: 100% !important;
-  margin: 4px 0 0 0 !important;
-  padding: 3px 0 !important;
+  margin: 2mm auto 0 !important;
+  padding: 1mm 0 !important;
+  text-align: center !important;
   position: relative !important;
-  text-align: center !important;
+  bottom: 0 !important;
+  page-break-before: avoid !important;
+  break-before: avoid !important;
 }
 
-/* Compact spacing for PDF mode */
-:deep(.pdf-mode .space-y-1) { gap: 2px !important; }
-:deep(.pdf-mode .space-x-2) { gap: 2px !important; }
-:deep(.pdf-mode .space-x-4) { gap: 3px !important; }
-:deep(.pdf-mode .gap-8) { gap: 4px !important; }
-
-/* Ensure content fits */
-:deep(.pdf-mode .from-details),
-:deep(.pdf-mode .to-details) {
-  padding: 3px !important;
-  margin-bottom: 3px !important;
-}
-
-:deep(.pdf-mode .py-3) { padding: 2px 0 !important; }
-:deep(.pdf-mode .px-6) { padding: 0 3px !important; }
-:deep(.pdf-mode .mb-4) { margin-bottom: 2px !important; }
-:deep(.pdf-mode .mb-8) { margin-bottom: 4px !important; }
-
-/* Logo size adjustment */
-:deep(.pdf-mode .w-32),
-:deep(.pdf-mode .h-32) {
-  width: 60px !important;
-  height: 60px !important;
-}
-
-:deep(.pdf-mode .md\\:w-40),
-:deep(.pdf-mode .md\\:h-40) {
-  width: 80px !important;
-  height: 80px !important;
-}
-
-/* Center text alignment */
-:deep(.pdf-mode .text-center) {
-  text-align: center !important;
-}
-
-:deep(.pdf-mode .items-center) {
-  align-items: center !important;
-}
-
-:deep(.pdf-mode .justify-center) {
-  justify-content: center !important;
-}
-
-/* Adjust font sizes for specific elements */
-:deep(.pdf-mode h3.text-sm) {
-  font-size: 8pt !important;
-  margin-bottom: 2px !important;
-}
-
-:deep(.pdf-mode .font-semibold.text-lg) {
-  font-size: 9pt !important;
-  margin-bottom: 2px !important;
-}
-
-:deep(.pdf-mode .text-sm) {
-  font-size: 7pt !important;
-}
-
-:deep(.pdf-mode .watermark-footer p) {
-  font-size: 7pt !important;
-  text-align: center !important;
+/* Force single page */
+:deep(.pdf-mode),
+:deep(.pdf-mode *) {
+  break-inside: avoid !important;
+  break-before: avoid !important;
+  break-after: avoid !important;
 }
 </style> 
