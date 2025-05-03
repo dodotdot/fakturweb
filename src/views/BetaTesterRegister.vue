@@ -82,6 +82,10 @@
               {{ error }}
             </div>
 
+            <div v-if="success" class="p-3 rounded-md bg-green-50 text-green-600 text-sm mb-4">
+              {{ success }}
+            </div>
+
             <form @submit.prevent="handleSubmit" class="space-y-4">
               <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div class="space-y-2">
@@ -133,33 +137,6 @@
               </div>
               
               <div class="space-y-2">
-                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                <input 
-                  id="password" 
-                  v-model="password" 
-                  type="password" 
-                  placeholder="••••••••" 
-                  required
-                  class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                />
-                <p class="text-xs text-gray-500">
-                  Password minimal 8 karakter
-                </p>
-              </div>
-              
-              <div class="space-y-2">
-                <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Konfirmasi Password</label>
-                <input 
-                  id="confirmPassword" 
-                  v-model="confirmPassword" 
-                  type="password" 
-                  placeholder="••••••••" 
-                  required
-                  class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                />
-              </div>
-              
-              <div class="space-y-2">
                 <label for="useCase" class="block text-sm font-medium text-gray-700">Bagaimana Anda akan menggunakan aplikasi ini?</label>
                 <textarea 
                   id="useCase" 
@@ -200,57 +177,19 @@
               </div>
               
               <button 
-                type="submit"
-                :disabled="isLoading"
-                class="w-full inline-flex justify-center items-center h-12 px-6 py-3 bg-primary text-white rounded-md font-medium hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary text-lg"
+                type="submit" 
+                class="w-full bg-primary text-white py-3 px-4 rounded-md hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                :disabled="isSubmitting"
               >
-                <span v-if="isLoading" class="mr-2 h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent"></span>
-                Daftar Sebagai Beta Tester
+                <span v-if="isSubmitting">
+                  <svg class="animate-spin -ml-1 mr-2 h-5 w-5 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Mendaftar...
+                </span>
+                <span v-else>Daftar Sekarang</span>
               </button>
-              
-              <div class="relative">
-                <div class="absolute inset-0 flex items-center">
-                  <div class="w-full border-t border-gray-300"></div>
-                </div>
-                <div class="relative flex justify-center text-sm">
-                  <span class="px-2 bg-white text-gray-500">Atau daftar dengan</span>
-                </div>
-              </div>
-              
-              <button 
-                @click="handleGoogleSignIn" 
-                :disabled="isGoogleLoading"
-                type="button" 
-                class="w-full flex items-center justify-center gap-2 h-10 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-md font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-              >
-                <span v-if="isGoogleLoading" class="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"></span>
-                <svg v-else class="w-5 h-5" viewBox="0 0 24 24">
-                  <path
-                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                    fill="#4285F4"
-                  />
-                  <path
-                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                    fill="#34A853"
-                  />
-                  <path
-                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                    fill="#FBBC05"
-                  />
-                  <path
-                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                    fill="#EA4335"
-                  />
-                </svg>
-                Daftar dengan Google
-              </button>
-              
-              <div class="text-center text-sm">
-                Sudah memiliki akun?
-                <router-link to="/login" class="font-medium text-primary hover:underline">
-                  Masuk
-                </router-link>
-              </div>
             </form>
           </div>
         </div>
@@ -262,173 +201,132 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAuthStore } from '../stores/auth';
-import { trackPageView } from '../utils/analytics';
 import { supabase } from '../lib/supabase';
 
 const router = useRouter();
-const authStore = useAuthStore();
 
+// Form data
 const fullName = ref('');
 const business = ref('');
 const email = ref('');
 const whatsapp = ref('');
-const password = ref('');
-const confirmPassword = ref('');
 const useCase = ref('');
 const acceptTerms = ref(false);
 const betaTesterAgreement = ref(false);
-const error = ref('');
-const isLoading = ref(false);
-const isGoogleLoading = ref(false);
 
-// Track beta tester registration page view
-trackPageView('/beta-register', 'Beta Tester Registration - Faktur.web.id');
+// UI state
+const error = ref('');
+const success = ref('');
+const isSubmitting = ref(false);
+
+// Generate a UUID v4
+function uuidv4() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
 
 async function handleSubmit() {
   try {
-    // Clear previous errors
     error.value = '';
-    
-    // Validate form
-    if (!fullName.value) {
-      error.value = 'Nama lengkap wajib diisi';
-      return;
+    success.value = '';
+    isSubmitting.value = true;
+
+    // Basic validation
+    if (!fullName.value || !email.value || !whatsapp.value) {
+      throw new Error('Mohon lengkapi semua field yang wajib diisi');
     }
-    
-    if (!email.value) {
-      error.value = 'Email wajib diisi';
-      return;
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.value)) {
+      throw new Error('Format email tidak valid');
     }
-    
-    if (!whatsapp.value) {
-      error.value = 'Nomor WhatsApp wajib diisi';
-      return;
+
+    // Validate WhatsApp number format (simple Indonesian format)
+    const waRegex = /^08[1-9][0-9]{7,11}$/;
+    if (!waRegex.test(whatsapp.value.replace(/[^0-9]/g, ''))) {
+      throw new Error('Format nomor WhatsApp tidak valid');
     }
-    
-    if (!password.value) {
-      error.value = 'Password wajib diisi';
-      return;
+
+    // Check if email already registered
+    const { data: existingUsers, error: checkError } = await supabase
+      .from('beta_testers')
+      .select('id')
+      .eq('email', email.value);
+
+    if (checkError) {
+      console.error('Error checking existing user:', checkError);
+      throw new Error('Terjadi kesalahan saat memeriksa data. Silakan coba lagi.');
     }
-    
-    if (password.value !== confirmPassword.value) {
-      error.value = 'Password tidak cocok';
-      return;
+
+    if (existingUsers && existingUsers.length > 0) {
+      throw new Error('Email sudah terdaftar sebagai beta tester.');
     }
-    
-    if (password.value.length < 8) {
-      error.value = 'Password minimal 8 karakter';
-      return;
-    }
-    
-    if (!acceptTerms.value) {
-      error.value = 'Anda harus menyetujui syarat dan ketentuan';
-      return;
-    }
-    
-    if (!betaTesterAgreement.value) {
-      error.value = 'Anda harus setuju untuk menjadi beta tester';
-      return;
-    }
-    
-    // Start loading
-    isLoading.value = true;
-    
-    // Register user with additional metadata
-    const { data, error: signUpError } = await supabase.auth.signUp({
+
+    // Prepare the data
+    const betaTesterData = {
+      full_name: fullName.value,
+      business_name: business.value || null,
       email: email.value,
-      password: password.value,
-      options: {
-        data: {
-          full_name: fullName.value,
-          business_name: business.value,
-          whatsapp: whatsapp.value,
-          use_case: useCase.value,
-          is_beta_tester: true
-        }
+      whatsapp: whatsapp.value.replace(/[^0-9]/g, ''),
+      use_case: useCase.value || null,
+      status: 'pending'
+    };
+
+    console.log('Attempting to insert beta tester:', betaTesterData);
+
+    // Insert to beta_testers table
+    const { data, error: insertError } = await supabase
+      .from('beta_testers')
+      .insert([betaTesterData])
+      .select();
+
+    if (insertError) {
+      console.error('Insert error details:', {
+        code: insertError.code,
+        message: insertError.message,
+        details: insertError.details,
+        hint: insertError.hint
+      });
+
+      if (insertError.message?.includes('violates not-null constraint')) {
+        throw new Error('Terjadi masalah dengan data registrasi. Mohon hubungi admin.');
       }
-    });
-    
-    if (signUpError) throw signUpError;
-    
-    // Check if user data exists
-    if (!data || !data.user || !data.user.id) {
-      throw new Error('Gagal membuat akun. Data pengguna tidak valid.');
-    }
-    
-    try {
-      // Insert beta tester record
-      const { error: insertError } = await supabase
-        .from('beta_testers')
-        .insert({
-          user_id: data.user.id,
-          full_name: fullName.value,
-          email: email.value,
-          whatsapp: whatsapp.value,
-          business_name: business.value || null,
-          use_case: useCase.value || null,
-          status: 'pending'
-        });
       
-      if (insertError) {
-        console.error('Error inserting beta tester record:', insertError);
-        // Don't throw here - we already created the user account
-        // Just log it and continue
+      if (insertError.message?.includes('row-level security')) {
+        throw new Error('Terjadi masalah dengan izin akses. Mohon hubungi admin.');
       }
-    } catch (insertErr) {
-      // Log the error but continue with registration
-      console.error('Failed to create beta tester record:', insertErr);
-      // We don't want to block the registration if only the beta_testers record fails
+      
+      throw new Error('Gagal mendaftar sebagai beta tester. Silakan coba lagi.');
     }
+
+    console.log('Successfully registered beta tester:', data);
+
+    // Show success message
+    success.value = 'Pendaftaran berhasil! Kami akan menghubungi Anda melalui WhatsApp untuk informasi selanjutnya.';
     
-    // Store beta status in local storage as fallback
-    try {
-      localStorage.setItem('is_beta_tester', 'true');
-      localStorage.setItem('beta_user_details', JSON.stringify({
-        full_name: fullName.value,
-        email: email.value,
-        whatsapp: whatsapp.value,
-        business_name: business.value,
-        use_case: useCase.value,
-        registered_at: new Date().toISOString()
-      }));
-    } catch (storageErr) {
-      console.error('Failed to save beta data to localStorage:', storageErr);
-    }
-    
-    // Redirect on success with a congratulations message
-    router.push('/login?beta_registered=true');
+    // Reset form
+    fullName.value = '';
+    business.value = '';
+    email.value = '';
+    whatsapp.value = '';
+    useCase.value = '';
+    acceptTerms.value = false;
+    betaTesterAgreement.value = false;
+
+    // Redirect after 3 seconds
+    setTimeout(() => {
+      router.push('/');
+    }, 3000);
+
   } catch (err) {
     console.error('Beta registration error:', err);
-    
-    // Handle specific errors
-    if (err.message?.includes('Database error') || err.message?.includes('saving new user')) {
-      error.value = 'Terjadi kesalahan pada database. Coba lagi atau hubungi kami jika masalah berlanjut.';
-    } else if (err.message?.includes('User already registered')) {
-      error.value = 'Email sudah terdaftar. Silakan login atau gunakan email lain.';
-    } else if (err.message?.includes('rate limit')) {
-      error.value = 'Terlalu banyak percobaan. Silakan coba lagi setelah beberapa saat.';
-    } else {
-      error.value = err.message || 'Gagal membuat akun. Silakan coba lagi.';
-    }
+    error.value = err.message || 'Terjadi kesalahan. Silakan coba lagi.';
   } finally {
-    isLoading.value = false;
-  }
-}
-
-async function handleGoogleSignIn() {
-  try {
-    isGoogleLoading.value = true;
-    error.value = '';
-    
-    // Store beta tester info in localStorage to retrieve after OAuth flow
-    localStorage.setItem('beta_signup', 'true');
-    
-    await authStore.signInWithGoogle();
-    // The redirect will be handled by Supabase
-  } catch (err) {
-    error.value = err.message || 'Gagal masuk dengan Google. Silakan coba lagi.';
-    isGoogleLoading.value = false;
+    isSubmitting.value = false;
   }
 }
 </script> 

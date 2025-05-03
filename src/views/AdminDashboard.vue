@@ -42,6 +42,17 @@
           >
             Guest Users
           </button>
+          <button
+            @click="activeTab = 'beta-testers'"
+            :class="[
+              'whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm',
+              activeTab === 'beta-testers'
+                ? 'border-primary text-primary'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            ]"
+          >
+            Beta Testers
+          </button>
         </nav>
       </div>
     </div>
@@ -454,6 +465,11 @@
         </div>
       </div>
     </div>
+
+    <!-- Beta Testers Tab -->
+    <div v-if="activeTab === 'beta-testers'">
+      <BetaTesterList />
+    </div>
   </div>
 </template>
 
@@ -461,8 +477,10 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
+import { useInvoiceStore } from '../stores/invoice';
 import { trackPageView } from '../utils/analytics';
 import { getGuestPdfStats } from '../utils/guest-tracker';
+import BetaTesterList from '../components/dashboard/BetaTesterList.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();

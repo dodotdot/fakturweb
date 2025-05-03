@@ -87,6 +87,8 @@
         </div>
       </div>
       
+      <!-- Comment out Google Sign Up Section -->
+      <!--
       <div>
         <button 
           @click="handleGoogleSignIn" 
@@ -116,6 +118,7 @@
           Sign up with Google
         </button>
       </div>
+      -->
       
       <div class="text-center text-sm">
         Already have an account?
@@ -192,6 +195,8 @@ async function handleSubmit() {
   }
 }
 
+// Comment out Google Sign In related code in script section
+/*
 async function handleGoogleSignIn() {
   try {
     isGoogleLoading.value = true;
@@ -203,4 +208,5 @@ async function handleGoogleSignIn() {
     isGoogleLoading.value = false;
   }
 }
+*/
 </script> 

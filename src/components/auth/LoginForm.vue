@@ -46,6 +46,8 @@
         </Button>
       </form>
       
+      <!-- Comment out Google Sign In Section -->
+      <!--
       <div class="relative">
         <div class="absolute inset-0 flex items-center">
           <div class="w-full border-t border-gray-300 dark:border-gray-600"></div>
@@ -83,6 +85,7 @@
           Sign in with Google
         </Button>
       </div>
+      -->
       
       <div class="text-center text-sm">
         Don't have an account?
@@ -109,7 +112,7 @@ const email = ref('');
 const password = ref('');
 const error = ref('');
 const isLoading = ref(false);
-const isGoogleLoading = ref(false);
+// const isGoogleLoading = ref(false);
 
 async function handleSubmit() {
   try {
@@ -124,6 +127,7 @@ async function handleSubmit() {
   }
 }
 
+/* Google Sign In Function (Temporarily Hidden)
 async function handleGoogleSignIn() {
   try {
     isGoogleLoading.value = true;
@@ -135,4 +139,5 @@ async function handleGoogleSignIn() {
     isGoogleLoading.value = false;
   }
 }
+*/
 </script> 

@@ -3,19 +3,21 @@
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
         <div class="flex">
-          <!-- Mobile menu button -->
-
-          <!-- Logo -->
-          <div class="flex-shrink-0 flex items-center">
+          <!-- Logo Section - Only visible when not authenticated -->
+          <div v-if="!isAuthenticated" class="flex items-center">
             <router-link to="/" class="flex items-center">
               <img
-                class="block h-8 w-auto"
+                class="h-8 w-auto"
                 src="/images/faktur-logo.svg"
                 alt="FakturWeb"
               />
               <span class="ml-2 px-2 py-0.5 text-xs font-semibold bg-yellow-100 text-yellow-600 rounded-full">BETA</span>
             </router-link>
           </div>
+
+          <!-- Mobile menu button -->
+
+          <!-- Remove Logo Section -->
         </div>
 
         <!-- Right side navigation items -->
@@ -75,7 +77,7 @@
               class="group relative text-gray-900 font-bold text-sm flex items-center px-3 py-1.5 bg-yellow-100 hover:bg-yellow-200 rounded-md transition-colors duration-200"
             >
               <span class="relative z-10">Daftar Beta</span>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1 relative z-10" viewBox="0 0 20 20" fill="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 transition-transform animate-slide-arrow relative z-10" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
               </svg>
             </router-link>
@@ -179,6 +181,27 @@ onUnmounted(() => {
   transform: scale(0.95);
   pointer-events: none;
   visibility: hidden;
+}
+
+@keyframes slide-arrow {
+  0%, 100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(4px);
+    opacity: 0.7;
+  }
+}
+
+.animate-slide-arrow {
+  animation: slide-arrow 2s ease-in-out infinite;
+}
+
+/* Stop animation on hover */
+.group:hover .animate-slide-arrow {
+  animation: none;
+  transform: translateX(4px);
 }
 
 /* Desktop hover behavior */

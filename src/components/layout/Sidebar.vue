@@ -4,7 +4,17 @@
     :class="{ 'w-64': isExpanded, 'w-20': !isExpanded }"
   >
     <!-- User Profile Section -->
-    <div class="h-16 flex items-center justify-center px-4 border-b border-gray-200">
+    <div class="h-16 flex items-center justify-between px-4 border-b border-gray-200">
+      <div v-if="isExpanded" class="flex items-center">
+        <router-link to="/" class="flex items-center">
+          <img
+            class="h-8 w-auto"
+            src="/images/faktur-logo.svg"
+            alt="FakturWeb"
+          />
+          <span class="ml-2 px-2 py-0.5 text-xs font-semibold bg-yellow-100 text-yellow-600 rounded-full">BETA</span>
+        </router-link>
+      </div>
       <div 
         class="h-10 w-10 rounded-full bg-primary-500 flex items-center justify-center text-white font-bold"
         :class="{ 'mx-auto': !isExpanded }"
