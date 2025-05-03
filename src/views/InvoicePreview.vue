@@ -79,12 +79,26 @@
             WhatsApp
           </button>
           <button 
+            @click="shareViaEmail"
+            class="px-6 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 font-medium flex items-center"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+              <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+            </svg>
+            Email
+          </button>
+          <button 
             @click="downloadPDF"
             class="px-6 py-3 bg-primary text-white rounded-md hover:bg-primary/90 font-medium flex items-center"
             :disabled="isGenerating"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <path d="M14 2v6h6"/>
+              <path d="M9 13v4"/>
+              <path d="M12 15v2"/>
+              <path d="M15 13v4"/>
             </svg>
             {{ isGenerating ? 'Membuat PDF...' : ' PDF' }}
           </button>
@@ -934,6 +948,33 @@ function shareToWhatsApp() {
   
   // Open WhatsApp with the message
   window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+}
+
+function shareViaEmail() {
+  // Generate email subject
+  const subject = `Invoice dari ${invoice.value.from.name}`;
+
+  // Generate email body
+  const body = `Kepada ${invoice.value.to.name},\n\n` +
+    `Berikut detail invoice Anda:\n\n` +
+    `Tanggal: ${formatDate(invoice.value.date)}\n` +
+    `Jatuh Tempo: ${formatDate(invoice.value.dueDate)}\n\n` +
+    `Detail Item:\n${invoice.value.items.map(item => 
+      `- ${item.description}\n  Jumlah: ${item.quantity}\n  Harga: ${formatCurrency(item.unitPrice)}\n  Total: ${formatCurrency(item.total)}`
+    ).join('\n\n')}\n\n` +
+    `Subtotal: ${formatCurrency(calculateSubtotal())}\n` +
+    (invoice.value.showTax ? `Pajak (${invoice.value.taxRate}%): ${formatCurrency(calculateTaxAmount())}\n` : '') +
+    `Total: ${formatCurrency(calculateTotal())}\n\n` +
+    (invoice.value.notes ? `Catatan:\n${invoice.value.notes}\n\n` : '') +
+    `Hormat kami,\n${invoice.value.from.name}\n\n` +
+    `--\nDibuat dengan https://faktur.web.id`;
+
+  // Encode subject and body for mailto URL
+  const encodedSubject = encodeURIComponent(subject);
+  const encodedBody = encodeURIComponent(body);
+  
+  // Open default email client with pre-filled content
+  window.location.href = `mailto:${invoice.value.to.email}?subject=${encodedSubject}&body=${encodedBody}`;
 }
 </script>
 
