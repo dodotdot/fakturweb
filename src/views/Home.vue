@@ -102,7 +102,7 @@
          <a href="/terms-of-service" class="footer-link">Terms of Service</a>
          <a href="/privacy-policy" class="footer-link">Privacy Policy</a>
        </div>
-       <div class="footer-copyright">© 2025 Faktur.web.id</div>
+       <div class="footer-copyright">© 2025</div>
      </div>
    </footer>
   </div>
@@ -990,6 +990,8 @@ onBeforeUnmount(() => {
 .footer-logo {
   font-size: 1.5rem;
   font-weight: 700;
+  letter-spacing: -0.05em;
+  text-transform: lowercase;
   color: #333;
 }
 
