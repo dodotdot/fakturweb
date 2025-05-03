@@ -70,10 +70,15 @@
             </div>
           </template>
           <template v-else>
-            <!-- <div class="flex items-center">
-              <router-link to="/login" class="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium">Login</router-link>
-              <router-link to="/register" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">Sign up</router-link>
-            </div> -->
+            <router-link 
+              to="/beta" 
+              class="group relative text-gray-900 font-bold text-sm flex items-center px-3 py-1.5 bg-yellow-100 hover:bg-yellow-200 rounded-md transition-colors duration-200"
+            >
+              <span class="relative z-10">Daftar Beta</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1 relative z-10" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+            </router-link>
           </template>
         </div>
       </div>

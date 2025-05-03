@@ -14,19 +14,17 @@
                 <span class="rotating-text" :class="{ active: currentTextIndex === 0 }">Bisnis Modern</span>
                 <span class="rotating-text" :class="{ active: currentTextIndex === 1 }">Freelancer</span>
                 <span class="rotating-text" :class="{ active: currentTextIndex === 2 }">UMKM</span>
+                <span class="rotating-text" :class="{ active: currentTextIndex === 3 }">Content Creator</span>
             </span>
           </h1>
           <p class="hero-subtitle mb-8">
             Faktur profesional dalam Hitungan Menit 🔥. Hemat waktu, simple, elegan, dan terorganisir dengan baik.
           </p>
           <div class="hero-video-wrapper mb-8">
-            <video class="hero-video" autoplay loop muted playsinline>
-              <source src="/images/videos/hero-video1.mp4" type="video/mp4">
-              Your browser does not support the video tag.
-            </video>
+            <img src="/images/preview-home.png" alt="Hero Image" class="hero-video">
           </div>
           <div class="hero-cta flex gap-4 justify-center">
-            <router-link to="/invoice/guest" class="btn-primary px-8 py-4 text-lg rounded-lg block w-full sm:w-auto text-center">Buat Faktur Sekarang</router-link>
+            <router-link to="/invoice/guest" class="btn-primary px-8 py-4 text-lg rounded-none block w-full sm:w-auto text-center"> BUAT FAKTUR SEKARANG</router-link>
           </div>
         </div>
       </div>
@@ -36,7 +34,7 @@
    
    
    <!-- Join Now Section -->
-   <section class="py-12 bg-gradient-to-br from-primary/5 to-primary/10">
+   <!-- <section class="py-12 bg-gradient-to-br from-primary/5 to-primary/10">
      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
        <div class="lg:flex lg:items-center lg:justify-between">
          <div class="lg:w-0 lg:flex-1">
@@ -94,7 +92,7 @@
          </div>
        </div>
      </div>
-   </section>
+   </section> -->
 
    <!-- Footer section -->
    <footer class="footer">
@@ -120,7 +118,7 @@ const isAuthenticated = computed(() => authStore.isAuthenticated);
 
 // Text rotation
 const currentTextIndex = ref(0);
-const rotationTexts = ["Bisnis Modern", "Freelancer", "UMKM"];
+const rotationTexts = ["Bisnis Modern", "Freelancer", "UMKM", "Content Creator"];
 let textRotationInterval = null;
 
 function startTextRotation() {
@@ -348,16 +346,87 @@ onBeforeUnmount(() => {
 .hero-video-wrapper {
   width: 100%;
   max-width: 800px;
-  margin: 0 auto 2.5rem;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  margin: 0 auto 3.5rem;
+  position: relative;
+  background: white;
+  padding: 20px;
+  z-index: 1;
+}
+
+.hero-video-wrapper::before,
+.hero-video-wrapper::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  left: 0;
+  top: 0;
+  z-index: -1;
+  transition: all 0.25s ease-out;
+}
+
+.hero-video-wrapper::before {
+  transform: rotate(2deg);
+  top: 5px;
+  box-shadow: 0 0 4px rgba(0,0,0,0.1);
+}
+
+.hero-video-wrapper::after {
+  transform: rotate(-2.5deg);
+  top: 3px;
+  box-shadow: 0 0 3px rgba(0,0,0,0.15);
+}
+
+.hero-video-wrapper:hover::before {
+  transform: rotate(3deg) translateY(-2px);
+}
+
+.hero-video-wrapper:hover::after {
+  transform: rotate(-3.5deg) translateY(-1px);
 }
 
 .hero-video {
   width: 100%;
   display: block;
+  position: relative;
+  z-index: 1;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: white;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+/* Clean hover animation */
+.hero-video-wrapper:hover {
+  transform: translateY(-1px);
+}
+
+.hero-video-wrapper:hover::before {
+  transform: translateY(0.5px);
+}
+
+.hero-video-wrapper:hover::after {
+  transform: translateY(0.25px);
+}
+
+.hero-video-wrapper,
+.hero-video-wrapper::before,
+.hero-video-wrapper::after,
+.hero-video {
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Add subtle top highlight for depth */
+.hero-video::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4), transparent);
+  pointer-events: none;
 }
 
 .hero-cta {
@@ -369,7 +438,7 @@ onBeforeUnmount(() => {
 
 .btn-primary, .btn-secondary {
   padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+  border-radius: 0;
   font-weight: 600;
   transition: all 0.2s ease;
   text-decoration: none;
@@ -387,12 +456,14 @@ onBeforeUnmount(() => {
 .btn-primary {
   background-color: #c0392b;
   color: white;
+  border: none;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.1);
 }
 
 .btn-primary:hover {
   background-color: #c0392a;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 183, 74, 0.2);
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
 }
 
 .btn-secondary {
