@@ -816,7 +816,7 @@ async function processDownload() {
       guestName: guestInfo.value.name,
       guestEmail: guestInfo.value.email,
       userAgent: navigator.userAgent,
-      action: shareMethod.value,
+      source: shareMethod.value, // Add the source based on share method
       timestamp: new Date().toISOString()
     };
     

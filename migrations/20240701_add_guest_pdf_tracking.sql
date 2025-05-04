@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS guest_pdf_generations (
   user_agent TEXT,
   guest_name TEXT,
   guest_email TEXT,
+  source TEXT NOT NULL DEFAULT 'pdf', -- Track the source of generation (pdf, whatsapp, email)
   generated_at TIMESTAMP WITH TIME ZONE NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
@@ -17,6 +18,7 @@ CREATE TABLE IF NOT EXISTS guest_pdf_generations (
 -- Add indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_guest_pdf_generations_generated_at ON guest_pdf_generations(generated_at);
 CREATE INDEX IF NOT EXISTS idx_guest_pdf_generations_guest_email ON guest_pdf_generations(guest_email);
+CREATE INDEX IF NOT EXISTS idx_guest_pdf_generations_source ON guest_pdf_generations(source);
 
 -- Add RLS policies to ensure only authenticated users with admin role can access the data
 ALTER TABLE guest_pdf_generations ENABLE ROW LEVEL SECURITY;

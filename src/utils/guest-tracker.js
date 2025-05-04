@@ -30,6 +30,7 @@ async function getClientIpAddress() {
  * @param {string} data.userAgent - The user agent of the browser (optional)
  * @param {string} data.guestName - The name of the guest (optional)
  * @param {string} data.guestEmail - The email of the guest (optional)
+ * @param {string} data.source - The source of generation (pdf, whatsapp, email) (optional)
  * @returns {Promise} - A promise that resolves when the tracking is complete
  */
 export async function trackGuestPdfGeneration(data) {
@@ -50,6 +51,7 @@ export async function trackGuestPdfGeneration(data) {
         user_agent: data.userAgent || navigator.userAgent,
         guest_name: data.guestName || null,
         guest_email: data.guestEmail || null,
+        source: data.source || 'pdf', // Default to 'pdf' if not specified
         generated_at: new Date(),
       });
     
@@ -106,6 +108,17 @@ export async function getGuestPdfStats() {
       return generatedDate >= last30Days;
     }).length;
     
+    // Calculate source statistics
+    const sourceStats = data.reduce((acc, item) => {
+      const source = item.source || 'pdf';
+      acc[source] = (acc[source] || 0) + 1;
+      return acc;
+    }, {
+      pdf: 0,
+      whatsapp: 0,
+      email: 0
+    });
+    
     // Recent generations
     const recentGenerations = data.slice(0, 10);
     
@@ -114,6 +127,7 @@ export async function getGuestPdfStats() {
       todayCount,
       weeklyCount,
       monthlyCount,
+      sourceStats,
       recentGenerations
     };
   } catch (error) {
@@ -123,6 +137,11 @@ export async function getGuestPdfStats() {
       todayCount: 0,
       weeklyCount: 0,
       monthlyCount: 0,
+      sourceStats: {
+        pdf: 0,
+        whatsapp: 0,
+        email: 0
+      },
       recentGenerations: []
     };
   }
