@@ -35,7 +35,7 @@ async function getClientIpAddress() {
 export async function trackGuestPdfGeneration(data) {
   try {
     // First track with Google Analytics
-    invoiceEvents.download(data.invoiceTitle, data.invoiceTotal);
+    invoiceEvents.download(data.invoiceTitle || 'Untitled Invoice', data.invoiceTotal);
     
     // Try to get the client's IP address if not provided
     const ipAddress = data.ipAddress || await getClientIpAddress();
@@ -44,8 +44,8 @@ export async function trackGuestPdfGeneration(data) {
     const { error } = await supabase
       .from('guest_pdf_generations')
       .insert({
-        title: data.invoiceTitle,
-        amount: data.invoiceTotal,
+        title: data.invoiceTitle || 'Untitled Invoice', // Ensure title is never null
+        amount: data.invoiceTotal || 0,
         ip_address: ipAddress,
         user_agent: data.userAgent || navigator.userAgent,
         guest_name: data.guestName || null,
@@ -55,9 +55,11 @@ export async function trackGuestPdfGeneration(data) {
     
     if (error) {
       console.error('Error tracking guest PDF generation:', error);
+      throw error; // Propagate the error for better error handling
     }
   } catch (error) {
     console.error('Failed to track guest PDF generation:', error);
+    throw error; // Propagate the error for better error handling
   }
 }
 

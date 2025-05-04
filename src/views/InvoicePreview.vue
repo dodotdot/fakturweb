@@ -59,48 +59,64 @@
             {{ translations.createInvoiceMessage }}
           </p>
         </div>
-        <div class="flex space-x-4">
+        <div class="flex sm:flex-row w-full sm:w-auto gap-3 justify-center">
           <button
             @click="backToEdit"
-            class="px-6 py-3 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200 font-medium flex items-center"
+            class="min-h-[44px] w-[44px] sm:w-auto px-3 sm:px-4 py-2.5 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200 active:bg-gray-300 font-medium flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 relative group"
+            title="Edit Invoice"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
             </svg>
-            Edit
+            <span class="hidden sm:inline-block ml-2">Edit</span>
+            <!-- Tooltip for mobile -->
+            <span class="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none sm:hidden">
+              Edit Invoice
+            </span>
           </button>
           <button 
             @click="shareToWhatsApp"
-            class="px-6 py-3 bg-green-500 text-white rounded-md hover:bg-green-600 font-medium flex items-center"
+            class="min-h-[44px] w-[44px] sm:w-auto px-3 sm:px-4 py-2.5 bg-green-500 text-white rounded-md hover:bg-green-600 active:bg-green-700 font-medium flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 relative group"
+            title="Share via WhatsApp"
           >
-            <svg class="h-5 w-5 mr-2" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+            <svg class="h-5 w-5" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
               <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/>
             </svg>
-            WhatsApp
+            <span class="hidden sm:inline-block ml-2">WhatsApp</span>
+            <span class="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none sm:hidden">
+              Share via WhatsApp
+            </span>
           </button>
           <button 
             @click="shareViaEmail"
-            class="px-6 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 font-medium flex items-center"
+            class="min-h-[44px] w-[44px] sm:w-auto px-3 sm:px-4 py-2.5 bg-blue-500 text-white rounded-md hover:bg-blue-600 active:bg-blue-700 font-medium flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 relative group"
+            title="Share via Email"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
               <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
             </svg>
-            Email
+            <span class="hidden sm:inline-block ml-2">Email</span>
+            <span class="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none sm:hidden">
+              Share via Email
+            </span>
           </button>
           <button 
             @click="downloadPDF"
-            class="px-6 py-3 bg-primary text-white rounded-md hover:bg-primary/90 font-medium flex items-center"
+            class="min-h-[44px] w-[44px] sm:w-auto px-3 sm:px-4 py-2.5 bg-primary text-white rounded-md hover:bg-primary/90 active:bg-primary/80 font-medium flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed relative group"
             :disabled="isGenerating"
+            title="Download PDF"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-              <path d="M14 2v6h6"/>
-              <path d="M9 13v4"/>
-              <path d="M12 15v2"/>
-              <path d="M15 13v4"/>
-            </svg>
-            {{ isGenerating ? 'Membuat PDF...' : ' PDF' }}
+            <img src="/images/pdf-icon.svg" alt="PDF" class="h-5 w-5" />
+            <span class="hidden sm:inline-block ml-2">{{ isGenerating ? 'Membuat PDF...' : 'PDF' }}</span>
+            <!-- Loading spinner -->
+            <div v-if="isGenerating" class="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center rounded-md">
+              <div class="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+            </div>
+            <!-- Tooltip for mobile -->
+            <span class="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none sm:hidden">
+              Download PDF
+            </span>
           </button>
         </div>
       </div>
@@ -436,16 +452,21 @@
       <!-- This element is to trick the browser into centering the modal contents. -->
       <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
       
-      <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-5xl sm:w-full">
+      <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-5xl sm:w-full relative">
+        <!-- Universal close button for both mobile and desktop -->
+        <button 
+          @click="showRegisterModal = false" 
+          class="absolute top-4 right-4 z-50 p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
+          title="Close modal"
+        >
+          <svg class="h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
         <div class="flex flex-col md:flex-row">
           <!-- Left side (benefits) -->
           <div class="hidden md:block bg-gray-800 text-white p-6 md:p-8 md:w-1/2">
-            <button @click="showRegisterModal = false" class="absolute top-4 right-4 text-white hover:text-gray-300">
-              <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-            
             <h2 class="text-2xl font-bold mb-4">MAU SIMPAN INVOICE-MU? 🔥</h2>
             <p class="text-gray-300 mb-6">Bikin invoice ga perlu ribet lagi! Daftar sekarang dan nikmati semua fitur keren ini:</p>
             
@@ -525,11 +546,17 @@
           <!-- Right side (PDF download) -->
           <div class="p-6 md:p-8 md:w-1/2 flex flex-col items-center justify-center">
             <div class="text-center mb-8">
-              <h3 class="text-2xl font-light text-gray-400">Download</h3>
+              <h3 class="text-2xl font-light text-gray-400">{{ getActionTitle }}</h3>
               <h2 class="text-4xl font-light text-gray-400 mb-4">invoice di sini</h2>
               
-              <svg class="h-16 w-16 mx-auto text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg v-if="shareMethod === 'pdf'" class="h-16 w-16 mx-auto text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+              </svg>
+              <svg v-else-if="shareMethod === 'whatsapp'" class="h-16 w-16 mx-auto text-green-500" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/>
+              </svg>
+              <svg v-else class="h-16 w-16 mx-auto text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
             </div>
             
@@ -580,7 +607,12 @@
             
             <button 
               @click="processDownload"
-              class="w-full mb-4 py-3 px-6 bg-gray-700 text-white font-medium rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-600"
+              :class="{
+                'bg-gray-700 hover:bg-gray-600': shareMethod === 'pdf',
+                'bg-green-600 hover:bg-green-500': shareMethod === 'whatsapp',
+                'bg-blue-600 hover:bg-blue-500': shareMethod === 'email'
+              }"
+              class="w-full mb-4 py-3 px-6 text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors duration-200"
               :disabled="isGenerating"
             >
               <span v-if="isGenerating">
@@ -590,9 +622,11 @@
                 </svg>
                 LAGI PROSES...
               </span>
-              <span v-else>DOWNLOAD INVOICE PDF</span>
+              <span v-else>
+                {{ getActionButtonText }}
+              </span>
             </button>
-            <p class="text-center text-sm text-gray-500">Bisa download dulu, tapi coba deh daftar juga, nanti jadi lebih gampang!</p>
+            <p class="text-center text-sm text-gray-500">Bisa {{ getActionText }} dulu, tapi coba deh daftar juga, nanti jadi lebih gampang!</p>
           </div>
         </div>
       </div>
@@ -653,6 +687,16 @@ const invoice = ref({
   taxRate: 0,
   notes: '',
   logo: null
+});
+
+// Add new ref for tracking the share method
+const shareMethod = ref('');
+
+// Add new refs for process states
+const processState = ref({
+  status: '', // 'idle', 'processing', 'success', 'error'
+  message: '',
+  error: null
 });
 
 onMounted(() => {
@@ -726,123 +770,297 @@ function formatDate(dateString) {
 }
 
 function downloadPDF() {
-  // Show the registration modal instead of immediately downloading
+  shareMethod.value = 'pdf';
   showRegisterModal.value = true;
   
-  // Track the modal view
-  invoiceEvents.view('registration_modal', {
-    source: 'invoice_preview',
-    invoice_title: invoice.value.title || 'Untitled Invoice'
-  });
+  // Track the modal view using the correct method
+  invoiceEvents.download(
+    invoice.value.title || 'Untitled Invoice',
+    calculateTotal()
+  );
 }
 
-function processDownload() {
-  if (!invoicePrintRef.value) return;
-  
-  isGenerating.value = true;
-  showRegisterModal.value = false;
+async function processDownload() {
+  if (!validateGuestInfo()) return;
 
-  // Add PDF class and remove shadows
-  const element = invoicePrintRef.value;
-  element.classList.add('pdf-mode');
-  
-  // Remove all shadow-related classes
-  element.querySelectorAll('[class*="shadow"]').forEach(el => {
-    const classes = Array.from(el.classList);
-    classes.forEach(cls => {
-      if (cls.includes('shadow')) {
-        el.classList.remove(cls);
+  try {
+    processState.value = {
+      status: 'processing',
+      message: `Memproses ${getActionText.value}...`,
+      error: null
+    };
+    
+    isGenerating.value = true;
+    showRegisterModal.value = false;
+
+    // Save guest info if checkbox is checked
+    if (guestInfo.value.saveInfo && isLocalStorageAvailable()) {
+      try {
+        localStorage.setItem('guest_info', JSON.stringify({
+          name: guestInfo.value.name,
+          email: guestInfo.value.email,
+          lastUsed: new Date().toISOString()
+        }));
+      } catch (e) {
+        console.warn('Failed to save guest info:', e);
       }
+    }
+
+    // Ensure we have a valid title
+    const invoiceTitle = invoice.value.title?.trim() || `Faktur #${new Date().getTime()}`;
+
+    // Track guest info with proper data structure
+    const guestData = {
+      invoiceTitle: invoiceTitle, // Use the validated title
+      invoiceTotal: calculateTotal(),
+      guestName: guestInfo.value.name,
+      guestEmail: guestInfo.value.email,
+      userAgent: navigator.userAgent,
+      action: shareMethod.value,
+      timestamp: new Date().toISOString()
+    };
+    
+    await trackGuestPdfGeneration(guestData);
+
+    // Process based on share method
+    switch (shareMethod.value) {
+      case 'whatsapp':
+        await processWhatsAppShare();
+        break;
+      case 'email':
+        await processEmailShare();
+        break;
+      case 'pdf':
+        await processPDFDownload();
+        break;
+    }
+
+    processState.value = {
+      status: 'success',
+      message: `${getActionTitle.value} berhasil!`,
+      error: null
+    };
+
+  } catch (error) {
+    console.error('Process error:', error);
+    processState.value = {
+      status: 'error',
+      message: 'Terjadi kesalahan saat memproses.',
+      error: error
+    };
+
+    // Show error message to user
+    alert(`Maaf, terjadi kesalahan: ${error.message || 'Unknown error'}`);
+  } finally {
+    isGenerating.value = false;
+  }
+}
+
+async function processWhatsAppShare() {
+  try {
+    // Clean up phone number - remove all non-numeric characters
+    const phoneNumber = invoice.value.to.phone.replace(/\D/g, '');
+    
+    if (!phoneNumber) {
+      throw new Error('Nomor telepon penerima invoice harus diisi untuk mengirim via WhatsApp');
+    }
+    
+    // Add country code if not present (assuming Indonesia/62)
+    const formattedPhone = phoneNumber.startsWith('62') ? phoneNumber :
+      phoneNumber.startsWith('0') ? `62${phoneNumber.substring(1)}` : `62${phoneNumber}`;
+
+    // Generate message text
+    const message = `*Invoice dari ${invoice.value.from.name}*\n\n` +
+      `Kepada: ${invoice.value.to.name}\n` +
+      `Tanggal: ${formatDate(invoice.value.date)}\n` +
+      `Total: ${formatCurrency(calculateTotal())}\n\n` +
+      `Detail Item:\n${invoice.value.items.map(item => 
+        `- ${item.description}: ${formatCurrency(item.total)}`
+      ).join('\n')}\n\n` +
+      `Subtotal: ${formatCurrency(calculateSubtotal())}\n` +
+      (invoice.value.showTax ? `Pajak (${invoice.value.taxRate}%): ${formatCurrency(calculateTaxAmount())}\n` : '') +
+      `*Total: ${formatCurrency(calculateTotal())}*\n\n` +
+      (invoice.value.notes ? `Catatan: ${invoice.value.notes}\n\n` : '') +
+      `Dibuat dengan https://faktur.web.id`;
+
+    // Track successful WhatsApp share attempt
+    invoiceEvents.create(invoice.value.title || 'Untitled Invoice', calculateTotal());
+
+    // Encode the message for URL
+    const encodedMessage = encodeURIComponent(message);
+    
+    // Open WhatsApp with the message and phone number
+    const whatsappUrl = `https://wa.me/${formattedPhone}?text=${encodedMessage}`;
+    window.open(whatsappUrl, '_blank');
+
+    return true;
+  } catch (error) {
+    console.error('WhatsApp share error:', error);
+    throw error;
+  }
+}
+
+async function processEmailShare() {
+  try {
+    if (!invoice.value.to.email) {
+      throw new Error('Email penerima invoice harus diisi untuk mengirim via Email');
+    }
+
+    // Generate email subject
+    const subject = `Invoice dari ${invoice.value.from.name}`;
+
+    // Generate email body
+    const body = `Kepada ${invoice.value.to.name},\n\n` +
+      `Berikut detail invoice Anda:\n\n` +
+      `Tanggal: ${formatDate(invoice.value.date)}\n` +
+      `Jatuh Tempo: ${formatDate(invoice.value.dueDate)}\n\n` +
+      `Detail Item:\n${invoice.value.items.map(item => 
+        `- ${item.description}\n  Jumlah: ${item.quantity}\n  Harga: ${formatCurrency(item.unitPrice)}\n  Total: ${formatCurrency(item.total)}`
+      ).join('\n\n')}\n\n` +
+      `Subtotal: ${formatCurrency(calculateSubtotal())}\n` +
+      (invoice.value.showTax ? `Pajak (${invoice.value.taxRate}%): ${formatCurrency(calculateTaxAmount())}\n` : '') +
+      `Total: ${formatCurrency(calculateTotal())}\n\n` +
+      (invoice.value.notes ? `Catatan:\n${invoice.value.notes}\n\n` : '') +
+      `Hormat kami,\n${invoice.value.from.name}\n\n` +
+      `--\nDibuat dengan https://faktur.web.id`;
+
+    // Track successful email share attempt
+    invoiceEvents.create(invoice.value.title || 'Untitled Invoice', calculateTotal());
+
+    // Encode subject and body for mailto URL
+    const encodedSubject = encodeURIComponent(subject);
+    const encodedBody = encodeURIComponent(body);
+    
+    // Open default email client with pre-filled content
+    window.location.href = `mailto:${invoice.value.to.email}?subject=${encodedSubject}&body=${encodedBody}`;
+
+    return true;
+  } catch (error) {
+    console.error('Email share error:', error);
+    throw error;
+  }
+}
+
+async function processPDFDownload() {
+  if (!invoicePrintRef.value) {
+    throw new Error('PDF container not found');
+  }
+
+  try {
+    // Track PDF generation start
+    invoiceEvents.download(invoice.value.title || 'Untitled Invoice', calculateTotal());
+
+    // Add PDF class and remove shadows
+    const element = invoicePrintRef.value;
+    element.classList.add('pdf-mode');
+    
+    // Remove all shadow-related classes
+    element.querySelectorAll('[class*="shadow"]').forEach(el => {
+      const classes = Array.from(el.classList);
+      classes.forEach(cls => {
+        if (cls.includes('shadow')) {
+          el.classList.remove(cls);
+        }
+      });
     });
-  });
 
-  // A4 dimensions in pixels (96 DPI)
-  const a4Width = 794;  // 210mm
-  const a4Height = 1123; // 297mm
+    // A4 dimensions in pixels (96 DPI)
+    const a4Width = 794;  // 210mm
+    const a4Height = 1123; // 297mm
 
-  const options = {
-    margin: 8,
-    filename: `faktur-${invoice.value.title.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.pdf`,
-    image: { 
-      type: 'jpeg', 
-      quality: 0.98 
-    },
-    html2canvas: { 
-      scale: 2,
-      useCORS: true,
-      allowTaint: true,
-      letterSpacing: true,
-      scrollY: 0,
-      width: a4Width - 16,
-      height: a4Height - 10,
-      windowWidth: a4Width - 16,
-      windowHeight: a4Height - 10,
-      removeContainer: true,
-      backgroundColor: '#ffffff'
-    },
-    jsPDF: { 
-      unit: 'mm', 
-      format: 'a4', 
-      orientation: 'portrait',
-      compress: true,
-      hotfixes: ['px_scaling'],
-      putOnlyUsedFonts: true,
-      precision: 16
-    },
-    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+    const options = {
+      margin: 8,
+      filename: `faktur-${invoice.value.title.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.pdf`,
+      image: { 
+        type: 'jpeg', 
+        quality: 0.98 
+      },
+      html2canvas: { 
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        letterSpacing: true,
+        scrollY: 0,
+        width: a4Width - 16,
+        height: a4Height - 10,
+        windowWidth: a4Width - 16,
+        windowHeight: a4Height - 10,
+        removeContainer: true,
+        backgroundColor: '#ffffff'
+      },
+      jsPDF: { 
+        unit: 'mm', 
+        format: 'a4', 
+        orientation: 'portrait',
+        compress: true,
+        hotfixes: ['px_scaling'],
+        putOnlyUsedFonts: true,
+        precision: 16
+      },
+      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+    };
+
+    // Generate PDF
+    await html2pdf()
+      .from(element)
+      .set(options)
+      .save();
+
+    element.classList.remove('pdf-mode');
+    return true;
+  } catch (error) {
+    console.error('PDF generation error:', error);
+    throw error;
+  }
+}
+
+// Update validation to include more specific checks
+function validateGuestInfo() {
+  formErrors.value = {
+    name: '',
+    email: ''
   };
 
-  // Generate PDF
-  html2pdf()
-    .from(element)
-    .set(options)
-    .save()
-    .then(() => {
-      isGenerating.value = false;
-      element.classList.remove('pdf-mode');
-    })
-    .catch(error => {
-      console.error('Error generating PDF:', error);
-      isGenerating.value = false;
-      element.classList.remove('pdf-mode');
-      alert('Error generating PDF. Please try again.');
-    });
+  let isValid = true;
+
+  // Validate name
+  if (!guestInfo.value.name.trim()) {
+    formErrors.value.name = 'Nama harus diisi';
+    isValid = false;
+  }
+
+  // Validate email
+  if (!guestInfo.value.email.trim()) {
+    formErrors.value.email = 'Email harus diisi';
+    isValid = false;
+  } else if (!validateEmail(guestInfo.value.email)) {
+    formErrors.value.email = 'Format email tidak valid';
+    isValid = false;
+  }
+
+  // Validate based on share method
+  switch (shareMethod.value) {
+    case 'whatsapp':
+      if (!invoice.value.to.phone) {
+        alert('Nomor telepon penerima invoice harus diisi untuk mengirim via WhatsApp');
+        isValid = false;
+      }
+      break;
+    case 'email':
+      if (!invoice.value.to.email) {
+        alert('Email penerima invoice harus diisi untuk mengirim via Email');
+        isValid = false;
+      }
+      break;
+  }
+
+  return isValid;
 }
 
-function backToEdit() {
-  // Check if the currentInvoice data exists in localStorage
-  const storedInvoice = localStorage.getItem('currentInvoice');
-  
-  if (storedInvoice) {
-    try {
-      // Parse the current data and update the timestamp
-      const currentData = JSON.parse(storedInvoice);
-      currentData._lastEdited = new Date().getTime();
-      
-      // Save the selected theme preference
-      currentData._theme = selectedTheme.value;
-      
-      // Save the language preference
-      currentData._language = currentLocale.value;
-      
-      // Save it back to localStorage
-      localStorage.setItem('currentInvoice', JSON.stringify(currentData));
-      
-      // Track edit event
-      invoiceEvents.update(currentData.title || 'Untitled Invoice');
-      
-      // Navigate back to edit form
-      router.push('/invoice/guest');
-    } catch (error) {
-      console.error('Error processing invoice data:', error);
-      alert('Terjadi kesalahan saat kembali ke halaman edit. Mencoba kembali...');
-      router.push('/invoice/guest');
-    }
-  } else {
-    // If no invoice data exists, just navigate back
-    console.warn('No invoice data found in localStorage, redirecting to empty form');
-    router.push('/invoice/guest');
-  }
+// Helper function to validate email format
+function validateEmail(email) {
+  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(String(email).toLowerCase());
 }
 
 // Function to set language
@@ -878,12 +1096,6 @@ function isLocalStorageAvailable() {
     console.warn('localStorage is not available:', e);
     return false;
   }
-}
-
-// Helper function to validate email format
-function validateEmail(email) {
-  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  return re.test(String(email).toLowerCase());
 }
 
 // Computed translations using our direct method
@@ -929,53 +1141,96 @@ const translations = computed(() => {
 });
 
 function shareToWhatsApp() {
-  // Generate message text
-  const message = `*Invoice dari ${invoice.value.from.name}*\n\n` +
-    `Kepada: ${invoice.value.to.name}\n` +
-    `Tanggal: ${formatDate(invoice.value.date)}\n` +
-    `Total: ${formatCurrency(calculateTotal())}\n\n` +
-    `Detail Item:\n${invoice.value.items.map(item => 
-      `- ${item.description}: ${formatCurrency(item.total)}`
-    ).join('\n')}\n\n` +
-    `Subtotal: ${formatCurrency(calculateSubtotal())}\n` +
-    (invoice.value.showTax ? `Pajak (${invoice.value.taxRate}%): ${formatCurrency(calculateTaxAmount())}\n` : '') +
-    `*Total: ${formatCurrency(calculateTotal())}*\n\n` +
-    (invoice.value.notes ? `Catatan: ${invoice.value.notes}\n\n` : '') +
-    `Dibuat dengan https://faktur.web.id`;
-
-  // Encode the message for URL
-  const encodedMessage = encodeURIComponent(message);
+  shareMethod.value = 'whatsapp';
+  showRegisterModal.value = true;
   
-  // Open WhatsApp with the message
-  window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+  // Track the modal view using the correct method
+  invoiceEvents.create(
+    invoice.value.title || 'Untitled Invoice',
+    calculateTotal()
+  );
 }
 
 function shareViaEmail() {
-  // Generate email subject
-  const subject = `Invoice dari ${invoice.value.from.name}`;
-
-  // Generate email body
-  const body = `Kepada ${invoice.value.to.name},\n\n` +
-    `Berikut detail invoice Anda:\n\n` +
-    `Tanggal: ${formatDate(invoice.value.date)}\n` +
-    `Jatuh Tempo: ${formatDate(invoice.value.dueDate)}\n\n` +
-    `Detail Item:\n${invoice.value.items.map(item => 
-      `- ${item.description}\n  Jumlah: ${item.quantity}\n  Harga: ${formatCurrency(item.unitPrice)}\n  Total: ${formatCurrency(item.total)}`
-    ).join('\n\n')}\n\n` +
-    `Subtotal: ${formatCurrency(calculateSubtotal())}\n` +
-    (invoice.value.showTax ? `Pajak (${invoice.value.taxRate}%): ${formatCurrency(calculateTaxAmount())}\n` : '') +
-    `Total: ${formatCurrency(calculateTotal())}\n\n` +
-    (invoice.value.notes ? `Catatan:\n${invoice.value.notes}\n\n` : '') +
-    `Hormat kami,\n${invoice.value.from.name}\n\n` +
-    `--\nDibuat dengan https://faktur.web.id`;
-
-  // Encode subject and body for mailto URL
-  const encodedSubject = encodeURIComponent(subject);
-  const encodedBody = encodeURIComponent(body);
+  shareMethod.value = 'email';
+  showRegisterModal.value = true;
   
-  // Open default email client with pre-filled content
-  window.location.href = `mailto:${invoice.value.to.email}?subject=${encodedSubject}&body=${encodedBody}`;
+  // Track the modal view using the correct method
+  invoiceEvents.create(
+    invoice.value.title || 'Untitled Invoice',
+    calculateTotal()
+  );
 }
+
+function backToEdit() {
+  // Check if the currentInvoice data exists in localStorage
+  const storedInvoice = localStorage.getItem('currentInvoice');
+  
+  if (storedInvoice) {
+    try {
+      // Parse the current data and update the timestamp
+      const currentData = JSON.parse(storedInvoice);
+      currentData._lastEdited = new Date().getTime();
+      
+      // Save the selected theme preference
+      currentData._theme = selectedTheme.value;
+      
+      // Save the language preference
+      currentData._language = currentLocale.value;
+      
+      // Save it back to localStorage
+      localStorage.setItem('currentInvoice', JSON.stringify(currentData));
+      
+      // Track edit event
+      invoiceEvents.update(currentData.title || 'Untitled Invoice');
+      
+      // Navigate back to edit form
+      router.push('/invoice/guest');
+    } catch (error) {
+      console.error('Error processing invoice data:', error);
+      alert('Terjadi kesalahan saat kembali ke halaman edit. Mencoba kembali...');
+      router.push('/invoice/guest');
+    }
+  } else {
+    // If no invoice data exists, just navigate back
+    console.warn('No invoice data found in localStorage, redirecting to empty form');
+    router.push('/invoice/guest');
+  }
+}
+
+// Add computed properties for dynamic text
+const getActionTitle = computed(() => {
+  switch (shareMethod.value) {
+    case 'whatsapp':
+      return 'Kirim';
+    case 'email':
+      return 'Kirim';
+    default:
+      return 'Download';
+  }
+});
+
+const getActionButtonText = computed(() => {
+  switch (shareMethod.value) {
+    case 'whatsapp':
+      return 'KIRIM KE WHATSAPP';
+    case 'email':
+      return 'KIRIM VIA EMAIL';
+    default:
+      return 'DOWNLOAD INVOICE PDF';
+  }
+});
+
+const getActionText = computed(() => {
+  switch (shareMethod.value) {
+    case 'whatsapp':
+      return 'kirim';
+    case 'email':
+      return 'kirim';
+    default:
+      return 'download';
+  }
+});
 </script>
 
 <style scoped>
