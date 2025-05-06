@@ -3,6 +3,7 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import { initAnalytics, trackPageView } from './utils/analytics'
+import { trackNavigation, initPerformanceTracking } from './utils/performance'
 import i18n from './i18n'
 
 // Import Toast
@@ -12,12 +13,36 @@ import "vue-toastification/dist/index.css";
 // Import CSS
 import './assets/main.css'
 
+// Initialize performance tracking
+initPerformanceTracking();
+
 // Google Analytics measurement ID
 const GA_MEASUREMENT_ID = 'G-97KBR0Q41J'
 
 // Initialize our analytics utility with the measurement ID early
 // This will trigger script loading if needed
 initAnalytics(GA_MEASUREMENT_ID)
+
+// Check if fonts are already loaded from session storage
+function checkPreloadedFonts() {
+  try {
+    if (sessionStorage.getItem('fonts-loaded') === 'true') {
+      document.documentElement.classList.add('fonts-loaded');
+      return true;
+    }
+  } catch (e) {
+    // Ignore storage errors
+  }
+  return false;
+}
+
+// Initial check for preloaded fonts
+checkPreloadedFonts();
+
+// Mark document as font loading in progress
+if (!document.documentElement.classList.contains('fonts-loaded')) {
+  document.documentElement.classList.add('fonts-loading');
+}
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -52,6 +77,11 @@ router.beforeEach((to, from, next) => {
 router.afterEach((to) => {
   // Track page view using our utility
   trackPageView(to.path, to.meta.title || 'Faktur.web.id')
+  
+  // Track performance metrics for page navigation
+  if (to.name) {
+    trackNavigation(to.name);
+  }
 })
 
 app.use(pinia)

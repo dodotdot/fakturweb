@@ -6,9 +6,19 @@
   <meta name="theme-color" content="#FF5733">
   <meta name="msapplication-TileColor" content="#FF5733">
   
-  <!-- Preconnect to important domains -->
+  <!-- Resource Hints Manager (should be as early as possible) -->
+  <script src="/js/resource-hints.js"></script>
+  
+  <!-- Preconnect to important domains - these will be managed by resource-hints.js -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <!-- Preload critical fonts -->
+  <link rel="preload" as="font" href="https://fonts.gstatic.com/s/inter/v12/UcC73FwrK3iLTeHuS_fvQtMwCp50KnMa1ZL7.woff2" crossorigin>
+  <link rel="preload" as="font" href="https://fonts.gstatic.com/s/plusjakartasans/v8/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA.woff2" crossorigin>
+  
+  <!-- Our custom font styles with optimizations -->
+  <link rel="stylesheet" href="/styles/fonts.css">
   
   <!-- Basic SEO tags - will be overridden by SeoHead component -->
   <title>Faktur.web.id - Solusi Pengelolaan Faktur Online Terbaik untuk Freelancer, Bisnis modern, Content creator dan UMKM Indonesia</title>
@@ -38,9 +48,6 @@
   <meta property="twitter:title" content="Faktur.web.id - Solusi Faktur Online Terbaik untuk UMKM Indonesia" />
   <meta property="twitter:description" content="Buat faktur profesional dengan mudah menggunakan faktur.web.id. Platform faktur online terbaik untuk UMKM Indonesia." />
   <meta property="twitter:image" content="https://faktur.web.id/images/og-image.png" />
-  
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
   <!-- Preload critical assets -->
   <link rel="preload" href="/images/faktur-logo.png" as="image">
@@ -89,9 +96,11 @@
   <link rel="dns-prefetch" href="https://www.google-analytics.com">
   
   <link rel="stylesheet" href="/styles/landing.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Add fonts-loading class to enable styling during font loading -->
+  <script>
+    document.documentElement.classList.add('fonts-loading');
+  </script>
 </head>
 <body>
   <header class="navbar">
@@ -457,6 +466,8 @@
     </div>
   </footer>
 
+  <!-- Advanced font loading script -->
+  <script src="/js/font-loader.js"></script>
   <script src="/js/landing.js"></script>
 </body>
 </html> 

@@ -5,11 +5,13 @@ import { useAuthStore } from './stores/auth';
 import SeoHead from './components/SeoHead.vue';
 import Navbar from './components/layout/Navbar.vue';
 import Sidebar from './components/layout/Sidebar.vue';
+import FontLoader from './components/FontLoader.vue';
 import './assets/landing.css'; // Import landing page styles
 
 const route = useRoute();
 const authStore = useAuthStore();
 const isSidebarOpen = ref(false);
+const fontsLoaded = ref(false);
 
 // Computed SEO properties
 const pageTitle = computed(() => route.meta.title || 'Faktur.web.id - Solusi Faktur Online');
@@ -53,6 +55,15 @@ function closeSidebar() {
   }
 }
 
+// Handle font loading completion
+function handleFontsLoaded() {
+  fontsLoaded.value = true;
+  // Track performance metric if needed
+  if (window.performance && window.performance.now) {
+    console.log('Fonts loaded in', Math.round(window.performance.now()), 'ms');
+  }
+}
+
 // Compute whether we can show the navbar based on the route
 const canShowNavbar = computed(() => {
   return !route.meta.hideNavbar;
@@ -77,6 +88,9 @@ document.head.appendChild(printStyles);
 </script>
 
 <template>
+  <!-- Font Loader Component -->
+  <FontLoader @fonts-loaded="handleFontsLoaded" />
+  
   <!-- SEO meta tags -->
   <SeoHead
     :title="pageTitle"
@@ -152,9 +166,8 @@ document.head.appendChild(printStyles);
 </template>
 
 <style>
-/* Global styles */
+/* Global styles - using fonts.css for font definitions */
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: #333;
   line-height: 1.6;
   background-color: #f9fafb; /* gray-50 */
