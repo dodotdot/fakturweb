@@ -1,0 +1,22 @@
+# robots.txt for faktur.web.id
+
+User-agent: *
+Allow: /
+Allow: /invoice/guest
+Allow: /beta
+Allow: /privacy
+Allow: /terms
+Allow: /faq
+
+# Disallow admin and dashboard areas
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+Disallow: /reset-password
+
+# Disallow API endpoints
+Disallow: /api/
+
+# Add sitemap location
+Sitemap: https://faktur.web.id/sitemap.xml 

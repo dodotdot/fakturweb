@@ -254,9 +254,9 @@ const routes = [
     name: 'GuestInvoice',
     component: () => import('../views/GuestInvoice.vue'),
     meta: {
-      title: 'Faktur - Detail Tagihan',
-      description: 'Lihat detail faktur dan tagihan untuk pelanggan.',
-      keywords: 'lihat faktur, tagihan pelanggan, faktur online, cek faktur',
+      title: 'Faktur - Buat Faktur Online Gratis',
+      description: 'Buat faktur online gratis untuk pelanggan Anda dengan mudah dan cepat.',
+      keywords: 'buat faktur online, faktur gratis, faktur online gratis, faktur online gratis untuk pelanggan',
       requiresAuth: false,
       hideNavbar: false,
       noSidebar: true

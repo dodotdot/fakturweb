@@ -28,6 +28,14 @@ const props = defineProps({
   type: {
     type: String,
     default: 'website'
+  },
+  canonical: {
+    type: String,
+    default: ''
+  },
+  lang: {
+    type: String,
+    default: 'id-ID'
   }
 });
 
@@ -35,6 +43,9 @@ const props = defineProps({
 function updateMetaTags() {
   // Update document title
   document.title = props.title;
+  
+  // Set document language
+  document.documentElement.setAttribute('lang', props.lang);
   
   // Basic meta tags
   updateMetaTag('description', props.description);
@@ -46,12 +57,24 @@ function updateMetaTags() {
   updateMetaTag('og:image', props.image);
   updateMetaTag('og:type', props.type);
   updateMetaTag('og:url', window.location.href);
+  updateMetaTag('og:site_name', 'Faktur.web.id');
+  updateMetaTag('og:locale', 'id_ID');
   
   // Twitter Card
   updateMetaTag('twitter:card', 'summary_large_image');
   updateMetaTag('twitter:title', props.title);
   updateMetaTag('twitter:description', props.description);
   updateMetaTag('twitter:image', props.image);
+  
+  // Additional SEO meta tags
+  updateMetaTag('author', 'Faktur.web.id');
+  updateMetaTag('robots', 'index, follow');
+  
+  // Set canonical URL
+  updateCanonicalLink();
+
+  // Add JSON-LD structured data for better rich snippets
+  addStructuredData();
 }
 
 // Helper function to update or create meta tags
@@ -79,6 +102,57 @@ function updateMetaTag(name, content) {
   meta.setAttribute('content', content);
 }
 
+// Set canonical URL to avoid duplicate content issues
+function updateCanonicalLink() {
+  let canonicalUrl = props.canonical || window.location.href.split('?')[0].split('#')[0];
+  
+  // Remove or update existing canonical
+  const existingCanonical = document.querySelector('link[rel="canonical"]');
+  if (existingCanonical) {
+    existingCanonical.setAttribute('href', canonicalUrl);
+  } else {
+    const link = document.createElement('link');
+    link.setAttribute('rel', 'canonical');
+    link.setAttribute('href', canonicalUrl);
+    document.head.appendChild(link);
+  }
+}
+
+// Add structured data for better rich snippets in search results
+function addStructuredData() {
+  // Remove any existing structured data
+  const existingScript = document.querySelector('script[type="application/ld+json"]');
+  if (existingScript) {
+    existingScript.remove();
+  }
+  
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Faktur.web.id",
+    "url": "https://faktur.web.id",
+    "description": props.description,
+    "applicationCategory": "BusinessApplication",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "IDR"
+    },
+    "operatingSystem": "All",
+    "screenshot": props.image,
+    "author": {
+      "@type": "Organization",
+      "name": "Faktur.web.id",
+      "url": "https://faktur.web.id"
+    }
+  };
+  
+  const script = document.createElement('script');
+  script.setAttribute('type', 'application/ld+json');
+  script.textContent = JSON.stringify(structuredData);
+  document.head.appendChild(script);
+}
+
 // Update meta tags when component is mounted
 onMounted(() => {
   updateMetaTags();
@@ -86,7 +160,7 @@ onMounted(() => {
 
 // Update meta tags when route or props change
 watch(
-  [() => props.title, () => props.description, () => props.keywords, () => props.image, () => props.type, () => route.path], 
+  [() => props.title, () => props.description, () => props.keywords, () => props.image, () => props.type, () => props.canonical, () => route.path], 
   () => {
     updateMetaTags();
   }
