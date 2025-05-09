@@ -444,6 +444,23 @@
     </div>
   </div>
 
+  <!-- PDF Generation Loading Overlay -->
+  <div class="pdf-generating-overlay" :class="{ 'active': isGenerating }" aria-live="polite">
+    <!-- Mobile-specific elements (shown only on mobile) -->
+    <div class="pdf-generating-spinner"></div>
+    <div class="pdf-generating-text">{{ pdfGenerationStatus }}</div>
+    <div class="pdf-generating-progress">
+      <div class="pdf-generating-progress-bar" :style="{ width: pdfGenerationProgress + '%' }"></div>
+    </div>
+    
+    <!-- Desktop-specific elements (hidden on mobile) -->
+    <div class="desktop-pdf-spinner"></div>
+    <div class="desktop-pdf-text">{{ pdfGenerationStatus }}</div>
+    <div class="desktop-pdf-progress">
+      <div class="pdf-generating-progress-bar" :style="{ width: pdfGenerationProgress + '%' }"></div>
+    </div>
+  </div>
+
   <!-- Registration Benefits Modal -->
   <div v-if="showRegisterModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
     <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -635,7 +652,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import html2pdf from 'html2pdf.js';
 import { invoiceEvents, trackPageView } from '../utils/analytics';
@@ -698,6 +715,10 @@ const processState = ref({
   message: '',
   error: null
 });
+
+// Add these new refs for the PDF generation status
+const pdfGenerationStatus = ref('Preparing document...');
+const pdfGenerationProgress = ref(0);
 
 onMounted(() => {
   // Track invoice preview page view
@@ -960,6 +981,11 @@ async function processPDFDownload() {
   try {
     console.log('Starting PDF generation...');
     isGenerating.value = true;
+    pdfGenerationStatus.value = 'Preparing document...';
+    pdfGenerationProgress.value = 10;
+    
+    // Add class to body to prevent scrolling
+    document.body.classList.add('generating-pdf');
 
     // Track PDF generation start
     invoiceEvents.download(invoice.value.title || 'Untitled Invoice', calculateTotal());
@@ -967,6 +993,11 @@ async function processPDFDownload() {
     // Add PDF class and remove shadows
     const element = invoicePrintRef.value;
     element.classList.add('pdf-mode');
+    
+    // Update progress
+    pdfGenerationStatus.value = 'Processing content...';
+    pdfGenerationProgress.value = 30;
+    await updateProgressWithDelay(40);
     
     // Remove all shadow-related classes
     element.querySelectorAll('[class*="shadow"]').forEach(el => {
@@ -977,6 +1008,11 @@ async function processPDFDownload() {
         }
       });
     });
+
+    // Update progress
+    pdfGenerationStatus.value = 'Loading images...';
+    pdfGenerationProgress.value = 50;
+    await updateProgressWithDelay(60);
 
     // Ensure all images are loaded before PDF generation
     const images = element.getElementsByTagName('img');
@@ -995,6 +1031,11 @@ async function processPDFDownload() {
         }
       });
     }));
+
+    // Update progress
+    pdfGenerationStatus.value = 'Generating PDF...';
+    pdfGenerationProgress.value = 70;
+    await updateProgressWithDelay(80);
 
     // A4 dimensions in pixels (96 DPI)
     const a4Width = 794;  // 210mm
@@ -1050,26 +1091,46 @@ async function processPDFDownload() {
     };
 
     // Add a small delay to ensure all styles are applied
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await updateProgressWithDelay(90);
 
     console.log('Generating PDF with options:', options);
-
+    
     // Generate PDF
+    pdfGenerationStatus.value = 'Finalizing document...';
     const pdf = await html2pdf()
       .from(element)
       .set(options)
       .save();
 
+    // Update progress to 100% when complete
+    pdfGenerationProgress.value = 100;
+    pdfGenerationStatus.value = 'PDF downloaded successfully!';
+      
+    // Add a delay before hiding the overlay for user to see success message
+    await new Promise(resolve => setTimeout(resolve, 1000));
+      
     console.log('PDF generation completed');
     element.classList.remove('pdf-mode');
     return true;
   } catch (error) {
     console.error('PDF generation error:', error);
-    alert('Error generating PDF: ' + (error.message || 'Unknown error'));
-    throw error;
+    pdfGenerationStatus.value = 'Error generating PDF. Please try again.';
+    // Show error for 2 seconds then hide overlay
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    return false;
   } finally {
     isGenerating.value = false;
+    document.body.classList.remove('generating-pdf');
   }
+}
+
+// Helper function to update progress with a small delay to show animation
+async function updateProgressWithDelay(targetProgress) {
+  // Wait for UI to update
+  await nextTick();
+  // Add a small delay for the progress animation
+  await new Promise(resolve => setTimeout(resolve, 300));
+  pdfGenerationProgress.value = targetProgress;
 }
 
 // Update validation to include more specific checks
@@ -1292,6 +1353,8 @@ const getActionText = computed(() => {
 </script>
 
 <style scoped>
+@import '../assets/mobile-styles.css';
+
 /* PDF mode styles */
 :deep(.pdf-mode) {
   width: 778px !important;
@@ -1413,5 +1476,31 @@ const getActionText = computed(() => {
   break-inside: avoid !important;
   break-before: avoid !important;
   break-after: avoid !important;
+}
+
+/* PDF Generation Loading Overlay - Fallback styles if CSS file doesn't load */
+/* These styles are provided as fallbacks but will be overridden by the CSS file */
+@media (max-width: 1023px) {
+  .pdf-generating-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.9);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  
+  .pdf-generating-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
 }
 </style> 

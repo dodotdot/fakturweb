@@ -291,10 +291,27 @@
       </div>
     </div>
   </div>
+  
+  <!-- PDF Generation Loading Overlay -->
+  <div class="pdf-generating-overlay" :class="{ 'active': isPrinting }" aria-live="polite">
+    <!-- Mobile-specific elements (shown only on mobile) -->
+    <div class="pdf-generating-spinner"></div>
+    <div class="pdf-generating-text">{{ pdfGenerationStatus }}</div>
+    <div class="pdf-generating-progress">
+      <div class="pdf-generating-progress-bar" :style="{ width: pdfGenerationProgress + '%' }"></div>
+    </div>
+    
+    <!-- Desktop-specific elements (hidden on mobile) -->
+    <div class="desktop-pdf-spinner"></div>
+    <div class="desktop-pdf-text">{{ pdfGenerationStatus }}</div>
+    <div class="desktop-pdf-progress">
+      <div class="pdf-generating-progress-bar" :style="{ width: pdfGenerationProgress + '%' }"></div>
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 import { supabase } from '../lib/supabase';
 import html2pdf from 'html2pdf.js';
@@ -307,6 +324,10 @@ const error = ref(null);
 const isPrinting = ref(false);
 const invoicePrintRef = ref(null);
 const selectedTheme = ref('classic');  // Default theme
+
+// Additional state for PDF generation
+const pdfGenerationStatus = ref('Preparing document...');
+const pdfGenerationProgress = ref(0);
 
 // Fetch the invoice details
 async function fetchInvoice() {
@@ -406,23 +427,101 @@ function formatDate(dateString) {
   }).format(date);
 }
 
-// Download PDF
+// Update the downloadPDF function
 async function downloadPDF() {
   if (!invoicePrintRef.value) return;
   
   try {
     isPrinting.value = true;
+    pdfGenerationStatus.value = 'Preparing document...';
+    pdfGenerationProgress.value = 10;
+    
+    // Add class to body to prevent scrolling
+    document.body.classList.add('generating-pdf');
     
     const invoiceElement = invoicePrintRef.value;
+    
+    // Add PDF class to improve rendering
+    invoiceElement.classList.add('pdf-mode');
+    
+    // Update progress
+    pdfGenerationStatus.value = 'Processing content...';
+    pdfGenerationProgress.value = 30;
+    await updateProgressWithDelay(40);
+    
     const opt = {
       margin: [10, 10, 10, 10],
       filename: `Invoice-${invoice.value.title.replace(/\s+/g, '-')}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      html2canvas: { 
+        scale: 2, 
+        useCORS: true,
+        allowTaint: true,
+        logging: true // Enable logging for debugging
+      },
+      jsPDF: { 
+        unit: 'mm', 
+        format: 'a4', 
+        orientation: 'portrait',
+        compress: true // Add compression to help with iOS rendering
+      }
     };
     
-    await html2pdf().set(opt).from(invoiceElement).save();
+    // Check if this is Safari on iOS/iPadOS
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    
+    // Update progress
+    pdfGenerationStatus.value = 'Loading images...';
+    pdfGenerationProgress.value = 50;
+    await updateProgressWithDelay(60);
+    
+    // Ensure all images are loaded before PDF generation
+    const images = invoiceElement.getElementsByTagName('img');
+    await Promise.all(Array.from(images).map(img => {
+      return new Promise((resolve) => {
+        if (img.complete) {
+          resolve();
+        } else {
+          img.onload = () => resolve();
+          img.onerror = () => resolve(); // Continue even if image fails to load
+        }
+      });
+    }));
+    
+    // Update progress
+    pdfGenerationStatus.value = 'Generating PDF...';
+    pdfGenerationProgress.value = 70;
+    await updateProgressWithDelay(80);
+    
+    // Safari on iOS requires a double-generation approach to fix blank PDF issue
+    if (isSafari && isIOS) {
+      pdfGenerationStatus.value = 'Optimizing for iOS...';
+      // First generation (will likely be blank on iOS Safari, but primes the renderer)
+      await html2pdf().from(invoiceElement).set(opt).output('blob');
+      
+      pdfGenerationProgress.value = 90;
+      pdfGenerationStatus.value = 'Finalizing document...';
+      await updateProgressWithDelay(95);
+      
+      // Second generation (should be properly rendered)
+      await html2pdf().from(invoiceElement).set(opt).save();
+    } else {
+      // Normal flow for non-Safari/iOS browsers
+      pdfGenerationStatus.value = 'Finalizing document...';
+      pdfGenerationProgress.value = 90;
+      await updateProgressWithDelay(95);
+      
+      await html2pdf().from(invoiceElement).set(opt).save();
+    }
+    
+    // Update progress to 100% when complete
+    pdfGenerationProgress.value = 100;
+    pdfGenerationStatus.value = 'PDF downloaded successfully!';
+    
+    // Add a delay before hiding the overlay for user to see success message
+    await new Promise(resolve => setTimeout(resolve, 1000));
     
     // Record this PDF generation for tracking
     try {
@@ -432,12 +531,26 @@ async function downloadPDF() {
       // Continue anyway, as this is just for analytics
     }
     
+    // Remove PDF mode class
+    invoiceElement.classList.remove('pdf-mode');
   } catch (err) {
     console.error('Error generating PDF:', err);
-    error.value = 'Failed to generate PDF. Please try again.';
+    pdfGenerationStatus.value = 'Error generating PDF. Please try again.';
+    // Show error for 2 seconds then hide overlay
+    await new Promise(resolve => setTimeout(resolve, 2000));
   } finally {
     isPrinting.value = false;
+    document.body.classList.remove('generating-pdf');
   }
+}
+
+// Helper function to update progress with a small delay to show animation
+async function updateProgressWithDelay(targetProgress) {
+  // Wait for UI to update
+  await nextTick();
+  // Add a small delay for the progress animation
+  await new Promise(resolve => setTimeout(resolve, 300));
+  pdfGenerationProgress.value = targetProgress;
 }
 
 // Record analytics when viewing or sharing
@@ -461,9 +574,37 @@ onMounted(() => {
 </script>
 
 <style scoped>
+@import '../assets/mobile-styles.css';
+
+/* PDF printing styles */
 @media print {
   .no-print {
     display: none;
+  }
+}
+
+/* Fallback styles for PDF overlay - these are overridden by mobile-styles.css */
+@media (max-width: 1023px) {
+  .pdf-generating-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.9);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  
+  .pdf-generating-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
   }
 }
 </style> 

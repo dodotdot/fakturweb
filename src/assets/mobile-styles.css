@@ -172,6 +172,88 @@
     max-width: 320px;
   }
 
+  /* Smooth PDF generation overlay for InvoicePreview */
+  .pdf-generating-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.9);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  .pdf-generating-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .pdf-generating-spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: hsl(var(--primary));
+    border-radius: 50%;
+    animation: pdf-spinner 1s linear infinite;
+    margin-bottom: 16px;
+  }
+
+  .pdf-generating-text {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    text-align: center;
+    max-width: 80%;
+  }
+
+  .pdf-generating-progress {
+    width: 200px;
+    height: 6px;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+    margin-top: 12px;
+    overflow: hidden;
+  }
+
+  .pdf-generating-progress-bar {
+    height: 100%;
+    background-color: hsl(var(--primary));
+    width: 0%;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+  }
+
+  @keyframes pdf-spinner {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* Disable scrolling and prevent interaction during PDF generation */
+  body.generating-pdf {
+    overflow: hidden !important;
+  }
+
+  /* Add container styles for PDF generation */
+  .pdf-container {
+    position: relative;
+    transition: all 0.3s ease;
+  }
+
+  .pdf-container.generating {
+    transform: scale(0.98);
+    opacity: 0.7;
+    pointer-events: none;
+  }
+
   /* Ensure content is visible during PDF generation */
   .pdf-mode {
     display: block !important;
@@ -183,6 +265,8 @@
     transform: none !important;
     transition: none !important;
     animation: none !important;
+    max-width: none !important;
+    max-height: none !important;
   }
 
   /* Force background colors and images to show in PDF */
@@ -190,6 +274,9 @@
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     color-adjust: exact !important;
+    background-origin: content-box !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
 
   /* Ensure proper image rendering */
@@ -199,6 +286,12 @@
     object-fit: contain !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
+    transform: translateZ(0) !important; /* Force hardware acceleration */
+    -webkit-transform: translateZ(0) !important;
+    -webkit-backface-visibility: hidden !important;
+    backface-visibility: hidden !important;
+    visibility: visible !important;
+    opacity: 1 !important;
   }
 
   /* Improve table rendering */
@@ -247,6 +340,13 @@
     max-width: 100% !important;
     padding: 0 !important;
     margin: 0 !important;
+  }
+  
+  /* Hide desktop loader styles when on mobile */
+  .desktop-pdf-spinner,
+  .desktop-pdf-text,
+  .desktop-pdf-progress {
+    display: none !important;
   }
 }
 
@@ -344,6 +444,22 @@
     padding: 10px 20px;
     font-size: 15px;
     max-width: 280px;
+  }
+
+  /* Adjust PDF generation overlay for smaller screens */
+  .pdf-generating-spinner {
+    width: 40px;
+    height: 40px;
+    border-width: 3px;
+  }
+
+  .pdf-generating-text {
+    font-size: 14px;
+  }
+
+  .pdf-generating-progress {
+    width: 180px;
+    height: 5px;
   }
 }
 
@@ -447,6 +563,22 @@
     font-size: 14px;
     max-width: 240px;
   }
+
+  /* Adjust PDF generation overlay for very small screens */
+  .pdf-generating-spinner {
+    width: 32px;
+    height: 32px;
+    border-width: 3px;
+  }
+
+  .pdf-generating-text {
+    font-size: 13px;
+  }
+
+  .pdf-generating-progress {
+    width: 160px;
+    height: 4px;
+  }
 }
 
 /* Safe area insets for notched devices */
@@ -459,6 +591,11 @@
   .mt-8.flex.justify-center.space-x-4 {
     padding-bottom: max(80px, calc(80px + env(safe-area-inset-bottom)));
   }
+
+  .pdf-generating-overlay {
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-top: max(20px, env(safe-area-inset-top));
+  }
 }
 
 /* Fix for iOS Safari 100vh issue */
@@ -469,5 +606,85 @@
   
   .mobile-preview-mode {
     min-height: calc(-webkit-fill-available - 160px);
+  }
+
+  .pdf-generating-overlay {
+    height: -webkit-fill-available;
+  }
+}
+
+/* Desktop styles for PDF generation overlay */
+@media (min-width: 1024px) {
+  .pdf-generating-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.92);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+
+  .pdf-generating-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .pdf-generating-spinner {
+    width: 64px;
+    height: 64px;
+    border: 5px solid rgba(0, 0, 0, 0.1);
+    border-left-color: hsl(var(--primary));
+    border-radius: 50%;
+    animation: pdf-spinner 1s linear infinite;
+    margin-bottom: 24px;
+  }
+
+  .pdf-generating-text {
+    font-size: 18px;
+    font-weight: 500;
+    color: #333;
+    text-align: center;
+    max-width: 60%;
+    margin-bottom: 16px;
+  }
+
+  .pdf-generating-progress {
+    width: 300px;
+    height: 8px;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    margin-top: 16px;
+    overflow: hidden;
+  }
+
+  .pdf-generating-progress-bar {
+    height: 100%;
+    background-color: hsl(var(--primary));
+    width: 0%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+  }
+
+  /* Add subtle shadow to make it pop on desktop */
+  .pdf-generating-text, 
+  .pdf-generating-progress {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Add classes for desktop-specific elements that will be hidden on mobile */
+  .desktop-pdf-spinner,
+  .desktop-pdf-text,
+  .desktop-pdf-progress {
+    display: block;
   }
 } 
