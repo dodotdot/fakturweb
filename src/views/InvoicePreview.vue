@@ -770,14 +770,24 @@ function formatDate(dateString) {
 }
 
 function downloadPDF() {
-  shareMethod.value = 'pdf';
-  showRegisterModal.value = true;
-  
-  // Track the modal view using the correct method
-  invoiceEvents.download(
-    invoice.value.title || 'Untitled Invoice',
-    calculateTotal()
-  );
+  if (isGenerating.value) {
+    console.log('PDF generation already in progress');
+    return;
+  }
+
+  try {
+    console.log('Starting PDF download process...');
+    shareMethod.value = 'pdf';
+    showRegisterModal.value = true;
+    
+    // Track the modal view
+    invoiceEvents.download(
+      invoice.value.title || 'Untitled Invoice',
+      calculateTotal()
+    );
+  } catch (error) {
+    alert('Error preparing PDF download: ' + (error.message || 'Unknown error'));
+  }
 }
 
 async function processDownload() {
@@ -943,10 +953,14 @@ async function processEmailShare() {
 
 async function processPDFDownload() {
   if (!invoicePrintRef.value) {
-    throw new Error('PDF container not found');
+    alert('Error: PDF container not found. Please try refreshing the page.');
+    return;
   }
 
   try {
+    console.log('Starting PDF generation...');
+    isGenerating.value = true;
+
     // Track PDF generation start
     invoiceEvents.download(invoice.value.title || 'Untitled Invoice', calculateTotal());
 
@@ -963,6 +977,24 @@ async function processPDFDownload() {
         }
       });
     });
+
+    // Ensure all images are loaded before PDF generation
+    const images = element.getElementsByTagName('img');
+    
+    await Promise.all(Array.from(images).map(img => {
+      return new Promise((resolve) => {
+        if (img.complete) {
+          resolve();
+        } else {
+          img.onload = () => {
+            resolve();
+          };
+          img.onerror = () => {
+            resolve(); // Continue even if image fails to load
+          };
+        }
+      });
+    }));
 
     // A4 dimensions in pixels (96 DPI)
     const a4Width = 794;  // 210mm
@@ -986,7 +1018,24 @@ async function processPDFDownload() {
         windowWidth: a4Width - 16,
         windowHeight: a4Height - 10,
         removeContainer: true,
-        backgroundColor: '#ffffff'
+        backgroundColor: '#ffffff',
+        logging: true, // Enable logging
+        onclone: (clonedDoc) => {
+          console.log('Cloning document for PDF...');
+          // Ensure all content is visible in the clone
+          const clonedElement = clonedDoc.querySelector('.pdf-mode');
+          if (clonedElement) {
+            clonedElement.style.display = 'block';
+            clonedElement.style.visibility = 'visible';
+            clonedElement.style.opacity = '1';
+            clonedElement.style.position = 'relative';
+            clonedElement.style.height = 'auto';
+            clonedElement.style.overflow = 'visible';
+            console.log('PDF mode styles applied to clone');
+          } else {
+            console.warn('Could not find .pdf-mode element in clone');
+          }
+        }
       },
       jsPDF: { 
         unit: 'mm', 
@@ -1000,17 +1049,26 @@ async function processPDFDownload() {
       pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
     };
 
+    // Add a small delay to ensure all styles are applied
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    console.log('Generating PDF with options:', options);
+
     // Generate PDF
-    await html2pdf()
+    const pdf = await html2pdf()
       .from(element)
       .set(options)
       .save();
 
+    console.log('PDF generation completed');
     element.classList.remove('pdf-mode');
     return true;
   } catch (error) {
     console.error('PDF generation error:', error);
+    alert('Error generating PDF: ' + (error.message || 'Unknown error'));
     throw error;
+  } finally {
+    isGenerating.value = false;
   }
 }
 

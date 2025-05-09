@@ -171,6 +171,83 @@
     width: 100%;
     max-width: 320px;
   }
+
+  /* Ensure content is visible during PDF generation */
+  .pdf-mode {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+    height: auto !important;
+    overflow: visible !important;
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+
+  /* Force background colors and images to show in PDF */
+  .pdf-mode * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  /* Ensure proper image rendering */
+  .pdf-mode img {
+    max-width: 100% !important;
+    height: auto !important;
+    object-fit: contain !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Improve table rendering */
+  .pdf-mode table {
+    width: 100% !important;
+    table-layout: fixed !important;
+    border-collapse: collapse !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .pdf-mode th,
+  .pdf-mode td {
+    padding: 8px !important;
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+    word-break: break-word !important;
+  }
+
+  /* Ensure text is readable */
+  .pdf-mode p,
+  .pdf-mode span,
+  .pdf-mode div {
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+    color: #000 !important;
+  }
+
+  /* Ensure proper spacing */
+  .pdf-mode .mb-4 { margin-bottom: 16px !important; }
+  .pdf-mode .mb-6 { margin-bottom: 24px !important; }
+  .pdf-mode .mb-8 { margin-bottom: 32px !important; }
+  .pdf-mode .mt-4 { margin-top: 16px !important; }
+  .pdf-mode .mt-6 { margin-top: 24px !important; }
+  .pdf-mode .mt-8 { margin-top: 32px !important; }
+
+  /* Ensure proper page breaks */
+  .pdf-mode .page-break {
+    page-break-before: always !important;
+    break-before: page !important;
+  }
+
+  /* Ensure proper container width */
+  .pdf-mode .container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
 }
 
 /* Small devices (phones) */
