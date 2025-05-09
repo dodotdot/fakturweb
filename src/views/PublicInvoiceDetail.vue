@@ -11,15 +11,6 @@
               View and download this invoice
             </p>
           </div>
-          <div class="flex gap-3 no-print">
-            <button 
-              @click="downloadPDF"
-              class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 disabled:opacity-70"
-              :disabled="isPrinting"
-            >
-              {{ isPrinting ? 'Generating PDF...' : 'Download PDF' }}
-            </button>
-          </div>
         </div>
         
         <div v-if="error" class="my-4 p-4 bg-red-50 text-red-500 rounded-md no-print">
@@ -287,6 +278,17 @@
           }">
             Powered by 🔥 <a href="/" class="underline">Faktur.web.id</a>
           </div>
+        </div>
+        
+        <!-- Add action buttons at the bottom -->
+        <div class="flex gap-3 mt-8 justify-center no-print">
+          <button 
+            @click="downloadPDF"
+            class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 disabled:opacity-70"
+            :disabled="isPrinting"
+          >
+            {{ isPrinting ? 'Generating PDF...' : 'Download PDF' }}
+          </button>
         </div>
       </div>
     </div>

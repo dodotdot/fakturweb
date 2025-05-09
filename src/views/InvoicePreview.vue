@@ -59,66 +59,6 @@
             {{ translations.createInvoiceMessage }}
           </p>
         </div>
-        <div class="flex sm:flex-row w-full sm:w-auto gap-3 justify-center">
-          <button
-            @click="backToEdit"
-            class="min-h-[44px] w-[44px] sm:w-auto px-3 sm:px-4 py-2.5 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200 active:bg-gray-300 font-medium flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 relative group"
-            title="Edit Invoice"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-            </svg>
-            <span class="hidden sm:inline-block ml-2">Edit</span>
-            <!-- Tooltip for mobile -->
-            <span class="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none sm:hidden">
-              Edit Invoice
-            </span>
-          </button>
-          <button 
-            @click="shareToWhatsApp"
-            class="min-h-[44px] w-[44px] sm:w-auto px-3 sm:px-4 py-2.5 bg-green-500 text-white rounded-md hover:bg-green-600 active:bg-green-700 font-medium flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 relative group"
-            title="Share via WhatsApp"
-          >
-            <svg class="h-5 w-5" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-              <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/>
-            </svg>
-            <span class="hidden sm:inline-block ml-2">WhatsApp</span>
-            <span class="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none sm:hidden">
-              Share via WhatsApp
-            </span>
-          </button>
-          <button 
-            @click="shareViaEmail"
-            class="min-h-[44px] w-[44px] sm:w-auto px-3 sm:px-4 py-2.5 bg-blue-500 text-white rounded-md hover:bg-blue-600 active:bg-blue-700 font-medium flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 relative group"
-            title="Share via Email"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-              <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-            </svg>
-            <span class="hidden sm:inline-block ml-2">Email</span>
-            <span class="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none sm:hidden">
-              Share via Email
-            </span>
-          </button>
-          <button 
-            @click="downloadPDF"
-            class="min-h-[44px] w-[44px] sm:w-auto px-3 sm:px-4 py-2.5 bg-primary text-white rounded-md hover:bg-primary/90 active:bg-primary/80 font-medium flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed relative group"
-            :disabled="isGenerating"
-            title="Download PDF"
-          >
-            <img src="/images/pdf-icon.svg" alt="PDF" class="h-5 w-5" />
-            <span class="hidden sm:inline-block ml-2">{{ isGenerating ? 'Membuat PDF...' : 'PDF' }}</span>
-            <!-- Loading spinner -->
-            <div v-if="isGenerating" class="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center rounded-md">
-              <div class="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
-            </div>
-            <!-- Tooltip for mobile -->
-            <span class="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none sm:hidden">
-              Download PDF
-            </span>
-          </button>
-        </div>
       </div>
       
       <!-- Theme Selector -->
@@ -648,6 +588,68 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- Add buttons at the bottom (after the invoice view) -->
+  <div class="mt-8 flex sm:flex-row w-full gap-3 justify-center">
+    <button
+      @click="backToEdit"
+      class="min-h-[44px] w-[44px] sm:w-auto px-3 sm:px-4 py-2.5 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200 active:bg-gray-300 font-medium flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 relative group"
+      title="Edit Invoice"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+      </svg>
+      <span class="hidden sm:inline-block ml-2">Edit</span>
+      <!-- Tooltip for mobile -->
+      <span class="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none sm:hidden">
+        Edit Invoice
+      </span>
+    </button>
+    <button 
+      @click="shareToWhatsApp"
+      class="min-h-[44px] w-[44px] sm:w-auto px-3 sm:px-4 py-2.5 bg-green-500 text-white rounded-md hover:bg-green-600 active:bg-green-700 font-medium flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 relative group"
+      title="Share via WhatsApp"
+    >
+      <svg class="h-5 w-5" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+        <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/>
+      </svg>
+      <span class="hidden sm:inline-block ml-2">WhatsApp</span>
+      <span class="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none sm:hidden">
+        Share via WhatsApp
+      </span>
+    </button>
+    <button 
+      @click="shareViaEmail"
+      class="min-h-[44px] w-[44px] sm:w-auto px-3 sm:px-4 py-2.5 bg-blue-500 text-white rounded-md hover:bg-blue-600 active:bg-blue-700 font-medium flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 relative group"
+      title="Share via Email"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+      </svg>
+      <span class="hidden sm:inline-block ml-2">Email</span>
+      <span class="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none sm:hidden">
+        Share via Email
+      </span>
+    </button>
+    <button 
+      @click="downloadPDF"
+      class="min-h-[44px] w-[44px] sm:w-auto px-3 sm:px-4 py-2.5 bg-primary text-white rounded-md hover:bg-primary/90 active:bg-primary/80 font-medium flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed relative group"
+      :disabled="isGenerating"
+      title="Download PDF"
+    >
+      <img src="/images/pdf-icon.svg" alt="PDF" class="h-5 w-5" />
+      <span class="hidden sm:inline-block ml-2">{{ isGenerating ? 'Membuat PDF...' : 'PDF' }}</span>
+      <!-- Loading spinner -->
+      <div v-if="isGenerating" class="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center rounded-md">
+        <div class="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+      </div>
+      <!-- Tooltip for mobile -->
+      <span class="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none sm:hidden">
+        Download PDF
+      </span>
+    </button>
   </div>
 </template>
 
