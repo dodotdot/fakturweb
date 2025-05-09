@@ -507,18 +507,18 @@
     </div>
   </div>
 
-  <!-- PDF Generation Loading Overlay -->
-  <div class="pdf-generating-overlay" :class="{ 'active': isGenerating }" aria-live="polite">
-    <!-- Mobile-specific elements (shown only on mobile) -->
-    <div class="pdf-generating-spinner"></div>
-    <div class="pdf-generating-text">{{ pdfGenerationStatus }}</div>
-    <div class="pdf-generating-progress">
+  <!-- PDF Generation Overlay -->
+  <div class="pdf-generating-overlay" :class="{ active: isGenerating || pdfGenerationStatus !== '' }">
+    <!-- Mobile Loader (only shows on mobile) -->
+    <div class="mobile-pdf-spinner"></div>
+    <p class="mobile-pdf-text">{{ pdfGenerationStatus }}</p>
+    <div class="mobile-pdf-progress">
       <div class="pdf-generating-progress-bar" :style="{ width: pdfGenerationProgress + '%' }"></div>
     </div>
     
-    <!-- Desktop-specific elements (hidden on mobile) -->
+    <!-- Desktop Loader (only shows on desktop) -->
     <div class="desktop-pdf-spinner"></div>
-    <div class="desktop-pdf-text">{{ pdfGenerationStatus }}</div>
+    <p class="desktop-pdf-text">{{ pdfGenerationStatus }}</p>
     <div class="desktop-pdf-progress">
       <div class="pdf-generating-progress-bar" :style="{ width: pdfGenerationProgress + '%' }"></div>
     </div>
@@ -857,7 +857,7 @@ function previewInvoice() {
 }
 
 // Additional state for PDF generation
-const pdfGenerationStatus = ref('Preparing document...');
+const pdfGenerationStatus = ref('');
 const pdfGenerationProgress = ref(0);
 
 // Update the downloadPDF function
@@ -976,11 +976,20 @@ async function downloadPDF() {
     
     // Remove PDF mode class
     element.classList.remove('pdf-mode');
+    
+    // Reset status and progress
+    pdfGenerationStatus.value = '';
+    pdfGenerationProgress.value = 0;
+    
   } catch (error) {
     console.error('Error generating PDF:', error);
     pdfGenerationStatus.value = 'Error generating PDF. Please try again.';
     // Show error for 2 seconds then hide overlay
     await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // Reset status and progress
+    pdfGenerationStatus.value = '';
+    pdfGenerationProgress.value = 0;
   } finally {
     isGenerating.value = false;
     document.body.classList.remove('generating-pdf');
