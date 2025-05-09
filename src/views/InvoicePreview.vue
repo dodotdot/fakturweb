@@ -59,6 +59,19 @@
             {{ translations.createInvoiceMessage }}
           </p>
         </div>
+        <div>
+          <!-- Update the edit button to always show text -->
+          <button
+            @click="backToEdit"
+            class="min-h-[44px] w-auto px-4 py-2.5 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200 active:bg-gray-300 font-medium flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 relative group"
+            title="Edit Invoice"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+            </svg>
+            <span class="ml-2">Edit</span>
+          </button>
+        </div>
       </div>
       
       <!-- Theme Selector -->
@@ -521,34 +534,28 @@
             <div class="w-full mb-4 bg-gray-50 p-4 rounded-md">
               <h4 class="text-sm font-medium text-gray-700 mb-3">Masukkan Informasi Anda</h4>
               
-              <div class="mb-3">
-                <label for="guest-name" class="block text-xs text-gray-600 mb-1">Nama <span class="text-red-500">*</span></label>
-                <input 
-                  id="guest-name" 
-                  type="text" 
-                  v-model="guestInfo.name" 
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-                  :class="{'border-red-500': formErrors.name}"
-                  placeholder="Nama Lengkap"
-                  required
-                />
-                <div v-if="formErrors.name" class="mt-1 text-xs text-red-500">{{ formErrors.name }}</div>
+              <!-- Add WhatsApp phone validation error message if there is one -->
+              <div class="mb-4">
+                <div class="flex flex-col">
+                  <label for="guest-name" class="text-sm font-medium text-gray-700 mb-1">Nama Anda</label>
+                  <input id="guest-name" v-model="guestInfo.name" type="text" class="rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
+                  <span v-if="formErrors.name" class="text-red-500 text-sm mt-1">{{ formErrors.name }}</span>
+                </div>
               </div>
-              
-              <div class="mb-3">
-                <label for="guest-email" class="block text-xs text-gray-600 mb-1">Email <span class="text-red-500">*</span></label>
-                <input 
-                  id="guest-email" 
-                  type="email" 
-                  v-model="guestInfo.email" 
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-                  :class="{'border-red-500': formErrors.email}"
-                  placeholder="email@anda.com"
-                  required
-                />
-                <div v-if="formErrors.email" class="mt-1 text-xs text-red-500">{{ formErrors.email }}</div>
+
+              <div class="mb-6">
+                <div class="flex flex-col">
+                  <label for="guest-email" class="text-sm font-medium text-gray-700 mb-1">Email Anda</label>
+                  <input id="guest-email" v-model="guestInfo.email" type="email" class="rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
+                  <span v-if="formErrors.email" class="text-red-500 text-sm mt-1">{{ formErrors.email }}</span>
+                </div>
               </div>
-              
+
+              <!-- Add WhatsApp phone validation error message -->
+              <div v-if="formErrors.whatsapp && shareMethod === 'whatsapp'" class="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md text-yellow-800 text-sm">
+                {{ formErrors.whatsapp }}
+              </div>
+
               <div class="flex items-center mb-1">
                 <input 
                   id="save-info" 
@@ -591,64 +598,41 @@
   </div>
 
   <!-- Add buttons at the bottom (after the invoice view) -->
-  <div class="mt-8 flex sm:flex-row w-full gap-3 justify-center">
-    <button
-      @click="backToEdit"
-      class="min-h-[44px] w-[44px] sm:w-auto px-3 sm:px-4 py-2.5 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200 active:bg-gray-300 font-medium flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 relative group"
-      title="Edit Invoice"
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-      </svg>
-      <span class="hidden sm:inline-block ml-2">Edit</span>
-      <!-- Tooltip for mobile -->
-      <span class="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none sm:hidden">
-        Edit Invoice
-      </span>
-    </button>
+  <div class="mt-8 flex flex-wrap w-full gap-3 justify-center">
+    <!-- Add a ref to track the WhatsApp button loading state -->
     <button 
       @click="shareToWhatsApp"
-      class="min-h-[44px] w-[44px] sm:w-auto px-3 sm:px-4 py-2.5 bg-green-500 text-white rounded-md hover:bg-green-600 active:bg-green-700 font-medium flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 relative group"
+      class="min-h-[44px] w-auto px-4 py-2.5 bg-green-500 text-white rounded-md hover:bg-green-600 active:bg-green-700 font-medium flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 relative group"
       title="Share via WhatsApp"
     >
       <svg class="h-5 w-5" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
         <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/>
       </svg>
-      <span class="hidden sm:inline-block ml-2">WhatsApp</span>
-      <span class="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none sm:hidden">
-        Share via WhatsApp
-      </span>
+      <span class="ml-2">WhatsApp</span>
     </button>
     <button 
       @click="shareViaEmail"
-      class="min-h-[44px] w-[44px] sm:w-auto px-3 sm:px-4 py-2.5 bg-blue-500 text-white rounded-md hover:bg-blue-600 active:bg-blue-700 font-medium flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 relative group"
+      class="min-h-[44px] w-auto px-4 py-2.5 bg-blue-500 text-white rounded-md hover:bg-blue-600 active:bg-blue-700 font-medium flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 relative group"
       title="Share via Email"
     >
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
         <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
         <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
       </svg>
-      <span class="hidden sm:inline-block ml-2">Email</span>
-      <span class="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none sm:hidden">
-        Share via Email
-      </span>
+      <span class="ml-2">Email</span>
     </button>
     <button 
       @click="downloadPDF"
-      class="min-h-[44px] w-[44px] sm:w-auto px-3 sm:px-4 py-2.5 bg-primary text-white rounded-md hover:bg-primary/90 active:bg-primary/80 font-medium flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed relative group"
+      class="min-h-[44px] w-auto px-4 py-2.5 bg-primary text-white rounded-md hover:bg-primary/90 active:bg-primary/80 font-medium flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed relative group"
       :disabled="isGenerating"
       title="Download PDF"
     >
       <img src="/images/pdf-icon.svg" alt="PDF" class="h-5 w-5" />
-      <span class="hidden sm:inline-block ml-2">{{ isGenerating ? 'Membuat PDF...' : 'PDF' }}</span>
+      <span class="ml-2">{{ isGenerating ? 'Membuat PDF...' : 'PDF' }}</span>
       <!-- Loading spinner -->
       <div v-if="isGenerating" class="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center rounded-md">
         <div class="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
       </div>
-      <!-- Tooltip for mobile -->
-      <span class="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none sm:hidden">
-        Download PDF
-      </span>
     </button>
   </div>
 </template>
@@ -804,10 +788,7 @@ function downloadPDF() {
     showRegisterModal.value = true;
     
     // Track the modal view
-    invoiceEvents.download(
-      invoice.value.title || 'Untitled Invoice',
-      calculateTotal()
-    );
+    safeTrackEvent('download', invoice.value.title || 'Untitled Invoice', calculateTotal());
   } catch (error) {
     alert('Error preparing PDF download: ' + (error.message || 'Unknown error'));
   }
@@ -891,45 +872,95 @@ async function processDownload() {
 
 async function processWhatsAppShare() {
   try {
-    // Clean up phone number - remove all non-numeric characters
-    const phoneNumber = invoice.value.to.phone.replace(/\D/g, '');
+    debug('Starting WhatsApp share process after form submission');
+    // Start loading
+    isGenerating.value = true;
     
-    if (!phoneNumber) {
-      throw new Error('Nomor telepon penerima invoice harus diisi untuk mengirim via WhatsApp');
+    // Clean up phone number - remove spaces, dashes, etc.
+    let phone = '';
+    if (invoice.value.to?.phone) {
+      phone = invoice.value.to.phone.replace(/\D/g, '');
+      
+      // Add country code if not present (assuming Indonesian number)
+      if (phone.startsWith('0')) {
+        phone = '62' + phone.substring(1);
+      } else if (!phone.startsWith('62') && !phone.startsWith('+62')) {
+        phone = '62' + phone;
+      }
+      
+      // Remove any plus sign
+      phone = phone.replace('+', '');
+      debug('Formatted phone number', phone);
+    } else {
+      debug('No phone number available, using web version');
     }
     
-    // Add country code if not present (assuming Indonesia/62)
-    const formattedPhone = phoneNumber.startsWith('62') ? phoneNumber :
-      phoneNumber.startsWith('0') ? `62${phoneNumber.substring(1)}` : `62${phoneNumber}`;
-
-    // Generate message text
-    const message = `*Invoice dari ${invoice.value.from.name}*\n\n` +
-      `Kepada: ${invoice.value.to.name}\n` +
-      `Tanggal: ${formatDate(invoice.value.date)}\n` +
-      `Total: ${formatCurrency(calculateTotal())}\n\n` +
-      `Detail Item:\n${invoice.value.items.map(item => 
-        `- ${item.description}: ${formatCurrency(item.total)}`
-      ).join('\n')}\n\n` +
-      `Subtotal: ${formatCurrency(calculateSubtotal())}\n` +
-      (invoice.value.showTax ? `Pajak (${invoice.value.taxRate}%): ${formatCurrency(calculateTaxAmount())}\n` : '') +
-      `*Total: ${formatCurrency(calculateTotal())}*\n\n` +
-      (invoice.value.notes ? `Catatan: ${invoice.value.notes}\n\n` : '') +
-      `Dibuat dengan https://faktur.web.id`;
-
-    // Track successful WhatsApp share attempt
-    invoiceEvents.create(invoice.value.title || 'Untitled Invoice', calculateTotal());
-
-    // Encode the message for URL
+    // Generate message text - keep it brief to avoid URL length issues
+    const message = `Invoice ${invoice.value.invoice_number || ""} dari ${invoice.value.from.name || guestInfo.value.name} senilai ${formatCurrency(calculateTotal())}.`;
+    
+    // Track successful share attempt
+    safeTrackEvent('create', invoice.value.title || 'Untitled Invoice', calculateTotal());
+    
+    // Encode message for URL
     const encodedMessage = encodeURIComponent(message);
     
-    // Open WhatsApp with the message and phone number
-    const whatsappUrl = `https://wa.me/${formattedPhone}?text=${encodedMessage}`;
-    window.open(whatsappUrl, '_blank');
-
-    return true;
+    // Create WhatsApp URL
+    let whatsappUrl;
+    if (phone) {
+      // If we have a phone number, use the standard WhatsApp API
+      whatsappUrl = `https://api.whatsapp.com/send?phone=${phone}&text=${encodedMessage}`;
+      debug('Using WhatsApp API URL with phone', whatsappUrl);
+    } else {
+      // If no phone number, use WhatsApp Web without a recipient
+      whatsappUrl = `https://web.whatsapp.com/send?text=${encodedMessage}`;
+      debug('Using WhatsApp Web URL without phone', whatsappUrl);
+    }
+    
+    // Show a message to the user
+    debug('About to open WhatsApp');
+    
+    let redirectSuccessful = false;
+    try {
+      // Try to open in a new tab/window
+      debug('Trying to open WhatsApp in new window');
+      const newWindow = window.open(whatsappUrl, '_blank');
+      
+      // If popup is blocked or fails
+      if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+        debug('Popup blocked, redirecting instead');
+        // Fallback - redirect directly
+        window.location.href = whatsappUrl;
+        redirectSuccessful = true;
+      } else {
+        debug('New window opened successfully');
+        redirectSuccessful = true;
+      }
+    } catch (error) {
+      debug('Error opening WhatsApp URL', error);
+      // Direct redirect as fallback
+      try {
+        window.location.href = whatsappUrl;
+        redirectSuccessful = true;
+      } catch (redirectError) {
+        debug('Final redirect failed', redirectError);
+        throw new Error('Could not open WhatsApp. Please check your connection and try again.');
+      }
+    }
+    
+    // If we get here and redirect wasn't successful, throw an error
+    if (!redirectSuccessful) {
+      throw new Error('Could not open WhatsApp. Your browser may be blocking popups.');
+    }
+    
+    // Reset loading state after a short delay
+    setTimeout(() => {
+      isGenerating.value = false;
+    }, 500);
+    
   } catch (error) {
-    console.error('WhatsApp share error:', error);
-    throw error;
+    debug('Process WhatsApp share error', error);
+    isGenerating.value = false;
+    alert('Gagal membagikan ke WhatsApp: ' + (error.message || 'Silakan coba lagi.'));
   }
 }
 
@@ -958,7 +989,7 @@ async function processEmailShare() {
       `--\nDibuat dengan https://faktur.web.id`;
 
     // Track successful email share attempt
-    invoiceEvents.create(invoice.value.title || 'Untitled Invoice', calculateTotal());
+    safeTrackEvent('email_share', invoice.value.title || 'Untitled Invoice', calculateTotal());
 
     // Encode subject and body for mailto URL
     const encodedSubject = encodeURIComponent(subject);
@@ -990,7 +1021,7 @@ async function processPDFDownload() {
     document.body.classList.add('generating-pdf');
 
     // Track PDF generation start
-    invoiceEvents.download(invoice.value.title || 'Untitled Invoice', calculateTotal());
+    safeTrackEvent('download', invoice.value.title || 'Untitled Invoice', calculateTotal());
 
     // Add PDF class and remove shadows
     const element = invoicePrintRef.value;
@@ -1170,13 +1201,20 @@ function validateGuestInfo() {
   // Validate based on share method
   switch (shareMethod.value) {
     case 'whatsapp':
-      if (!invoice.value.to.phone) {
-        alert('Nomor telepon penerima invoice harus diisi untuk mengirim via WhatsApp');
+      if (!invoice.value.to?.phone) {
+        // Instead of failing immediately, set a field that can be displayed in the modal
+        formErrors.value.whatsapp = 'Nomor telepon penerima harus diisi. Pastikan anda mengisi nomor telepon di data invoice.';
+        
+        // Allow this to proceed, but will show a more detailed error when trying to process
+        if (confirm('Nomor telepon penerima belum diisi. Apakah anda ingin melanjutkan dengan WhatsApp Web?')) {
+          // User wants to continue anyway - we'll handle this in processWhatsAppShare
+          return true;
+        }
         isValid = false;
       }
       break;
     case 'email':
-      if (!invoice.value.to.email) {
+      if (!invoice.value.to?.email) {
         alert('Email penerima invoice harus diisi untuk mengirim via Email');
         isValid = false;
       }
@@ -1269,26 +1307,27 @@ const translations = computed(() => {
   };
 });
 
+// Add a simple debugging function to help troubleshoot
+function debug(msg, data) {
+  console.log(`[DEBUG] ${msg}`, data || '');
+}
+
+// Update the shareToWhatsApp function to always show the modal first
 function shareToWhatsApp() {
+  // Always show the modal first, regardless of whether phone number exists
   shareMethod.value = 'whatsapp';
   showRegisterModal.value = true;
   
-  // Track the modal view using the correct method
-  invoiceEvents.create(
-    invoice.value.title || 'Untitled Invoice',
-    calculateTotal()
-  );
+  // Track the modal view
+  safeTrackEvent('create', invoice.value.title || 'Untitled Invoice', calculateTotal());
 }
 
 function shareViaEmail() {
   shareMethod.value = 'email';
   showRegisterModal.value = true;
   
-  // Track the modal view using the correct method
-  invoiceEvents.create(
-    invoice.value.title || 'Untitled Invoice',
-    calculateTotal()
-  );
+  // Track the modal view using safeTrackEvent
+  safeTrackEvent('create', invoice.value.title || 'Untitled Invoice', calculateTotal());
 }
 
 function backToEdit() {
@@ -1311,7 +1350,7 @@ function backToEdit() {
       localStorage.setItem('currentInvoice', JSON.stringify(currentData));
       
       // Track edit event
-      invoiceEvents.update(currentData.title || 'Untitled Invoice');
+      safeTrackEvent('update', currentData.title || 'Untitled Invoice');
       
       // Navigate back to edit form
       router.push('/invoice/guest');
@@ -1360,6 +1399,43 @@ const getActionText = computed(() => {
       return 'download';
   }
 });
+
+// Add a safe tracking function that handles missing dependencies
+function safeTrackEvent(eventType, eventName, value) {
+  try {
+    // First try the invoiceEvents
+    if (typeof invoiceEvents === 'object' && invoiceEvents) {
+      if (eventType === 'create') {
+        invoiceEvents.create(eventName, value);
+        debug('Tracked with invoiceEvents.create', { eventName, value });
+        return true;
+      } else if (eventType === 'download') {
+        invoiceEvents.download(eventName, value);
+        debug('Tracked with invoiceEvents.download', { eventName, value });
+        return true;
+      } else if (eventType === 'update') {
+        invoiceEvents.update(eventName);
+        debug('Tracked with invoiceEvents.update', { eventName });
+        return true;
+      }
+    }
+    
+    // Fall back to generic tracking if available
+    if (typeof tracking === 'object' && tracking && typeof tracking.trackEvent === 'function') {
+      tracking.trackEvent('invoice_action', eventType, eventName);
+      debug('Tracked with tracking.trackEvent', { eventType, eventName });
+      return true;
+    }
+    
+    // If we get here, no tracking was performed
+    debug('No tracking method available');
+    return false;
+    
+  } catch (e) {
+    debug('Error during tracking', e);
+    return false;
+  }
+}
 </script>
 
 <style scoped>
