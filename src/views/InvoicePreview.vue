@@ -895,8 +895,21 @@ async function processWhatsAppShare() {
       debug('No phone number available, using web version');
     }
     
-    // Generate message text - keep it brief to avoid URL length issues
-    const message = `Invoice ${invoice.value.invoice_number || ""} dari ${invoice.value.from.name || guestInfo.value.name} senilai ${formatCurrency(calculateTotal())}.`;
+    // Generate detailed message text
+    const message = `*INVOICE ${invoice.value.invoice_number || ""}*\n\n` +
+      `*Dari:* ${invoice.value.from.name}\n` +
+      `*Kepada:* ${invoice.value.to.name}\n\n` +
+      `*Tanggal:* ${formatDate(invoice.value.date)}\n` +
+      `*Jatuh Tempo:* ${formatDate(invoice.value.dueDate)}\n\n` +
+      `*Detail Item:*\n` +
+      invoice.value.items.map(item => 
+        `- ${item.description}\n  Jumlah: ${item.quantity}\n  Harga: ${formatCurrency(item.unitPrice)}\n  Total: ${formatCurrency(item.total)}`
+      ).join('\n\n') + '\n\n' +
+      `*Subtotal:* ${formatCurrency(calculateSubtotal())}\n` +
+      (invoice.value.showTax ? `*Pajak (${invoice.value.taxRate}%):* ${formatCurrency(calculateTaxAmount())}\n` : '') +
+      `*Total:* ${formatCurrency(calculateTotal())}\n\n` +
+      (invoice.value.notes ? `*Catatan:*\n${invoice.value.notes}\n\n` : '') +
+      `Dibuat dengan 🔥 Faktur.web.id`;
     
     // Track successful share attempt
     safeTrackEvent('create', invoice.value.title || 'Untitled Invoice', calculateTotal());
@@ -1312,18 +1325,33 @@ function debug(msg, data) {
   console.log(`[DEBUG] ${msg}`, data || '');
 }
 
-// Update the shareToWhatsApp function to always show the modal first
+// Update the shareToWhatsApp function to pre-populate guest info
 function shareToWhatsApp() {
   // Always show the modal first, regardless of whether phone number exists
   shareMethod.value = 'whatsapp';
+  
+  // Pre-populate guest info with invoice "from" details
+  if (invoice.value.from) {
+    guestInfo.value.name = invoice.value.from.name || '';
+    guestInfo.value.email = invoice.value.from.email || '';
+  }
+  
   showRegisterModal.value = true;
   
   // Track the modal view
   safeTrackEvent('create', invoice.value.title || 'Untitled Invoice', calculateTotal());
 }
 
+// Also update shareViaEmail to do the same
 function shareViaEmail() {
   shareMethod.value = 'email';
+  
+  // Pre-populate guest info with invoice "from" details
+  if (invoice.value.from) {
+    guestInfo.value.name = invoice.value.from.name || '';
+    guestInfo.value.email = invoice.value.from.email || '';
+  }
+  
   showRegisterModal.value = true;
   
   // Track the modal view using safeTrackEvent

@@ -867,31 +867,31 @@ async function downloadPDF() {
   isGenerating.value = true;
   pdfGenerationStatus.value = 'Preparing document...';
   pdfGenerationProgress.value = 10;
-  
+
   // Add class to body to prevent scrolling
   document.body.classList.add('generating-pdf');
 
   try {
-    const options = {
-      margin: 10,
-      filename: `faktur-${invoice.value.title.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.pdf`,
-      image: { 
-        type: 'jpeg', 
-        quality: 0.98 
-      },
-      html2canvas: { 
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        logging: true
-      },
-      jsPDF: { 
-        unit: 'mm', 
-        format: 'a4', 
+  const options = {
+    margin: 10,
+    filename: `faktur-${invoice.value.title.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.pdf`,
+    image: { 
+      type: 'jpeg', 
+      quality: 0.98 
+    },
+    html2canvas: { 
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      logging: true
+    },
+    jsPDF: { 
+      unit: 'mm', 
+      format: 'a4', 
         orientation: 'portrait',
         compress: true // Add compression to help with iOS rendering
-      }
-    };
+    }
+  };
 
     // Update progress
     pdfGenerationStatus.value = 'Processing content...';
@@ -936,7 +936,7 @@ async function downloadPDF() {
       // First generation (will likely be blank on iOS Safari, but primes the renderer)
       await html2pdf()
         .from(element)
-        .set(options)
+      .set(options)
         .output('blob');
       
       pdfGenerationProgress.value = 90;
@@ -966,13 +966,13 @@ async function downloadPDF() {
     
     // Add a delay before hiding the overlay for user to see success message
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Track guest PDF generation with comprehensive data
-    trackGuestPdfGeneration({
-      invoiceTitle: invoice.value.title,
-      invoiceTotal: calculateTotal(),
-      userAgent: navigator.userAgent
-    });
+        
+        // Track guest PDF generation with comprehensive data
+        trackGuestPdfGeneration({
+          invoiceTitle: invoice.value.title,
+          invoiceTotal: calculateTotal(),
+          userAgent: navigator.userAgent
+        });
     
     // Remove PDF mode class
     element.classList.remove('pdf-mode');
@@ -982,7 +982,7 @@ async function downloadPDF() {
     pdfGenerationProgress.value = 0;
     
   } catch (error) {
-    console.error('Error generating PDF:', error);
+        console.error('Error generating PDF:', error);
     pdfGenerationStatus.value = 'Error generating PDF. Please try again.';
     // Show error for 2 seconds then hide overlay
     await new Promise(resolve => setTimeout(resolve, 2000));
@@ -991,7 +991,7 @@ async function downloadPDF() {
     pdfGenerationStatus.value = '';
     pdfGenerationProgress.value = 0;
   } finally {
-    isGenerating.value = false;
+        isGenerating.value = false;
     document.body.classList.remove('generating-pdf');
   }
 }
